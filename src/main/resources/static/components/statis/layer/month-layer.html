@@ -1,0 +1,26 @@
+<div style="padding: 20px;">
+    <input type="text" class="layui-input" readonly id="date">
+</div>
+<script>
+    layui.use(['laydate','layer'], function () {
+        function mGetDate(year, month){
+            let d = new Date(year, month, 0);
+            return d.getDate();
+        }
+        const laydate = layui.laydate;
+        laydate.render({
+            elem: '#date'
+            ,format: 'yyyy年MM月'
+            ,type: 'month'
+            ,max:new Date().getTime()
+            ,btns: ['now','confirm']
+            ,done: function(value, date, endDate){
+                let openDiv = layui.sessionData('dateLayer')['openDiv'];
+                layui.sessionData('dateLayer', {key: openDiv+'_type', value: '2'});
+                layui.sessionData('dateLayer', {key: openDiv+'_start', value: value+'01日'});
+                layui.sessionData('dateLayer', {key: openDiv+'_end', value: value+mGetDate(date.year,date.month)+'日'});
+                layer.close(layui.sessionData('dateLayer')['index']);
+            }
+        });
+    });
+</script>

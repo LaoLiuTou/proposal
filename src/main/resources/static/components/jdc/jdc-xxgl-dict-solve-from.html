@@ -1,0 +1,58 @@
+<!-- 单位表单弹窗 -->
+<form id="xxgl-form" lay-filter="xxgl-form" class="layui-form model-form" onsubmit="return false;">
+    <div class="layui-form-item">
+        <label class="layui-form-label">化解方式</label>
+        <div class="layui-input-block">
+            <select id="dictSolveId" name="dictSolveId"></select>
+        </div>
+    </div>
+    <div class="layui-form-item model-form-footer">
+        <button class="layui-btn layui-btn-primary close" ew-event="closeDialog" type="button">取消</button>
+        <button class="layui-btn" type="button" id="saveBtn">保存</button>
+    </div>
+</form>
+
+<script>
+    layui.use(['layer', 'crab', 'form'], function () {
+        const layer = layui.layer;
+        const crab = layui.crab;
+        const form = layui.form;
+
+        let data = crab.getTempData('p_eventInfo');
+        crab.putTempData('p_eventInfo');
+
+        // 加载单选下拉选择框
+        function loadSingleSelectBox(crab,form,url,selectIdName,selectedId){
+            crab.get(url, {}, function (data) {
+                var l = data.length;
+                if (l > 0) {
+                    var option = '<option value=""></option>',_selectedId;
+                    if(selectedId){
+                        _selectedId = selectedId
+                    }
+                    for (var i = 0; i < l; i++) {
+                        option += '<option value="' + data[i].id + '" '+((''+data[i].id===''+_selectedId)?"selected":"")+'>' + data[i].name + '</option>';
+                    }
+                    $('#'+selectIdName).empty().append(option);
+                    form.render('select');
+                }
+            });
+        }
+
+        loadSingleSelectBox(crab,form,'/sys/dict/solve/list_effective','dictSolveId');
+
+        // 保存点击事件
+        $('#saveBtn').click(function(){
+            let dictSolveId = $('#dictSolveId').val();
+            if(dictSolveId === '') {
+                layer.msg('请选择化解方式');
+                return false;
+            }
+            crab.put('/jdc/xxgl/solve', {id:data.id,dictSolveId:dictSolveId}, function (msg) {
+                console.log(msg);
+                layer.msg('选择成功');
+                crab.finishPopupCenter();
+            });
+        });
+    });
+</script>

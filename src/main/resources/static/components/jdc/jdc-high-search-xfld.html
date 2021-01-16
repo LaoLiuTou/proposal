@@ -1,0 +1,340 @@
+<table class="layui-hide layui-form high-search-table" id="high-search-table" lay-filter="high-search-table"></table>
+<div class="layui-form-item model-form-footer high-search-table-btns">
+    <button class="layui-btn layui-btn-primary close" ew-event="closeDialog" type="button">取消</button>
+    <button class="layui-btn" type="button" id="highSearchBtn">搜索</button>
+</div>
+<style>
+    .high-search-table + .layui-form.layui-border-box.layui-table-view{margin-top: 0;}
+    /* 防止下拉框的下拉列表被隐藏---必须设置--- */
+    .high-search-table + .layui-form.layui-border-box.layui-table-view .layui-table-cell {overflow: visible !important;}
+    /* 设置下拉框的高度与表格单元相同 */
+    .high-search-table + .layui-form.layui-border-box.layui-table-view .layui-input, .layui-select, .layui-textarea{height: 30px !important;}
+    .highSearchDateSelect:disabled,td[data-field="value"][data-edit="false"]{background-color: #f1f1f1}
+    .high-search-table-btns{margin-right: 10px;}
+</style>
+<script type="text/html" id="high-search-table-bar">
+    <a class="layui-btn layui-btn-xs" lay-event="add">新增</a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+</script>
+<script>
+    highSearchNameData = {
+        petitionerInfo:[
+            {name:'姓名',value:'petitionerName',type:1},
+            {name:'身份证号',value:'idcard',type:1},
+            {name:'户籍地址',value:'permanentAddress',type:1},
+            {name:'居住地',value:'currentAddress',type:1},
+            {name:'联系电话',value:'mobileNo',type:1},
+            {name:'登记地点',value:'djOrg',type:1}
+        ],
+        eventInfo:[
+            {name:'事项名称',value:'name',type:1},
+            {name:'信访件编号',value:'eventNum',type:1},
+            {name:'来访日期',value:'visitDate',type:2},
+            {name:'接待处',value:'receptionOrg',type:1},
+            {name:'反映问题',value:'eventContent',type:1},
+            {name:'主要诉求',value:'mainDemand',type:1},
+            {name:'事发地',value:'eventPlace',type:1},
+            {name:'来访人数',value:'comeNum',type:4},
+            {name:'是否集体访',value:'isGroupVisit',type:3},
+            {name:'随访人信息',value:'followPerson',type:1},
+            {name:'是否重访',value:'isRepeat',type:3},
+            {name:'是否重点领域',value:'isKeyArea',type:3},
+            {name:'重点领域分类',value:'keyArea',type:1},
+            {name:'问题分类',value:'contentTypeName',type:1},
+            {name:'上访地点是否正常',value:'visitPlaceStatus',type:3},
+            {name:'上访异常地点',value:'abnormalPlace',type:1},
+            {name:'上访行为是否正常',value:'visitActionStatus',type:3},
+            {name:'上访异常行为',value:'abnormalAction',type:1},
+            {name:'责任单位',value:'dutyUnitName',type:1},
+            {name:'配合单位',value:'coUnit',type:1},
+            {name:'稳控单位',value:'wkdwName',type:1},
+            {name:'是否滞留',value:'isHoldUp',type:3},
+            {name:'是否跟访',value:'isFollow',type:3},
+            {name:'跟访内容',value:'followContent',type:1},
+            {name:'工作建议',value:'workProposal',type:1},
+            {name:'是否办结',value:'solveState',type:3}
+        ],
+        progressInfo:[
+            {name:'问题症结',value:'crux',type:1},
+            {name:'问题是否属实',value:'isVerified',type:3},
+            {name:'核实情况',value:'verifyDetail',type:1},
+            {name:'诉求合理性',value:'isReasonable',type:3},
+            {name:'不合理理由',value:'unreasonableReason',type:1},
+            {name:'最新工作进展',value:'newestProgress',type:1},
+            {name:'是否领导包案',value:'isLeaderHad',type:3},
+            {name:'领导姓名',value:'leader',type:1},
+            {name:'是否有最终处理意见',value:'isFinalOpinion',type:3},
+            {name:'最终处理意见',value:'finalOpinion',type:1}
+        ]
+    };
+    highSearchSymbolData = {
+        '1':[{name:'等于',value:1}, {name:'不等于',value:2}, {name:'包含',value:7}, {name:'不包含',value:8}],
+        '2':[{name:'等于',value:1}],
+        '3':[{name:'等于',value:1}],
+        '4':[{name:'等于',value:1}, {name:'不等于',value:2}, {name:'大于',value:3}, {name:'大于等于',value:4}, {name:'小于',value:5}, {name:'小于等于',value:6}]
+    };
+    highSearchFlagData = {
+        '1':[{name:'否',value:0}, {name:'是',value:1}],
+        '2':[{name:'否',value:0}, {name:'部分',value:1}, {name:'是',value:2}]
+    }
+</script>
+<script>
+    layui.use(['layer', 'table', 'element', 'form', 'crab','laydate'], function () {
+        const layer = layui.layer //弹层
+            , table = layui.table //表格
+            , form = layui.form
+            , laydate = layui.laydate
+            , $ = layui.jquery
+            , crab = layui.crab;
+
+        let emptyData = {
+            id:1,
+            type:1,
+            leftBracket:'无',
+            category:'petitionerInfo',
+            name:'petitionerName',
+            symbol:1,
+            value:'',
+            flagType:1,
+            flag:0,
+            date:'',
+            rightBracket:'无',
+            relation:1
+        };
+
+
+        // 根据id查找表中数据，doCallback，并返回数据
+        function doSomeThingById(id,callback){
+            let oldData = table.cache['high-search-table'];
+            for(let i=0;i<oldData.length;i++){if(''+oldData[i].id === ''+id){if(callback){callback(i,oldData[i]);}break;}}
+            return oldData;
+        }
+        // 修改属性
+        function changeProperty(obj,name,callback,flag){
+            let oldData,id=flag?obj.getAttribute('dataid'):obj.elem.getAttribute('dataid');
+            oldData = doSomeThingById(id,function(i,d){d[''+name] = obj.value;if(callback){callback(i,d);}});
+            table.reload('high-search-table',{data : oldData});
+        }
+        //监听左括号选择操作
+        form.on('select(highSearchLeftBracketSelect)', function (obj) {changeProperty(obj,'leftBracket')});
+        //监听类别选择操作
+        form.on('select(highSearchCategorySelect)', function (obj) {changeProperty(obj,'category');});
+        //监听条件选择操作
+        form.on('select(highSearchNameSelect)', function (obj) {
+            changeProperty(obj,'name',function(index,data){
+                let cates = highSearchNameData[''+data.category];
+                for(let i=0;i<cates.length;i++){
+                    if(''+cates[i].value === ''+data.name){
+                        data.type = cates[i].type;
+                        if(''+data.name === 'isReasonable') data.flagType=2;
+                        if(''+data.type === '1'){
+                            data.flag = '否';
+                            data.date = '';
+                        }else if(''+data.type === '2'){
+                            data.flag = '否';
+                            data.value = '';
+                        }else if(''+data.type === '3' || ''+data.type === '4'){
+                            data.value = '';
+                            data.date = '';
+                        }
+                        break;
+                    }
+                }
+            })
+        });
+        //监听符号选择操作
+        form.on('select(highSearchSymbolSelect)', function (obj) {changeProperty(obj,'symbol')});
+        //监听是否选择操作
+        form.on('select(highSearchFlagSelect)', function (obj) {changeProperty(obj,'flag')});
+        //监听右括号选择操作
+        form.on('select(highSearchRightBracketSelect)', function (obj) {changeProperty(obj,'rightBracket')});
+        //监听关系选择操作
+        form.on('select(highSearchRelationSelect)', function (obj) {changeProperty(obj,'relation')});
+
+        // 渲染 table 实例
+        table.render({
+            elem: '#high-search-table'
+            , height: ($(window).height()-130)
+            , data:[JSON.parse(JSON.stringify(emptyData))]
+            , page: false
+            , limit:100
+            , cols: [[ //表头
+                {field: 'leftBracket', title: '左括号', width: 90, align: 'center', templet: '#high-search-table_selectLeftBracketTool',unresize:true}
+                , {field: 'category', title: '类别',width: 160, align: 'center', templet: '#high-search-table_selectCategoryTool',unresize:true}
+                , {field: 'name', title: '条件', width: 200, align: 'center', templet: '#high-search-table_selectNameTool',unresize:true}
+                , {field: 'symbol', title: '符号', width: 130, align: 'center', templet: '#high-search-table_selectSymbolTool',unresize:true}
+                , {field: 'value', title: '内容'}
+                , {field: 'flag', title: '是/否', width: 100, align: 'center', templet: '#high-search-table_selectFlagTool',unresize:true}
+                , {field: 'date', title: '时间段', width: 210, align: 'center', templet: '#high-search-table_selectDateTool',unresize:true}
+                , {field: 'rightBracket', title: '右括号', width: 90, align: 'center', templet: '#high-search-table_selectRightBracketTool',unresize:true}
+                , {field: 'relation', title: '关系', width: 100, align: 'center', templet: '#high-search-table_selectRelationTool',unresize:true}
+                , {fixed: 'right', title: '操作', width: 110, align: 'center', toolbar: '#high-search-table-bar'}
+            ]]
+            , done:function(){
+                $('.highSearchDateSelect').each(function(i,e){
+                    let obj=$(this)[0],id = obj.getAttribute('dataid'),date,
+                        valueTD = obj.parentElement.parentElement.previousElementSibling.previousElementSibling;
+                    doSomeThingById(id,function(i,d){
+                        date = d.date?d.date:'';
+                        valueTD.setAttribute('data-edit',(''+d.type==='1' || ''+d.type==='4')?'text':'false');
+                    });
+                    date = date?date:'';
+                    laydate.render({
+                        elem: '#highSearchDateSelect-'+id
+                        ,value:date
+                        ,range: '~'
+                        ,max:new Date().getTime()
+                        ,btns: ['clear', 'confirm']
+                        ,done: function(value, date, endDate){
+                            obj.value = value;
+                            changeProperty(obj,'date',function(){},true);
+                        }
+                    });
+                });
+            }
+        });
+        //监听单元格编辑
+        table.on('edit(high-search-table)', function(obj){
+            let value = obj.value,data = obj.data,field = obj.field;
+            if(''+data.type === '4'){
+                // 非负数
+                let check= /^\d+(\.{0,1}\d+){0,1}$/;
+                if(!check.test(value)){
+                    layer.msg('请输入非负数');
+                    data.value = '';
+                    let oldData = doSomeThingById(data.id,function(i,d){d['value'] = ''});
+                    table.reload('high-search-table',{data:oldData});
+                }
+            }
+        });
+        //监听工具条
+        table.on('tool(high-search-table)', function (obj) {
+            let data = obj.data,layEvent = obj.event;
+            if (layEvent === 'add') {
+                let index,oldData = doSomeThingById(data.id,function(i,d){index=i;});
+                emptyData.id ++;
+                oldData.splice(index+1,0,emptyData);
+                table.reload('high-search-table',{data : oldData});
+            } else if (layEvent === 'del') {
+                layer.confirm('确定删除吗？', function (index) {obj.del();layer.close(index);});
+            }
+        });
+        // 搜索按钮点击
+        $('#highSearchBtn').click(function(){
+            let data = table.cache['high-search-table'],highSearchData='',flag=true;
+            for(let j=0;j<data.length;j++){
+                let d = data[j];
+                highSearchData += (''+d.leftBracket !== '无'?' (':' ');
+                switch (parseInt(d.type)){
+                    case 1:
+                        d.value = $.trim(d.value);
+                        switch (parseInt(d.symbol)){
+                            case 1:
+                                highSearchData += " `"+d.name+"`='"+d.value+"' ";
+                                break;
+                            case 2:
+                                highSearchData += " `"+d.name+"`<>'"+d.value+"' ";
+                                break;
+                            case 7:
+                                highSearchData += " LOCATE('"+d.value+"',`"+d.name+"`)>0 ";
+                                break;
+                            case 8:
+                                highSearchData += " LOCATE('"+d.value+"',`"+d.name+"`)=0 ";
+                                break;
+                            default:flag=false;break;
+                        }
+                        break;
+                    case 2:
+                        let dates = d.date.split('~');
+                        highSearchData += " `"+d.name+"`>='"+$.trim(dates[0])+"' AND `"+d.name+"`<='"+$.trim(dates[dates.length-1])+"' ";
+                        break;
+                    case 3:
+                        highSearchData += " `"+d.name+"`='"+d.flag+"' ";
+                        break;
+                    case 4:
+                        switch (parseInt(d.symbol)){
+                            case 1:
+                                highSearchData += " `"+d.name+"`='"+d.value+"' ";
+                                break;
+                            case 2:
+                                highSearchData += " `"+d.name+"`<>'"+d.value+"' ";
+                                break;
+                            case 3:
+                                highSearchData += " `"+d.name+"`>'"+d.value+"' ";
+                                break;
+                            case 4:
+                                highSearchData += " `"+d.name+"`>='"+d.value+"' ";
+                                break;
+                            case 5:
+                                highSearchData += " `"+d.name+"`<'"+d.value+"' ";
+                                break;
+                            case 6:
+                                highSearchData += " `"+d.name+"`<='"+d.value+"' ";
+                                break;
+                            default:flag=false;break;
+                        }
+                        break;
+                    default:flag=false;break;
+                }
+                highSearchData += (''+d.rightBracket !== '无'?') ':' ');
+                if(j!==data.length-1)highSearchData += (''+d.relation === '1'?' AND ':' OR ');
+            }
+            if(!flag){layer.msg('存在配置项错误，请联系管理员！')};
+            crab.putTempData('highSearchData',flag?highSearchData:'');
+            crab.finishPopupCenter();
+        });
+    });
+</script>
+
+<script type="text/html" id="high-search-table_selectLeftBracketTool">
+    <select name="leftBracket" dataid="{{d.id}}" lay-filter="highSearchLeftBracketSelect">
+        {{# layui.each(['无','('], function(index, item){ }}
+        <option {{ (d.leftBracket==item)?'selected':'' }}>{{ item }}</option>
+        {{# }); }}
+    </select>
+</script>
+<script type="text/html" id="high-search-table_selectCategoryTool">
+    <select name="category" dataid="{{d.id}}" lay-filter="highSearchCategorySelect">
+        {{# layui.each([{name:'信访人信息',value:'petitionerInfo'},{name:'事项信息',value:'eventInfo'},{name:'进度信息',value:'progressInfo'}], function(index, item){ }}
+        <option value="{{item.value}}" {{ (d.category==item.value)?'selected':'' }}>{{ item.name }}</option>
+        {{# }); }}
+    </select>
+</script>
+<script type="text/html" id="high-search-table_selectNameTool">
+    <select name="name" dataid="{{d.id}}" lay-filter="highSearchNameSelect">
+        {{# layui.each(highSearchNameData[''+d.category], function(index, item){ }}
+        <option value="{{item.value}}" {{ (d.name==item.value)?'selected':'' }}>{{ item.name }}</option>
+        {{# }); }}
+    </select>
+</script>
+<script type="text/html" id="high-search-table_selectSymbolTool">
+    <select name="symbol" dataid="{{d.id}}" lay-filter="highSearchSymbolSelect">
+        {{# layui.each(highSearchSymbolData[''+d.type], function(index, item){ }}
+        <option value="{{item.value}}" {{ (d.symbol==item.value)?'selected':'' }}>{{ item.name }}</option>
+        {{# }); }}
+    </select>
+</script>
+<script type="text/html" id="high-search-table_selectFlagTool">
+    <select name="flag" dataid="{{d.id}}" lay-filter="highSearchFlagSelect" {{ (d.type==3)?'':'disabled'}}>
+        {{# layui.each(highSearchFlagData[''+d.flagType], function(index, item){ }}
+        <option value="{{item.value}}" {{ (d.flag==item.value)?'selected':'' }}>{{ item.name }}</option>
+        {{# }); }}
+    </select>
+</script>
+<script type="text/html" id="high-search-table_selectDateTool">
+    <input type="text" class="layui-input highSearchDateSelect" readonly  {{ (d.type==2)?'':'disabled'}} dataid="{{d.id}}" id="highSearchDateSelect-{{= d.id }}">
+</script>
+<script type="text/html" id="high-search-table_selectRightBracketTool">
+    <select name="rightBracket" dataid="{{d.id}}" lay-filter="highSearchRightBracketSelect">
+        {{# layui.each(['无',')'], function(index, item){ }}
+        <option {{ (d.rightBracket==item)?'selected':'' }}>{{ item }}</option>
+        {{# }); }}
+    </select>
+</script>
+<script type="text/html" id="high-search-table_selectRelationTool">
+    <select name="relation" dataid="{{d.id}}" lay-filter="highSearchRelationSelect">
+        {{# layui.each([{name:'并且',value:1},{name:'或者',value:2}], function(index, item){ }}
+        <option value="{{item.value}}" {{ (d.relation==item.value)?'selected':'' }}>{{ item.name }}</option>
+        {{# }); }}
+    </select>
+</script>

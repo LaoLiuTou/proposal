@@ -1,0 +1,171 @@
+
+<!-- 打印类项选择弹窗 -->
+<div class="layui-card">
+    <div class="layui-card-body">
+    <form id="choose-form" lay-filter="choose-form" class="layui-form choose-form model-form">
+
+        <div class="layui-form-item layui-form-item-limit-height">
+            <label class="layui-form-label">责任单位</label>
+            <div class="layui-input-block">
+                <table class="print-choose-table" data-table="2">
+                    <tbody id="coUnitIds">
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">起止时间</label>
+            <div class="layui-input-block">
+                <table class="print-choose-table" data-table="3">
+                    <tbody>
+                    <tr>
+                        <td><input type="checkbox" name="isUseDateLimit"  lay-filter="isUseDateLimit" lay-skin="switch" lay-text="启用|关闭" checked></td>
+                        <td class="time">&nbsp;开始日期：<input type="text" class="layui-input" placeholder="选择开始日期" id="beginDate" name="beginDate" autocomplete="off" readonly="readonly"  style="display: inline-block;width: auto"></td>
+                        <td class="time">&nbsp;结束日期：<input type="text" class="layui-input" placeholder="选择结束日期" id="endDate" name="endDate"  autocomplete="off" readonly="readonly"  style="display: inline-block;width: auto"></td>
+                    </tr>
+
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="layui-form-item model-form-footer">
+            <button class="layui-btn layui-btn-primary cate-all-choose" type="button">全选</button>
+            <button class="layui-btn layui-btn-primary reverse-choose" type="button">反选</button>
+            <button class="layui-btn cate-print" lay-filter="export-form-submit" lay-submit>下载</button>
+        </div>
+        </form>
+    </div></div>
+<style>
+    .layui-unselect.layui-form-switch{
+        margin-top: 5px;
+    }
+    .layui-form-item.layui-form-item-limit-height{
+        overflow: auto;
+        max-height: 600px;
+    }
+</style>
+<script type="text/javascript">
+    layui.use(['laydate','form', 'crab', 'layer', 'element'], function(){
+        const crab = layui.crab,
+            form = layui.form,
+            $ = layui.jquery,
+            layer = layui.layer,
+            element = layui.element;
+        let choosePrintLayerIndex = null;
+        var laydate = layui.laydate;
+        var nowTime = new Date().valueOf();
+        //执行一个laydate实例
+
+        //日期
+        var start = laydate.render({ //开始
+            elem: '#beginDate',
+            max:nowTime,
+            done:function(value,date){
+                endMax = end.config.max;
+                end.config.min = date;
+                end.config.min.month = date.month -1;
+            }
+        });
+        var end = laydate.render({ //结束
+            elem: '#endDate',
+            max : nowTime,
+            done:function(value,date){
+                if($.trim(value) == ''){
+                    var curDate = new Date();
+                    date = {'date': curDate.getDate(), 'month': curDate.getMonth()+1, 'year': curDate.getFullYear()};
+                }
+                start.config.max = date;
+                start.config.max.month = date.month -1;
+            }
+        });
+
+
+
+        loadCheckbox(crab,form,'/sys/dict/unit/list_effective','coUnitIds');
+        // 加载多选下拉选择框
+        function loadCheckbox(crab,form,url,selectIdName,selectedId){
+            crab.get(url, {}, function (data) {
+                var l = data.length;
+                if (l > 0) {
+                    var option = '<tr>',_selectedId;
+                    if(selectedId){
+                        _selectedId = selectedId
+                    }
+                    for (var i = 0; i < l; i++) {
+                        option+='<td><input type="checkbox" data-type="1" name="print-cate" value="' + data[i].id + '" title="' + data[i].name + '" checked></td>';
+                        if((i+1)%4==0)option+="<tr></tr>";
+                    }
+                    option+="</tr>";
+                    $('#'+selectIdName).empty().append(option);
+                    form.render();
+                }
+            });
+        }
+        $('#choose-form .cate-all-choose').click(function(){
+            console.log(1);
+            $('#choose-form input[name="print-cate"]').each(function(){
+                $(this)[0].checked=true;
+            });
+            form.render();
+        });
+        $('#choose-form .reverse-choose').click(function(){
+            console.log(1);
+            $('#choose-form input[name="print-cate"]').each(function(){
+                $(this)[0].checked=!$(this)[0].checked;
+            });
+            form.render();
+        });
+        //监听是否使用时间限制
+        form.on('switch(isUseDateLimit)', function(data){
+
+            if(data.elem.checked){
+                $('.time').show();
+            }else{
+                $('.time').hide();
+            }
+
+        });
+// 表单提交事件
+        form.on('submit(export-form-submit)', function (data) {
+            var checkedUnitId=[];
+            var teplist='';
+            $('input[name="print-cate"]:checked').each(function(){
+                let $this = $(this)[0],value = $this.value;
+                checkedUnitId.push(value);
+                teplist+="&checkedUnitIdList="+value;
+            });
+            console.log(checkedUnitId)
+            if(checkedUnitId.length==0){layer.msg("请选择责任单位"); return false;}
+            if(data.field.isUseDateLimit=="on"){
+                if(data.field.beginDate==""){layer.msg("请选择开始时间"); return false;}
+                if(data.field.endDate==""){layer.msg("请选择结束时间"); return false;}
+            }
+
+           data.field.checkedUnitIdList=checkedUnitId;
+            if(data.field.isUseDateLimit=="on"){
+                data.field.isUseDateLimit=true;
+            }else {
+                data.field.isUseDateLimit=false;
+            }
+            console.log(data.field)
+            var isUseDateLimit="?isUseDateLimit="+data.field.isUseDateLimit;
+            var beginDate="&beginDate="+data.field.beginDate;
+            var endDate="&endDate="+data.field.endDate;
+            // crab.get('/jdc/export_excel'+isUseDateLimit+beginDate+endDate+teplist, ({}), function () {
+            //     layer.msg('导出成功', {icon: 1});
+            //     crab.finishPopupCenter();
+            // });
+            window.open('/jdc/export_excel'+isUseDateLimit+beginDate+endDate+teplist);
+                layer.msg('导出成功', {icon: 1});
+        });
+    });
+</script>
+
+<!--JSON.stringify({-->
+<!--checkedUnitIdList:checkedUnitId,-->
+<!--isUseDateLimit:data.field.isUseDateLimit,-->
+<!--beginDate:data.field.beginDate,-->
+<!--endDate:data.field.endDate-->
+<!--})-->

@@ -1,0 +1,436 @@
+<div class="layui-card detail-show-card">
+    <div class="layui-card-header detail-show-header">
+        信访事项详情
+        <div class="layui-btn-group pull-right">
+            <a href="javascript:;" class="layui-btn layui-btn-sm" id="printBtn">打印</a>
+            <a href="javascript:;" class="layui-btn layui-btn-sm layui-btn-primary" id="closeBtn">关闭</a>
+        </div>
+    </div>
+    <div class="layui-card-body detail-show-body">
+        <table class="layui-table">
+            <tbody id="showTableBody">
+            <tr>
+                <td style="width:275px" class="bold font-blue-hoki">事项名称</td>
+                <td style="width:275px" colspan="3" id="show-detail-name" ></td>
+            </tr>
+            <tr>
+                <td style="width:275px" class="bold font-blue-hoki">姓名</td>
+                <td style="width:275px" id="show-detail-petitioner"></td>
+                <td style="width:275px" class="bold font-blue-hoki">身份证号</td>
+                <td style="width:275px" id="show-detail-idcard"></td>
+            </tr>
+            <tr>
+                <td style="width:275px" class="bold font-blue-hoki">户籍地址</td>
+                <td style="width:275px" id="show-detail-permanentAddress"></td>
+                <td style="width:275px" class="bold font-blue-hoki">居住地</td>
+                <td style="width:275px" id="show-detail-currentAddress"></td>
+            </tr>
+            <tr>
+                <td style="width:275px" class="bold font-blue-hoki">联系电话</td>
+                <td style="width:275px" id="show-detail-mobileNo"></td>
+                <td style="width:275px" class="bold font-blue-hoki">来访日期</td>
+                <td style="width:275px" id="show-detail-visitDate"></td>
+            </tr>
+            <tr>
+                <td style="width:275px" class="bold font-blue-hoki">信访件编号</td>
+                <td style="width:275px" id="show-detail-eventNum"></td>
+                <td style="width:275px" class="bold font-blue-hoki">登记地点</td>
+                <td style="width:275px" id="show-detail-djOrg"></td>
+            </tr>
+            <tr>
+                <td style="width:275px" class="bold font-blue-hoki">反映问题</td>
+                <td style="width:275px" colspan="3" id="show-detail-eventContent"></td>
+            </tr>
+            <tr>
+                <td style="width:275px" class="bold font-blue-hoki">主要诉求</td>
+                <td style="width:275px" colspan="3" id="show-detail-mainDemand"></td>
+            </tr>
+            <tr>
+                <td style="width:275px" class="bold font-blue-hoki">是否重点领域</td>
+                <td style="width:275px" id="show-detail-isKeyArea"></td>
+                <td style="width:275px" class="bold font-blue-hoki">重点领域分类</td>
+                <td style="width:275px" id="show-detail-keyArea"></td>
+            </tr>
+            <tr>
+                <td style="width:275px" class="bold font-blue-hoki">事发地</td>
+                <td style="width:275px" id="show-detail-eventPlace"></td>
+                <td style="width:275px" class="bold font-blue-hoki">来访人数</td>
+                <td style="width:275px" id="show-detail-comeNum"></td>
+            </tr>
+            <tr>
+                <td style="width:275px" class="bold font-blue-hoki">涉及人数</td>
+                <td style="width:275px" id="show-detail-involveNum"></td>
+                <td style="width:275px" class="bold font-blue-hoki">是否集体访</td>
+                <td style="width:275px" id="show-detail-isGroupVisit"></td>
+            </tr>
+            <tr>
+                <td style="width:275px" class="bold font-blue-hoki">随访人信息</td>
+                <td style="width:275px" colspan="3" id="show-detail-followPerson"></td>
+            </tr>
+            <tr>
+                <td style="width:275px" class="bold font-blue-hoki">是否重访</td>
+                <td style="width:275px" id="show-detail-isRepeat"></td>
+                <td style="width:275px" class="bold font-blue-hoki">问题分类</td>
+                <td style="width:275px" id="show-detail-contentType"></td>
+            </tr>
+            <tr>
+                <td style="width:275px" class="bold font-blue-hoki">上访地点</td>
+                <td style="width:275px" id="show-detail-visitPlaceStatus"></td>
+                <td style="width:275px" class="bold font-blue-hoki">上访异常地点</td>
+                <td style="width:275px" id="show-detail-abnormalPlace"></td>
+            </tr>
+            <tr>
+                <td style="width:275px" class="bold font-blue-hoki">上访行为</td>
+                <td style="width:275px" id="show-detail-visitActionStatus"></td>
+                <td style="width:275px" class="bold font-blue-hoki">上访异常行为</td>
+                <td style="width:275px" id="show-detail-abnormalAction"></td>
+            </tr>
+            <tr>
+                <td style="width:275px" class="bold font-blue-hoki">责任单位</td>
+                <td style="width:275px" id="show-detail-dutyUnit"></td>
+                <td style="width:275px" class="bold font-blue-hoki">配合单位</td>
+                <td style="width:275px" id="show-detail-coUnit"></td>
+            </tr>
+            <tr>
+                <td style="width:275px" class="bold font-blue-hoki">稳控单位</td>
+                <td style="width:275px" id="show-detail-wkdwName"></td>
+                <td style="width:275px" class="bold font-blue-hoki">是否滞留</td>
+                <td style="width:275px" id="show-detail-isHoldUp"></td>
+            </tr>
+            <tr>
+                <td style="width:275px" class="bold font-blue-hoki">是否跟访</td>
+                <td style="width:275px" id="show-detail-isFollow"></td>
+                <td style="width:275px" class="bold font-blue-hoki">是否办结</td>
+                <td style="width:275px" id="show-detail-solveState"></td>
+            </tr>
+            <tr>
+                <td style="width:275px" class="bold font-blue-hoki">跟访内容</td>
+                <td style="width:275px" colspan="3" id="show-detail-followContent"></td>
+            </tr>
+            <tr>
+                <td style="width:275px" class="bold font-blue-hoki">工作建议</td>
+                <td style="width:275px" id="show-detail-workProposal" colspan="3"></td>
+            </tr>
+            <tr>
+                <td style="width:275px" class="bold font-blue-hoki">问题症结</td>
+                <td style="width:275px" colspan="3" id="show-detail-crux"></td>
+            </tr>
+            <tr>
+                <td style="width:275px" class="bold font-blue-hoki">问题是否属实</td>
+                <td style="width:275px" id="show-detail-isVerified"></td>
+                <td style="width:275px" class="bold font-blue-hoki">诉求合理性</td>
+                <td style="width:275px" id="show-detail-isReasonable"></td>
+            </tr>
+            <tr>
+                <td style="width:275px" class="bold font-blue-hoki">核实情况</td>
+                <td style="width:275px" colspan="3" id="show-detail-verifyDetail"></td>
+            </tr>
+            <tr>
+                <td style="width:275px" class="bold font-blue-hoki">理由</td>
+                <td style="width:275px" colspan="3" id="show-detail-unreasonableReason"></td>
+            </tr>
+            <tr>
+                <td style="width:275px" class="bold font-blue-hoki">是否领导包案</td>
+                <td style="width:275px" id="show-detail-isLeaderHad"></td>
+                <td style="width:275px" class="bold font-blue-hoki">领导层级姓名</td>
+                <td style="width:275px" id="show-detail-leader"></td>
+            </tr>
+            <tr>
+                <td style="width:275px" class="bold font-blue-hoki">最新工作进展</td>
+                <td style="width:275px" colspan="3" id="show-detail-newestProgress"></td>
+            </tr>
+            <tr>
+                <td style="width:275px" class="bold font-blue-hoki">是否有最终处理意见</td>
+                <td style="width:275px" colspan="3" id="show-detail-isFinalOpinion"></td>
+            </tr>
+            <tr>
+                <td style="width:275px" class="bold font-blue-hoki">最终处理意见</td>
+                <td style="width:275px" colspan="3" id="show-detail-finalOpinion"></td>
+            </tr>
+            <tr>
+                <td style="width:275px" class="bold font-blue-hoki">满意度</td>
+                <td style="width:275px" id="show-detail-dictSatisfaction"></td>
+                <td style="width:275px" class="bold font-blue-hoki">化解方式</td>
+                <td style="width:275px" id="show-detail-dictSolve"></td>
+            </tr>
+
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<style>
+    .bold {
+        font-weight: 600 !important;
+    }
+    .detail-show-card{
+        height: inherit;
+    }
+    .detail-show-card .detail-show-body{
+        height: calc(100vh - 30px - 43px - 20px);
+        overflow-y: auto;
+    }
+</style>
+
+<!-- 打印类项选择弹窗 -->
+<script type="text/html" id="choose-model">
+    <form id="choose-form" lay-filter="choose-form" class="layui-form choose-form model-form">
+        <div class="layui-form-item">
+            <label class="layui-form-label">信访人</label>
+            <div class="layui-input-block">
+                <table class="print-choose-table" data-table="1">
+                    <tbody>
+                    <tr>
+                        <td><input type="checkbox" data-type="1" name="print-cate" value="petitioner" title="姓名" checked></td>
+                        <td><input type="checkbox" data-type="1" name="print-cate" value="idcard" title="身份证号" checked></td>
+                        <td><input type="checkbox" data-type="1" name="print-cate" value="permanentAddress" title="户籍地址"></td>
+                        <td><input type="checkbox" data-type="1" name="print-cate" value="currentAddress" title="居住地" checked></td>
+                        <td><input type="checkbox" data-type="1" name="print-cate" value="mobileNo" title="联系电话" checked></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">信访事项</label>
+            <div class="layui-input-block">
+                <table class="print-choose-table" data-table="2">
+                    <tbody>
+                    <tr>
+                        <td><input type="checkbox" data-type="3" name="print-cate" value="eventNum" title="信访件编号" checked></td>
+                        <td><input type="checkbox" data-type="3" name="print-cate" value="name" title="事项名称" checked></td>
+                        <td><input type="checkbox" data-type="1" name="print-cate" value="visitDate" title="来访日期"></td>
+                        <td><input type="checkbox" data-type="1" name="print-cate" value="djOrg" title="登记地点"></td>
+                        <td><input type="checkbox" data-type="1" name="print-cate" value="eventPlace" title="事发地" checked></td>
+                    </tr>
+                    <tr>
+                        <td><input type="checkbox" data-type="3" name="print-cate" value="eventContent" title="反映问题" checked></td>
+                        <td><input type="checkbox" data-type="3" name="print-cate" value="mainDemand" title="主要诉求" checked></td>
+                        <td><input type="checkbox" data-type="1" name="print-cate" value="isKeyArea" title="是否重点领域"></td>
+                        <td><input type="checkbox" data-type="1" name="print-cate" value="keyArea" title="重点领域分类"></td>
+                        <td><input type="checkbox" data-type="1" name="print-cate" value="followPerson" title="随访人信息"></td>
+                    </tr>
+                    <tr>
+                        <td><input type="checkbox" data-type="1" name="print-cate" value="contentType" title="内容分类"></td>
+                        <td><input type="checkbox" data-type="1" name="print-cate" value="comeNum" title="来访人数"></td>
+                        <td><input type="checkbox" data-type="1" name="print-cate" value="involveNum" title="涉及人数" checked></td>
+                        <td><input type="checkbox" data-type="1" name="print-cate" value="isGroupVisit" title="是否集体访"></td>
+                        <td><input type="checkbox" data-type="1" name="print-cate" value="isRepeat" title="是否重访"></td>
+                    </tr>
+                    <tr>
+                        <td><input type="checkbox" data-type="1" name="print-cate" value="visitPlaceStatus" title="上访地点是否正常" checked></td>
+                        <td><input type="checkbox" data-type="1" name="print-cate" value="abnormalPlace" title="上访异常地点" checked></td>
+                        <td><input type="checkbox" data-type="1" name="print-cate" value="visitActionStatus" title="上访行为是否正常"></td>
+                        <td><input type="checkbox" data-type="1" name="print-cate" value="abnormalAction" title="上访异常行为"></td>
+                        <td><input type="checkbox" data-type="1" name="print-cate" value="isHoldUp" title="是否滞留"></td>
+                    </tr>
+                    <tr>
+                        <td><input type="checkbox" data-type="1" name="print-cate" value="isFollow" title="是否跟访"></td>
+                        <td><input type="checkbox" data-type="3" name="print-cate" value="followContent" title="跟访内容"></td>
+                        <td><input type="checkbox" data-type="1" name="print-cate" value="dutyUnit" title="责任单位" checked></td>
+                        <td><input type="checkbox" data-type="1" name="print-cate" value="coUnit" title="配合单位"></td>
+                        <td><input type="checkbox" data-type="1" name="print-cate" value="wkdwName" title="稳控单位"></td>
+                    </tr>
+                    <tr>
+                        <td><input type="checkbox" data-type="3" name="print-cate" value="workProposal" title="工作建议" checked></td>
+                        <td><input type="checkbox" data-type="1" name="print-cate" value="solveState" title="是否办结"></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">工作进展</label>
+            <div class="layui-input-block">
+                <table class="print-choose-table" data-table="3">
+                    <tbody>
+                    <tr>
+                        <td><input type="checkbox" data-type="3" name="print-cate" value="crux" title="问题症结"></td>
+                        <td><input type="checkbox" data-type="3" name="print-cate" value="newestProgress" title="最新工作进展" checked></td>
+                        <td><input type="checkbox" data-type="1" name="print-cate" value="isLeaderHad" title="是否领导包案"></td>
+                        <td><input type="checkbox" data-type="1" name="print-cate" value="leader" title="领导层级及姓名"></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td><input type="checkbox" data-type="1" name="print-cate" value="isVerified" title="问题是否属实"></td>
+                        <td><input type="checkbox" data-type="3" name="print-cate" value="verifyDetail" title="调查核实情况"></td>
+                        <td><input type="checkbox" data-type="1" name="print-cate" value="isReasonable" title="诉求合理性" checked></td>
+                        <td><input type="checkbox" data-type="3" name="print-cate" value="unreasonableReason" title="不合理理由" checked></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td><input type="checkbox" data-type="3" name="print-cate" value="isFinalOpinion" title="是否有最终处理意见"></td>
+                        <td><input type="checkbox" data-type="3" name="print-cate" value="finalOpinion" title="最终处理意见"></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">额外记录</label>
+            <div class="layui-input-block">
+                <table class="print-choose-table" data-table="4">
+                    <tbody>
+                    <tr>
+                        <td><input type="checkbox" data-type="1" name="print-cate" value="dictSatisfaction" title="满意度"></td>
+                        <td><input type="checkbox" data-type="1" name="print-cate" value="dictSolve" title="化解方式"></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td><input type="checkbox" data-type="2" name="print-cate" value="extraMeeting" title="协调会记录"></td>
+                        <td><input type="checkbox" data-type="2" name="print-cate" value="extraHandle" title="督办记录"></td>
+                        <td><input type="checkbox" data-type="2" name="print-cate" value="extraRevisit" title="回访情况记录"></td>
+                        <td><input type="checkbox" data-type="2" name="print-cate" value="extraPraise" title="上级表扬"></td>
+                        <td></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="layui-form-item model-form-footer">
+            <button class="layui-btn layui-btn-primary cate-all-choose" type="button">全选</button>
+            <button class="layui-btn layui-btn-primary close" type="button">取消</button>
+            <button class="layui-btn cate-print" type="button">打印</button>
+        </div>
+    </form>
+</script>
+
+<script type="text/javascript">
+    layui.use(['form', 'crab', 'layer', 'element'], function(){
+        const crab = layui.crab,
+            form = layui.form,
+            $ = layui.jquery,
+            layer = layui.layer,
+            element = layui.element;
+        let choosePrintLayerIndex = null;
+
+        // 回显信息
+        let o_data = crab.getTempData('p_eventInfo'),
+            detail_layer_index = crab.getTempData('detail_layer_index');
+        crab.putTempData('p_eventInfo');
+        crab.putTempData('detail_layer_index');
+        $('#closeBtn').click(function(){
+            layer.close(detail_layer_index);
+        });
+        if(o_data.id){
+            crab.get('/jdc/show/event_info',{id:o_data.id},function(data){
+                o_data = data;
+                $('#show-detail-name').text(data.name);
+                $('#show-detail-petitioner').text(data.petitioner);
+                $('#show-detail-idcard').text(data.idcard);
+                $('#show-detail-permanentAddress').text(data.permanentAddress);
+                $('#show-detail-currentAddress').text(data.currentAddress);
+                $('#show-detail-mobileNo').text(data.mobileNo);
+                $('#show-detail-visitDate').text(data.visitDate);
+                $('#show-detail-eventNum').text(data.eventNum);
+                $('#show-detail-djOrg').text(data.djOrg);
+                $('#show-detail-eventContent').text(data.eventContent);
+                $('#show-detail-mainDemand').text(data.mainDemand);
+                $('#show-detail-isKeyArea').text(data.isKeyArea);
+                $('#show-detail-keyArea').text(data.keyArea);
+                $('#show-detail-eventPlace').text(data.eventPlace);
+                $('#show-detail-comeNum').text(data.comeNum);
+                $('#show-detail-involveNum').text(data.involveNum);
+                $('#show-detail-isGroupVisit').text(data.isGroupVisit);
+                $('#show-detail-followPerson').text(data.followPerson);
+                $('#show-detail-isRepeat').text(data.isRepeat);
+                $('#show-detail-contentType').text(data.contentType);
+                $('#show-detail-visitPlaceStatus').text(data.visitPlaceStatus);
+                $('#show-detail-abnormalPlace').text(data.abnormalPlace);
+                $('#show-detail-visitActionStatus').text(data.visitActionStatus);
+                $('#show-detail-abnormalAction').text(data.abnormalAction);
+                $('#show-detail-dutyUnit').text(data.dutyUnit);
+                $('#show-detail-coUnit').text(data.coUnit);
+                $('#show-detail-wkdwName').text(data.wkdwName);
+                $('#show-detail-isHoldUp').text(data.isHoldUp);
+                $('#show-detail-isFollow').text(data.isFollow);
+                $('#show-detail-solveState').text(data.solveState);
+                $('#show-detail-followContent').text(data.followContent);
+                $('#show-detail-workProposal').text(data.workProposal);
+                $('#show-detail-crux').text(data.crux);
+                $('#show-detail-isVerified').text(data.isVerified);
+                $('#show-detail-isReasonable').text(data.isReasonable);
+                $('#show-detail-verifyDetail').text(data.verifyDetail);
+                $('#show-detail-unreasonableReason').text(data.unreasonableReason);
+                $('#show-detail-newestProgress').text(data.newestProgress);
+                $('#show-detail-isLeaderHad').text(data.isLeaderHad);
+                $('#show-detail-leader').text(data.leader);
+                $('#show-detail-isFinalOpinion').text(data.isFinalOpinion);
+                $('#show-detail-finalOpinion').text(data.finalOpinion);
+                $('#show-detail-dictSatisfaction').text(data.dictSatisfaction);
+                $('#show-detail-dictSolve').text(data.dictSolve);
+                showExtra('协调会记录',data.extraMeeting);
+                showExtra('督办记录',data.extraHandle);
+                showExtra('回访情况记录',data.extraRevisit);
+                showExtra('上级表扬',data.extraPraise);
+            });
+
+            function showExtra(name,list){
+                let str = '<tr>',length = list.length;
+                if(length > 0){
+                    str += '<td style="width:275px" class="bold font-blue-hoki" rowspan="'+length+'">'+name+'</td>';
+                    for(let i=0;i<length;i++){
+                        if(i>0) str += '<tr>';
+                        str+='<td style="width:275px">'+list[i].contentDate+'</td><td style="width:275px" colspan="2">'+list[i].content+'</td>';
+                        if(i>0) str += '</tr>';
+                    }
+                }else{
+                    str += '<td style="width:275px" class="bold font-blue-hoki">'+name+'</td><td style="width:275px" colspan="3"></td>';
+                }
+                str += '</tr>';
+                $('#showTableBody').append(str);
+            }
+            $('#printBtn').click(function(){
+                choosePrintLayerIndex = layer.open({
+                    type: 1,
+                    title: '打印类项选择',
+                    area: ['900px','600px'],
+                    offset: 'auto',
+                    content: $('#choose-model').html(),
+                    success: function () {
+                        form.render();
+                        $('#choose-form .cate-all-choose').click(function(){
+                            console.log(1);
+                            $('#choose-form input[name="print-cate"]').each(function(){
+                                $(this)[0].checked=true;
+                            });
+                            form.render();
+                        });
+                        $('#choose-form .cate-print').click(function(){
+                            let cate_print_data = {},cate_print_data_type = {};
+                            $('input[name="print-cate"]:checked').each(function(){
+                                let $this = $(this)[0],value = $this.value,type = $($this).data('type');
+                                cate_print_data_type[''+value]=type;
+                                cate_print_data[''+value]=o_data[''+value]?o_data[''+value]:'';
+                            });
+                            sessionStorage.setItem('catePrintData',JSON.stringify(cate_print_data));
+                            sessionStorage.setItem('catePrintDataType',JSON.stringify(cate_print_data_type));
+                            let height = ($(window).height()-30)>=1050?1050:($(window).height()-30);
+                            layer.close(choosePrintLayerIndex);
+                            layer.open({
+                                type: 2,
+                                content: '/components/print/jdc.html',
+                                title: false,
+                                area: ['860px', height+'px']
+                            });
+                        });
+                        $('#choose-form .close').click(function () {
+                            layer.close(choosePrintLayerIndex);
+                        });
+                    }
+                });
+            });
+        }else{
+            $('#printBtn').hide();
+        }
+    });
+</script>
+

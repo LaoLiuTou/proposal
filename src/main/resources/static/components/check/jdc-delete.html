@@ -1,0 +1,117 @@
+<div class="layui-card">
+    <div class="layui-card-header">
+        <h2 class="header-title">事项删除审核</h2>
+    </div>
+    <div class="layui-card-body">
+        <!-- 搜索条件 -->
+        <div class="layui-form toolbar">
+            <form id="searchForm" onsubmit="return false;">
+                提交人：<input name="userRealName" class="layui-input search-input" type="text" placeholder="输入提交人姓名"/>&emsp;
+                提交日期：<input name="submitDate" id="submitDate" class="layui-input search-input" type="text" placeholder="输入提交日期" style="width: 170px;" readonly/>&emsp;
+                <button id="jdc-delete-btn-search" class="layui-btn icon-btn"><i class="layui-icon">&#xe615;</i>搜索</button>
+            </form>
+        </div>
+        <!-- 表格顶部操作列 -->
+        <table class="layui-table" id="jdc-delete-table" lay-filter="jdc-delete-table"></table>
+    </div>
+</div>
+
+<!-- 表格操作列 -->
+<script type="text/html" id="jdc-delete-table-bar">
+    <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="view">详情</a>
+    <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="pass">通过</a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="unpass">驳回</a>
+</script>
+
+<script>
+    layui.use(['form', 'table', 'config', 'crab','laydate'], function () {
+        var form = layui.form;
+        var table = layui.table;
+        var config = layui.config;
+        var layer = layui.layer;
+        var crab = layui.crab;
+        var laydate = layui.laydate;
+
+        laydate.render({
+            elem: '#submitDate'
+            ,type: 'date'
+            ,range: true
+            ,trigger: 'click'
+            ,max:0
+        });
+
+        // 渲染表格
+        var u_table = table.render({
+            elem: '#jdc-delete-table',
+            toolbar: '#jdc-delete-toolbar',
+            url: config.base_server + '/check/delete/page',
+            parseData: config.parseData,
+            page: true,
+            cols: [[
+                {type: 'numbers'},
+                {field: 'eventNum', title: '事件编号', width: 130},
+                {field: 'name', title: '事件名称', width: 90},
+                {field: 'eventContent', title: '反映问题', width: 120},
+                {field: 'mainDemand', title: '主要诉求',width: 100},
+                {field: 'dutyUnitName', title: '责任单位',width: 100},
+                {field: 'contentTypeName', title: '问题分类',width: 100},
+                {field: 'status', title: '事件状态', width: 160, templet:function(d){
+                    var status = ''+d.status;
+                    if(status === '0'){
+                        return '待接待';
+                    }else if(status === '1'){
+                        return '处理中';
+                    }else if(status === '2'){
+                        return '已处理';
+                    }else if(status === '-1'){
+                        return '已放弃';
+                    }
+                }
+                },
+                {field: 'userRealName', title: '申请人', width: 80},
+                {field: 'createTime', title: '申请时间', sort: true, width: 150},
+                {fixed: 'right', align: 'center', toolbar: '#jdc-delete-table-bar', title: '操作', width: 180}
+            ]]
+        });
+
+        // 表格操作列事件
+        table.on('tool(jdc-delete-table)', function (obj) {
+            var data = obj.data;
+            var layEvent = obj.event;
+
+            if (layEvent === 'pass') {
+                layer.confirm('您确定要通过该删除吗？', function () {
+                    crab.put('/check/delete/changeStaus',{'id':obj.data.id,'status':1} , function () {
+                        layer.msg('事件删除已通过', {icon: 1});
+                        obj.del();
+                    });
+                });
+            } else if (obj.event === 'unpass') {
+                layer.confirm('您确定要驳回该删除吗？', function () {
+                    crab.put('/check/delete/changeStaus',{'id':obj.data.id,'status':2} , function () {
+                        layer.msg('事件删除已驳回', {icon: 1});
+                        obj.del();
+                    });
+                });
+            } else if (obj.event === 'view') {
+                data.id=data.petitionEventInfoId;
+                crab.putTempData('p_eventInfo', data);
+                let height = $(window).height()-30;
+                let detail_layer_index = crab.popupCenter({
+                    closeBtn:0,
+                    path: '/components/jdc/jdc-djxx-table.html',
+                    title: false,
+                    offset: '15px',
+                    area: ['800px', height+'px']
+                });
+                crab.putTempData('detail_layer_index', detail_layer_index);
+            }
+        });
+
+
+        // 搜索按钮点击事件
+        $('#jdc-delete-btn-search').click(function () {
+            u_table.reload({where: crab.getSearchForm()});
+        });
+    });
+</script>

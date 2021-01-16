@@ -1,0 +1,70 @@
+<div class="layui-card">
+    <div class="layui-card-header">
+        <h2 class="header-title">内容分类统计</h2>
+    </div>
+    <div class="layui-card-body">
+        <!-- 搜索条件 -->
+        <div class="layui-form toolbar user-search">
+            <form id="searchForm" onsubmit="return false;">
+                登记时间：<input name="queryCheckDate" type="text" class="layui-input search-input" readonly id="queryCheckDate" style="width:200px">
+                <button id="user-btn-search" class="layui-btn icon-btn"><i class="layui-icon">&#xe615;</i>搜索</button>
+            </form>
+        </div>
+        <!-- 表格 -->
+        <table class="layui-table" id="data-table" lay-filter="data-table"></table>
+    </div>
+</div>
+
+<script>
+    layui.use(['table', 'config',  'crab', 'laydate'], function () {
+        const table = layui.table;
+        const config = layui.config;
+        const crab = layui.crab;
+        const laydate = layui.laydate;
+        laydate.render({
+            elem: '#queryCheckDate'
+            ,format: 'yyyy-MM-dd'
+            ,type: 'date'
+            ,range: '~'
+            ,max:new Date().getTime()
+            ,btns: ['confirm']
+        });
+
+        // 渲染表格
+        var dataTable = table.render({
+            elem: '#data-table',
+            toolbar: true,
+            url: config.base_server + '/province/data/statis/content/type',
+            where:{queryCheckDate:''},
+            page: false,
+            totalRow:true,
+            /*height: 'full-220',*/
+            cols: [[
+                {field: 'name', title: '地区', fixed:'left', totalRowText:'合计', minWidth: 150},
+                {field: 'one', title: '农村农业', align:'center', totalRow:true, width: 90},
+                {field: 'two', title: '国土资源', align:'center', totalRow:true, width: 90},
+                {field: 'three', title: '城乡建设', align:'center', totalRow:true, width: 90},
+                {field: 'four', title: '劳动和社会保障', align:'center', totalRow:true, width: 90},
+                {field: 'five', title: '卫生计生', align:'center', totalRow:true, width: 90},
+                {field: 'six', title: '教育文体', align:'center', totalRow:true, width: 90},
+                {field: 'seven', title: '民政', align:'center', totalRow:true, width: 90},
+                {field: 'eight', title: '政法', align:'center', totalRow:true, width: 90},
+                {field: 'nine', title: '经济管理', align:'center', totalRow:true, width: 90},
+                {field: 'ten', title: '交通运输', align:'center', totalRow:true, width: 90},
+                {field: 'eleven', title: '商贸旅游', align:'center', totalRow:true, width: 90},
+                {field: 'twelve', title: '科技与信息产业', align:'center', totalRow:true, width: 90},
+                {field: 'thirteen', title: '环境保护', align:'center', totalRow:true, width: 90},
+                {field: 'fourteen', title: '党务政务', align:'center', totalRow:true, width: 90},
+                {field: 'fifteen', title: '组织人事', align:'center', totalRow:true, width: 90},
+                {field: 'sixteen', title: '纪检监察', align:'center', totalRow:true, width: 90},
+                {field: 'seventeen', title: '其他', align:'center', totalRow:true, width: 90}
+            ]]
+        });
+
+        // 搜索按钮点击事件
+        $('#user-btn-search').click(function () {
+            dataTable.reload({where: crab.getSearchForm()});
+        });
+
+    });
+</script>

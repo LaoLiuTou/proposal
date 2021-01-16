@@ -1,0 +1,102 @@
+<div class="layui-card" id="JdcxxglDiv">
+    <div class="layui-card-header">
+        <h2 class="header-title">信访中心简报</h2>
+        <button class="layui-btn layui-btn-primary layui-btn-sm fright" lay-filter="export-form-submit" lay-submit>
+            <i class="layui-icon">&#xe63c;</i>导出表格</button>
+    </div>
+    <div class="layui-card-body">
+        <!-- 搜索条件 -->
+        <div class="layui-form toolbar">
+            <form id="searchForm" onsubmit="return false;">
+                开始日期：<input name="beginDate" id="beginDate" class="layui-input search-input" type="text" placeholder="输入来访日期"/>
+                结束日期：<input name="endDate" id="endDate" class="layui-input search-input" type="text" placeholder="输入来访日期"/>
+                <button id="user-btn-search" class="layui-btn icon-btn"><i class="layui-icon">&#xe615;</i>搜索</button>
+            </form>
+        </div>
+        <!-- 表格顶部操作列 -->
+        <script type="text/html" id="user-toolbar">
+            <div class="layui-btn-container">
+            </div>
+        </script>
+        <table class="layui-table" id="zhc-table" lay-filter="zhc-table"></table>
+    </div>
+</div>
+
+<style>
+    button.fright {
+        float: right;
+        margin: 5px;
+    }
+</style>
+
+
+<script>
+
+    layui.use(['form', 'table', 'config','layer', 'crab', 'laydate','tableMerge'], function () {
+        var crab = layui.crab;
+        var config = layui.config;
+        var form = layui.form;
+        var table = layui.table;
+        var laydate = layui.laydate;
+        var $ = layui.jquery;
+        var tableMerge = layui.tableMerge;
+        laydate.render({
+            elem: '#beginDate'
+        });
+        laydate.render({
+            elem: '#endDate'
+        });
+        var zhcTable = table.render({
+            elem: '#zhc-table',
+            //toolbar: '#user-toolbar',
+            url: config.base_server + '/jdc/export_briefing',
+            where: {beginDate:'',endDate:''},
+            parseData: config.parse,
+            totalRow: true,
+            //page: true,
+            //limits:[10,20,30,40,50,60,70,80,90,120,240,360,720,1440],
+            cols:  [
+
+                [ //标题栏
+                    {field: 'jdc_name', title: '接待处', rowspan: 2, align: "center",merge:true},
+                    {field: 'name', title: '单位', rowspan: 2,  align: "center",totalRowText: '合计'}, //rowspan即纵向跨越的单元格数
+                    {field: '2', title: '总量', colspan: 3, align: "center"},
+                    {field: '3', title: '集体访', colspan: 2, align: "center"}, //colspan即横跨的单元格数，这种情况下不用设置field和width
+                    {field: '4', title: '单访', colspan: 2, align: "center"},
+                    {field: '5', title: '初访', colspan: 2,align: "center"}
+                ],
+
+                [
+                    {field: 'wuyong',hide:true},
+                    {field: 'sum_event', title: '件数',  align: "center",totalRow:true},
+                    {field: 'sum_come', title: '人次',  align: "center", totalRow: true},
+                    {field: 'group_event', title: '件数',align: "center", totalRow: true},
+                    {field: 'group_come', title: '人次', align: "center", totalRow: true},
+                    {field: 'single_event', title: '件数', align: "center", totalRow: true},
+                    {field: 'single_come', title: '人次', align: "center", totalRow: true},
+                    {field: 'first_event', title: '件数',align: "center", totalRow: true},
+                    {field: 'first_come', title: '人次',align: "center", totalRow: true}
+                ]
+
+            ],
+            done: function () {
+            tableMerge.render(this)
+        }
+        })
+        // 搜索按钮点击事件
+        $('#user-btn-search').click(function () {
+            zhcTable.reload(
+                {
+                    where: {beginDate:$('#beginDate').val(),endDate:$('#endDate').val()}
+                }
+            );
+        });
+        // 表单提交事件
+        form.on('submit(export-form-submit)', function (data) {
+            var beginDate="?beginDate="+$('#beginDate').val();
+            var endDate="&endDate="+$('#endDate').val();
+            window.open('/jdc/export_briefing_excel'+beginDate+endDate);
+            layer.msg('导出成功', {icon: 1});
+        });
+    });
+</script>

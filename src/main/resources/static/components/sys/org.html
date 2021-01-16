@@ -1,0 +1,108 @@
+<div class="layui-card">
+    <div class="layui-card-header">
+        <h2 class="header-title">组织管理</h2>
+        <span class="layui-breadcrumb pull-right">
+          <a><cite>系统管理</cite></a>
+          <a><cite>组织管理</cite></a>
+        </span>
+    </div>
+    <div class="layui-card-body">
+        <!-- 搜索条件 -->
+        <div class="layui-form toolbar">
+            顶级组织：<select id="topOrg" lay-search lay-filter="topOrg">></select>&nbsp;&nbsp;&nbsp;
+            <!--<button class="layui-btn layui-btn-primary layui-btn-sm" lay-event="operate"><i
+                    class="layui-icon">&#xe63c;</i>操作日志
+            </button>-->
+            <button class="layui-btn layui-btn-sm" id="add"><i class="layui-icon">&#xe654;</i>添加
+            </button>
+        </div>
+        <div id="orgChart" style="overflow-x: auto;"></div>
+    </div>
+</div>
+<link href="/assets/libs/orgChart/org.css" media="all" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="/assets/libs/orgChart/org.js"></script>
+<script type="text/javascript">
+    function editOrg(crab,edit, node,top,form) {
+        console.log(node);
+        var data = edit ? node.data : {pid: node.data.id};
+        data.edit = edit;
+        data.rid = top?0:$('#topOrg').val();
+        crab.putFormData(data);
+        crab.popupCenter({
+            title: edit ? '编辑组织' : '添加组织',
+            path: '/components/sys/org-form.html',
+            finish: function () {
+                top?loadTopOrg(crab,form,crab.getFormData().rid):loadOrg(crab,form, data.rid);
+            }
+        });
+    }
+    // 加载顶级组织选择框
+    function loadTopOrg(crab,form,orgId){
+        crab.get('/sys/org/top/list', {}, function (data) {
+            var l = data.length;
+            if (l > 0) {
+                var option = '',_orgId;
+                if(orgId){
+                    _orgId = orgId
+                }else{
+                    _orgId = data[0].id;
+                }
+                for (var i = 0; i < l; i++) {
+                    option += '<option value="' + data[i].id + '" '+((''+data[i].id===''+_orgId)?"selected":"")+'>' + data[i].name + '</option>';
+                }
+                $('#topOrg').empty().append(option);
+                form.render('select');
+                // 加载组织
+                loadOrg(crab,form, _orgId);
+            }
+        });
+    }
+    // 加载组织树
+    function loadOrg(crab,form, topOrgId) {
+        crab.get('/sys/org/list_' + topOrgId, {}, function (data) {
+            $('#orgChart').orgChart({
+                data: data,
+                showControls: true,
+                newNodeText: '添加子部门',
+                onAddNode: function (node) {
+                    editOrg(crab,false, node,false);
+                    //orgChart.newNode(node.data.id);
+                },
+                onDeleteNode: function (node) {
+                    layer.confirm('确定要删除该组织信息吗？', function () {
+                        crab.delete('/sys/org/' + node.data.id, {}, function (data) {
+                            layer.msg('删除成功', {icon: 1, time: 1500}, function () {
+                                // 重新渲染
+                                if(''+node.data.pid === '0'){
+                                    loadTopOrg(crab, form);
+                                }else{
+                                    loadOrg(crab, form, topOrgId);
+                                }
+                            });
+                        });
+                    });
+                },
+                onClickNode: function (node) {
+                    editOrg(crab,true, node,false);
+                }
+            });
+        });
+    }
+
+    layui.use(['form', 'table', 'config', 'crab'], function () {
+        var form = layui.form;
+        var crab = layui.crab;
+
+        $('#add').click(function(){
+            editOrg(crab,false, {data:{id:0,pid:0}},true,form);
+        });
+
+        // 监听选择企业
+        form.on('select(topOrg)', function (data) {
+            loadOrg(crab,form, data.value);
+        });
+
+        // 默认加载
+        loadTopOrg(crab,form);
+    });
+</script>

@@ -1,0 +1,146 @@
+<div class="layui-card">
+    <div class="layui-card-header">
+        <h2 class="header-title">字典管理</h2>
+        <span class="layui-breadcrumb pull-right">
+          <a><cite>系统管理</cite></a>
+          <a><cite>字典管理</cite></a>
+        </span>
+    </div>
+    <div class="layui-card-body">
+        <!-- 搜索条件 -->
+        <div class="layui-form toolbar">
+            <form id="searchForm" onsubmit="return false;">
+                名称：<input name="name" class="layui-input search-input" type="text" placeholder="输入名称"/>&emsp;
+                编码：<input name="code" class="layui-input search-input" type="text" placeholder="输入编码"/>&emsp;
+                状态：<select name="status" lay-verify="">
+                    <option value="">请选择一个状态</option>
+                    <option value="0">正常</option>
+                    <option value="-1">禁用</option>
+                </select>
+                <button id="dict-btn-search" class="layui-btn icon-btn"><i class="layui-icon">&#xe615;</i>搜索</button>
+            </form>
+        </div>
+        <!-- 表格顶部操作列 -->
+        <script type="text/html" id="dict-toolbar">
+            <div class="layui-btn-container">
+                <button class="layui-btn layui-btn-sm" lay-event="add"><i class="layui-icon">&#xe654;</i>添加</button>
+                <button class="layui-btn layui-btn-primary layui-btn-sm" lay-event="operate"><i class="layui-icon">&#xe63c;</i>操作日志</button>
+            </div>
+        </script>
+        <table class="layui-table" id="dict-table" lay-filter="dict-table"></table>
+    </div>
+</div>
+
+<!-- 表格操作列 -->
+<script type="text/html" id="dict-table-bar">
+    <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="data">数据</a>
+    <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="edit">修改</a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+</script>
+
+<!-- 表格状态列 -->
+<script type="text/html" id="dict-tpl-status">
+    <input type="checkbox" lay-filter="dict-tpl-status" value="{{d.id}}" lay-skin="switch"
+           lay-text="正常|禁用" {{d.status==0?'checked':''}}/>
+</script>
+<script type="text/html" id="dict-tpl-sys">
+    <input type="checkbox" lay-filter="dict-tpl-sys" value="{{d.id}}" lay-skin="switch"
+           lay-text="是|否" {{d.sys==1?'checked':''}}/>
+</script>
+
+<script>
+    layui.use(['form', 'table', 'config', 'crab'], function () {
+        var form = layui.form;
+        var table = layui.table;
+        var config = layui.config;
+        var layer = layui.layer;
+        var crab = layui.crab;
+
+        // 渲染表格
+        var dictTable = table.render({
+            elem: '#dict-table',
+            toolbar: '#dict-toolbar',
+            url: config.base_server + '/sys/dict/page',
+            parseData: config.parseData,
+            page: true,
+            cols: [[
+                {type: 'numbers'},
+                {field: 'name', title: '名称', width: 160},
+                {field: 'code', title: '编码', width: 200},
+                {field: 'content', title: '内容', width: 200},
+                {field: 'status', templet: '#dict-tpl-status', title: '状态', width: 100},
+                {field: 'sys', templet: '#dict-tpl-sys', title: '系统字典', width: 100},
+                {field: 'remark', title: '备注'},
+                {field: 'createTime', title: '创建时间', sort: true, width: 150},
+                {fixed: 'right', align: 'center', toolbar: '#dict-table-bar', title: '操作', width: 160}
+            ]]
+        });
+        // 表格顶部操作列
+        table.on('toolbar(dict-table)', function (obj) {
+            if (obj.event === 'add') {
+                showEditModel();
+            }
+        });
+        // 表格操作列事件
+        table.on('tool(dict-table)', function (obj) {
+            var data = obj.data;
+            var layEvent = obj.event;
+
+            if (layEvent === 'edit') {
+                // 修改
+                showEditModel(data);
+            } else if (obj.event === 'data') {
+                crab.putFormData(data);
+                crab.popupCenter({
+                    title: '字典列表',
+                    maxmin: true,
+                    area: ['1180px', '700px'],
+                    path: '/components/sys/dict-data.html',
+                    finish: function () {
+                        dictTable.reload('dict-table', {});
+                    }
+                });
+            } else if (obj.event === 'del') {
+                // 删除
+                layer.confirm('确定要删除该条字典记录吗？', function () {
+                    crab.deleteRow(obj, '/sys/dict/' + obj.data.id);
+                });
+            }
+        });
+
+        //显示表单弹窗
+        var showEditModel = function (data) {
+            crab.putFormData(data);
+            crab.popupCenter({
+                title: data ? '修改字典' : '添加字典',
+                path: '/components/sys/dict-form.html',
+                finish: function () {
+                    dictTable.reload('dict-table', {});
+                }
+            });
+        };
+
+        // 搜索按钮点击事件
+        $('#dict-btn-search').click(function () {
+            dictTable.reload({where: crab.getSearchForm()});
+        });
+
+        // 修改dict状态
+        form.on('switch(dict-tpl-status)', function (obj) {
+            crab.put('/sys/dict/status_' + obj.elem.value, {
+                status: obj.elem.checked ? 0 : -1
+            }, function () {
+                layer.msg('字典状态修改成功', {icon: 1});
+            });
+        });
+
+        // 修改dict状态
+        form.on('switch(dict-tpl-sys)', function (obj) {
+            crab.put('/sys/dict/sys_' + obj.elem.value, {
+                sys: obj.elem.checked ? 1 : 0
+            }, function () {
+                layer.msg('字典系统状态修改成功', {icon: 1});
+            });
+        });
+    });
+</script>

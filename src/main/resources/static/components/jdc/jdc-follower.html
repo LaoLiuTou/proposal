@@ -1,0 +1,131 @@
+<div class="layui-card">
+    <div class="layui-card-body">
+        <!-- 身份表单 -->
+        <form class="layui-form" id="followerinfo_form" lay-filter="followerinfo_form">
+            <div class="layui-form-item">
+                <label class="layui-form-label"><span style="color: red">*</span>姓名</label>
+                <div class="layui-input-block">
+                    <input id="name_follower" type="text" name="name" required  lay-verify="required" placeholder="请输入姓名" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">身份证号</label>
+                <div class="layui-input-block">
+                    <input id="idcard_follower" type="text" name="idcard" required  lay-verify="required|identity" placeholder="请输入身份证号" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">性别</label>
+                <div class="layui-input-block">
+                    <input type="radio" name="sex_follower" value="1" title="男" >
+                    <input type="radio" name="sex_follower" value="0" title="女" checked>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label class="layui-form-label">民族</label>
+                    <div class="layui-input-block">
+                        <input id="nation_follower" value="汉" type="text" name="nation"  placeholder="请输入民族" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">出生年月</label>
+                    <div class="layui-input-inline">
+                        <input id="birthDate_follower" type="text" name="birthDate" required lay-verify="required|date" autocomplete="off" class="layui-input" readonly>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">户籍地址</label>
+                <div class="layui-input-block">
+                    <input id="permanentAddress_follower" type="text" name="permanentAddress" required  lay-verify="required" placeholder="请输入户籍地址" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">现住地址</label>
+                <div class="layui-input-block">
+                    <input id="currentAddress_follower" type="text" name="currentAddress" required  lay-verify="required" placeholder="请输入现居住地" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">联系电话</label>
+                <div class="layui-input-block">
+                    <input id="mobileNo_follower" type="text" name="mobileNo" placeholder="请输入11位联系电话" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item model-form-footer">
+                <button class="layui-btn layui-btn-primary close" ew-event="closeDialog" type="button">取消</button>
+                <button class="layui-btn" type="button" id="follower_saveBtn">保存</button>
+            </div>
+        </form>
+    </div>
+</div>
+<script type="text/javascript">
+    layui.use(['form', 'crab','laydate'], function(){
+        var form = layui.form;
+        var crab = layui.crab;
+        var laydate = layui.laydate;
+        var edit = false;
+
+        //初始化日期
+        function initLayDate(){
+            //日期
+            laydate.render({elem: '#birthDate_follower'});
+        }
+
+        form.render();
+        initLayDate();
+        // 编辑的人员信息
+        var user = crab.getTempData('follower');
+        crab.putTempData('follower');
+        if (user) {
+            console.log(user);
+            edit = true;
+            initEdit();
+        }
+        //回显数据
+        function initEdit(){
+            if (edit) {
+                form.val('followerinfo_form', user);
+                form.render();
+            }
+        }
+
+        //保存
+        $('#follower_saveBtn').click(function(){
+            let name = $.trim($('#name_follower').val()),
+                idcard = $.trim($('#idcard_follower').val()),
+                permanentAddress = $.trim($('#permanentAddress_follower').val()),
+                currentAddress = $.trim($('#currentAddress_follower').val()),
+                birthDate = $.trim($('#birthDate_follower').val());
+            if(name === ''){
+                layer.msg('请填写姓名');
+                return false;
+            }
+            var reg = /(^\d{15}$)|(^\d{18}$)|(^\d{17}(\d|X|x)$)/;
+            if(''+idcard !== '' && reg.test(idcard) === false){
+                layer.msg('请填写正确的身份证号');
+                return false;
+            }
+            if(birthDate === '') birthDate = idcard.substr(6,4)+'-'+idcard.substr(10,2)+'-'+idcard.substr(12,2);
+            let dataJson = crab.getTempData("followerDataJson") || [];
+            if(edit){
+            }else{
+                let follower = {};
+                follower.name = name;
+                follower.sex  = $('input[name="sex_follower"]:checked').val();
+                follower.nation = $.trim($('#nation_follower').val());
+                follower.birthDate = birthDate==='--'?'':birthDate;
+                follower.idcard = idcard;
+                follower.permanentAddress = permanentAddress;
+                follower.currentAddress = currentAddress;
+                follower.mobileNo = $.trim($('#mobileNo_follower').val());
+                console.log(follower);
+                dataJson.push(follower);
+            }
+            crab.putTempData("followerDataJson",dataJson);
+            $("#followerinfo_form")[0].reset();
+            crab.finishPopupCenter();
+        });
+    });
+</script>

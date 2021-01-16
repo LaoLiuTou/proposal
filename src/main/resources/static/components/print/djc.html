@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Cache-Control" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>登记接谈记录单</title>
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+        }
+
+        html, body {
+            width: 840px;
+            height: 100%;
+            font-size: 17px;
+        }
+        .title{font-size: 19px;}
+
+        .style-div {
+            border-width: 30px 20px;
+            border-style: solid;
+            border-color: transparent;
+            -webkit-box-sizing: border-box;
+            -moz-box-sizing: border-box;
+            box-sizing: border-box;
+            height: 100%;
+        }
+
+        .style-table {
+            width: 100%;
+            table-layout: fixed;
+            border-top: 2px solid #000;
+            border-left: 2px solid #000;
+            margin-bottom: 20px;
+        }
+
+        .style-table tbody tr {
+            height: 30px;
+        }
+
+        .style-table tbody tr td:not(.no-center) {
+            text-align: center;
+        }
+        .style-table tbody tr td{
+            border-right: 1px solid #000;
+            border-bottom: 1px solid #000;
+            padding: 0 5px;
+        }
+        .style-table tbody tr td.last-right{
+            border-right: 2px solid #000;
+        }
+        .style-table tbody tr td.last-bottom{
+            border-bottom: 2px solid #000;
+        }
+        .style-table tbody tr td.no-right{
+            border-right: 0;
+        }
+
+        .style-table tbody tr td.font-bold{
+            font-weight: bold;
+        }
+        .style-table tbody tr td.has-checkbox.no-right{
+            position: relative;
+            padding-left: 60px;
+        }
+        .style-table tbody tr td.has-checkbox.no-right::after{
+            content: " ";
+            display: block;
+            width: 15px;
+            height: 15px;
+            border: 1px solid #000;
+            position: absolute;
+            left: 40px;
+            top:6px;
+        }
+        .style-table tbody tr td.has-checkbox{
+            position: relative;
+            padding-left: 37px;
+        }
+        .style-table tbody tr td.has-checkbox::after{
+            content: " ";
+            display: block;
+            width: 15px;
+            height: 15px;
+            border: 1px solid #000;
+            position: absolute;
+            left: 17px;
+            top:6px;
+        }
+        .style-table .lfsx p {
+            text-align: center;
+            padding: 15px 0;
+        }
+
+        .style-table p {
+            padding: 4px 0;
+        }
+        .style-table caption h1{
+            font-weight:normal;
+            font-size: 35px;
+            font-family: "SimHei","Microsoft YaHei","微软雅黑";
+            text-align: center;
+
+        }
+        .style-table caption p{
+            text-align: left;
+        }
+        .btn-print{
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            padding: 5px 10px;
+            background: #20a6bb;
+            color: #fff;
+            border: 1px solid #3199ac;
+            border-radius: 3px;
+        }
+        .placeholder{
+            visibility: hidden;color: transparent;}
+    </style>
+</head>
+<body style="">
+<button class="btn-print" id="btnPrint" style="width: 80px;height: 30px;">打印</button>
+<div class="style-div">
+    <table class="style-table" border="0" cellspacing="0" cellpadding="0">
+        <caption>
+            <h1><span id="top_org">长春新区</span>群众来访登记接谈记录单</h1>
+            <p>来访编号：<span id="event_num"></span></p>
+        </caption>
+        <tbody>
+        <tr>
+            <td class="title" rowspan="2">姓名</td>
+            <td id="name" rowspan="2"></td>
+            <td class="title" rowspan="2">性别</td>
+            <td id="sex" rowspan="2"></td>
+            <td class="title">联系电话</td>
+            <td class="last-right" colspan="4" id="mobile_no"></td>
+        </tr>
+        <tr>
+            <td class="title">身份证号</td>
+            <td class="last-right" colspan="4" id="idcard"></td>
+        </tr>
+        <tr>
+            <td class="title" rowspan="4">随访人<br>姓<span class="placeholder" style="">访</span>名</td>
+            <td></td>
+            <td class="title" rowspan="4">来访人数</td>
+            <td rowspan="4"></td>
+            <td class="title" rowspan="4">来访时间</td>
+            <td class="last-right" rowspan="4" colspan="4" id="visit_date"></td>
+        </tr>
+        <tr>
+            <td></td>
+        </tr>
+        <tr>
+            <td></td>
+        </tr>
+        <tr>
+            <td></td>
+        </tr>
+        <tr>
+            <td class="title" colspan="2">单位或住址</td>
+            <td class="last-right no-center" colspan="7" id="current_address"></td>
+        </tr>
+        <tr>
+            <td class="title" colspan="2">事涉单位</td>
+            <td class="last-right" colspan="7"></td>
+        </tr>
+        <tr>
+            <td class="font-bold2">持书</td>
+            <td class="no-center has-checkbox no-right">是</td>
+            <td class="no-center has-checkbox">否</td>
+            <td class="font-bold2">重访</td>
+            <td class="no-center has-checkbox no-right">是</td>
+            <td class="no-center has-checkbox">否</td>
+            <td class="font-bold2">报告</td>
+            <td class="no-center has-checkbox no-right">是</td>
+            <td class="no-center has-checkbox last-right">否</td>
+        </tr>
+        <tr>
+            <td class="font-bold2">跟踪</td>
+            <td class="no-center has-checkbox no-right">是</td>
+            <td class="no-center has-checkbox">否</td>
+            <td class="font-bold2">滞留</td>
+            <td class="no-center has-checkbox no-right">是</td>
+            <td class="no-center has-checkbox">否</td>
+            <td class="font-bold2">终结</td>
+            <td class="no-center has-checkbox no-right">是</td>
+            <td class="no-center has-checkbox last-right">否</td>
+        </tr>
+        <tr style="height: 290px;" class="lfsx">
+            <td class="title">
+                <p>来</p>
+                <p>访</p>
+                <p>事</p>
+                <p>项</p>
+            </td>
+            <td class="last-right" colspan="8"></td>
+        </tr>
+        <tr style="height: 100px;">
+            <td class="title" style="text-align: center">
+                简要处理<br>情况
+            </td>
+            <td class="last-right" colspan="8"></td>
+        </tr>
+        <tr>
+            <td colspan="9" class="no-center last-right">
+                <p>办理方式</p>
+                <p>1.受理(<span class="placeholder" style="">访访访访</span>)或待定受理(<span class="placeholder" style="">访访访访</span>)；</p>
+                <p>2.政策咨询予以解答(<span class="placeholder" style="">访访访访访访访访</span>)；</p>
+                <p>3.转送(<span class="placeholder" style="">访访访访访访访访访访()访</span>)办理；</p>
+                <p>4.不属信访受理范围,告知(<span class="placeholder" style="">访访访访</span>)反映；</p>
+                <p>5.告知不予受理(<span class="placeholder" style="">访访访访访方方方方方</span>)；</p>
+                <p>6.编发信息(<span class="placeholder" style="">访访访访访访访访访访访访</span>)；</p>
+            </td>
+        </tr>
+        <tr style="height: 50px;">
+            <td colspan="5" class="no-center last-bottom" style="padding-left: 20px;"><span class="title">接待部门: </span><span id="reception_org"></span></td>
+            <td colspan="2" class="no-center last-bottom"><span class="title">登记人:</span></td>
+            <td colspan="2" class="no-center last-right last-bottom"><span class="title">接谈人:</span></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<script type="text/javascript">
+    (function(){
+        function bankToEmptyStr(str){
+            return (str===null||str===undefined||str===''||str==='null'||str==='undefined')?'':str;
+        }
+        let arg = decodeURI(window.location.search.substring(1)),
+            args = arg.split('&'),
+            event_num='',name='',sex='',idcard='',mobile_no='',visit_date='',current_address='',reception_org='';
+        if(args.length===8){
+                event_num = bankToEmptyStr(args[0].split('=')[1]);
+                // 姓名
+                name = bankToEmptyStr(args[1].split('=')[1]);
+                // 身份证号
+                idcard = bankToEmptyStr(args[2].split('=')[1]);
+                // 联系方式
+                mobile_no = bankToEmptyStr(args[3].split('=')[1]);
+                // 来访日期
+                visit_date = bankToEmptyStr(args[4].split('=')[1]);
+                if(visit_date!=='') {
+                    let visit_date_str = visit_date.split('-');
+                    visit_date = visit_date_str[0]+'年'+visit_date_str[1]+'月'+visit_date_str[2]+'日';
+                }
+                // 现住地
+                current_address = bankToEmptyStr(args[5].split('=')[1]);
+                // 接待部门
+                reception_org = bankToEmptyStr(args[6].split('=')[1]);
+                // 性别
+                sex = bankToEmptyStr(args[7].split('=')[1]);
+        }
+        document.getElementById('event_num').innerHTML=event_num;
+        document.getElementById('name').innerHTML=name;
+        document.getElementById('sex').innerHTML=sex;
+        document.getElementById('idcard').innerHTML=idcard;
+        document.getElementById('mobile_no').innerHTML=mobile_no;
+        document.getElementById('visit_date').innerHTML=visit_date;
+        document.getElementById('current_address').innerHTML=current_address;
+        document.getElementById('reception_org').innerHTML=reception_org;
+    })();
+
+    let btnPrint = document.getElementById("btnPrint");
+    btnPrint.addEventListener("click", function(e){
+        this.style.display="none";
+        window.print()
+    });
+    const beforePrint = function() {
+        btnPrint.style.display="none"
+    };
+    const afterPrint = function() {
+        btnPrint.style.display="block"
+    };
+    if (window.matchMedia) {
+        let mediaQueryList = window.matchMedia('print');
+        mediaQueryList.addListener(function(mql) {
+            if (mql.matches) {
+                beforePrint();
+            } else {
+                afterPrint();
+            }
+        });
+    }
+
+</script>
+</body></html>

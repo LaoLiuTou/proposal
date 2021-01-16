@@ -1,0 +1,90 @@
+<div class="layui-card">
+    <div class="layui-card-header">
+        <h2 class="header-title">省数据管理</h2>
+        <button type="button"  class="layui-btn layui-btn-primary layui-btn-sm fright"  id="uploadExcel">
+            <i class="layui-icon">&#xe67c;</i>EXCEL导入</button>
+    </div>
+    <div class="layui-card-body">
+        <table class="layui-table" id="data-table" lay-filter="data-table"></table>
+    </div>
+</div>
+<style>
+    button.fright{
+        float: right;
+        margin: 5px;
+    }
+</style>
+<!-- 表格操作列 -->
+<script type="text/html" id="data-table-bar">
+    <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="view">详情</a>
+</script>
+<script>
+    layui.use(['table', 'config', 'layer', 'crab', 'upload'], function () {
+        const table = layui.table;
+        const config = layui.config;
+        const layer = layui.layer;
+        const crab = layui.crab;
+        const upload = layui.upload;
+
+        const dataTable = table.render({
+            elem: '#data-table',
+            toolbar: '#data-toolbar',
+            url: config.base_server + '/province/data/page',
+            parseData: config.parseData,
+            page: true,
+            cols: [[
+                {type: 'numbers'},
+                {field: 'code', title: '事件编号', width: 150},
+                {field: 'name', title: '姓名', width: 80},
+                {field: 'number', title: '人数', width: 60},
+                {field: 'address', title: '住址', width: 150, hide:true},
+                {field: 'mobile', title: '手机', width: 130, hide:true},
+                {field: 'eventPlace', title: '问题属地', width: 300},
+                {field: 'purpose', title: '目的', width: 150, hide:true},
+                {field: 'contentType', title: '内容分类', width: 200, hide:true},
+                {field: 'visitDate', title: '信访日期', width: 150, hide:true},
+                {field: 'checkDate', title: '登记日期', width: 150},
+                {field: 'deadlineDate', title: '限办时间', width: 150, hide:true},
+                {field: 'format', title: '形式', width: 150},
+                {field: 'description', title: '概况', width: 150, hide:true},
+                {field: 'solve', title: '办结', width: 90,templet: function(d){
+                        return ''+d.solve === '1'?'是':'否';
+                    }},
+                {field: 'firstTime', title: '全国初次信访', width: 90,templet: function(d){
+                        return ''+d.firstTime === '1'?'是':'否';
+                    }},
+                {field: 'isGroup', title: '联名信或集体访', width: 90,templet: function(d){
+                        return ''+d.isGroup === '1'?'是':'否';
+                    }},
+                {field: 'status', title: '状态', width: 150},
+                {field: 'org', title: '登记部门', width: 200, hide:true},
+                {field: 'operator', title: '登记人', width: 150, hide:true}/*,
+                {fixed: 'right', align: 'center', toolbar: '#data-table-bar', title: '操作', minWidth: 100}*/
+            ]]
+        });
+
+        //导入excel
+        //执行实例
+        let importError=[];
+        const uploadInst = upload.render({
+            elem: '#uploadExcel' //绑定元素
+            ,url: '/province/data/uploadExcel' //上传接口
+            ,accept: 'file'
+            ,acceptMime: 'application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+            ,exts:'xlsx'
+            ,before: function(obj){ //obj参数包含的信息，跟 choose回调完全一致，可参见上文。
+                layer.load(); //上传loading
+            }
+            ,done: function(res,index){
+                console.log(res);
+                console.log(index);
+                layer.closeAll('loading');
+                layer.msg('上传成功！');
+                dataTable.reload('data-table', {});
+            }
+            ,error: function(res){
+                console.log(res)
+            }
+        });
+    });
+</script>

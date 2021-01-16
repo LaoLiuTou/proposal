@@ -1,0 +1,8 @@
+spring:
+  datasource:
+    platform: postgres
+    url: jdbc:p6spy:postgresql://47.104.25.225:5432/crab
+    username: postgres
+    password: 密码
+#    driver-class-name: org.postgresql.Driver
+    driver-class-name: com.p6spy.engine.spy.P6SpyDriver

@@ -1,0 +1,34 @@
+<!-- 单位表单弹窗 -->
+<form id="dict-unit-form" lay-filter="dict-unit-form" class="layui-form model-form">
+    <div class="layui-form-item">
+        <label class="layui-form-label">单位名称</label>
+        <div class="layui-input-block">
+            <input id="coUnitName" name="coUnitName" placeholder="请输入单位名称" type="text" class="layui-input"/>
+        </div>
+    </div>
+    <div class="layui-form-item model-form-footer">
+        <button class="layui-btn layui-btn-primary close" ew-event="closeDialog" type="button">取消</button>
+        <button class="layui-btn" type="button" id="saveUnitBtn">保存</button>
+    </div>
+</form>
+
+<script>
+    layui.use(['layer', 'crab', 'form'], function () {
+        const layer = layui.layer;
+        const crab = layui.crab;
+
+        // 保存点击事件
+        $('#saveUnitBtn').click(function(){
+            let name = $.trim($('#coUnitName').val());
+            if(name === '') {
+                layer.msg('请填写单位名称');
+                return false;
+            }
+            crab.post('/sys/dict/unit', {name:name}, function (msg) {
+                console.log(msg);
+                layer.msg('新增成功');
+                crab.finishPopupCenter();
+            });
+        });
+    });
+</script>

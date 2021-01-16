@@ -1,0 +1,486 @@
+    <link rel="icon" href="/assets/images/favicon.ico">
+    <link rel="stylesheet" href="/assets/libs/layui/css/layui.css"/>
+    <link rel="stylesheet" href="/assets/css/admin.css"/>
+    <link rel="stylesheet" href="/module/formSelects/formSelects-v4.css"/>
+<!-- user表单弹窗 -->
+<form class="layui-form model-form" id="userinfo_form" lay-filter="userinfo_form">
+    <fieldset class="layui-elem-field">
+        <legend>信访人信息</legend>
+        <div class="layui-field-box">
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label class="layui-form-label">姓名</label>
+                    <div class="layui-input-block">
+                        <input id="petitionerName" type="text" name="petitionerName" required  lay-verify="required" placeholder="请输入姓名" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">性别</label>
+                    <div class="layui-input-block">
+                        <input type="radio" name="sex" value="0" title="男" checked>
+                        <input type="radio" name="sex" value="1" title="女">
+                    </div>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">身份证号</label>
+                <div class="layui-input-block">
+                    <input id="idcard" type="text" name="idcard" required  lay-verify="required|identity" placeholder="请输入身份证号" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label class="layui-form-label">民族</label>
+                    <div class="layui-input-block">
+                        <input id="nation" value="汉" type="text" name="nation"  placeholder="请输入民族" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">出生年月</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="birthDate" id="birthDate" required lay-verify="required|date" placeholder="yyyy-MM-dd" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label class="layui-form-label">户籍地址</label>
+                    <div class="layui-input-block">
+                        <input id="permanentAddress" type="text" name="permanentAddress" required  lay-verify="required" placeholder="请输入户籍地址" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">现住地址</label>
+                    <div class="layui-input-block">
+                        <input id="currentAddress" type="text" name="currentAddress" required  lay-verify="required" placeholder="请输入现居住地" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label class="layui-form-label">联系电话</label>
+                    <div class="layui-input-block">
+                        <input id="mobileNo" type="text" name="mobileNo" required  lay-verify="required|phone" placeholder="请输入11位联系电话" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">来访日期</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="visitDate" id="visitDate" required lay-verify="required|date" placeholder="yyyy-MM-dd" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+            </div>
+            <!--<div class="layui-form-item">
+                <label class="layui-form-label"> 随访人信息</label>
+                <div class="layui-input-block">
+                    <button id="scanBtn" class="layui-btn" lay-submit lay-filter="formDemo">扫描添加</button>
+                </div>
+            </div>-->
+        </div>
+    </fieldset>
+    <fieldset class="layui-elem-field">
+        <legend>信访事项基本信息</legend>
+        <div class="layui-field-box">
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label class="layui-form-label">事件名称</label>
+                    <div class="layui-input-block">
+                        <input id="name" type="text" name="name" required  lay-verify="required" placeholder="请输入名称" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label class="layui-form-label">信访件编号</label>
+                    <div class="layui-input-block">
+                        <input id="eventNum"  type="text" name="eventNum" placeholder="系统自动生成"  autocomplete="off" class="layui-input" disabled>
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">事发地</label>
+                    <div class="layui-input-inline">
+                        <select id="eventPlaceId" name="eventPlaceId" lay-verify="required" lay-search="eventPlaceId">
+
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">反映问题</label>
+                <div class="layui-input-block">
+                    <textarea name="eventContent" placeholder="请输入反映问题" class="layui-textarea"></textarea>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">主要诉求</label>
+                <div class="layui-input-block">
+                    <textarea name="mainDemand" placeholder="请输入主要诉求" class="layui-textarea"></textarea>
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">内容分类</label>
+                <div class="layui-input-block">
+                    <select name="contentTypeIdStr" xm-select="contentTypeId" xm-select-radio xm-select-skin="normal" lay-verify="required">
+                        <option value="">请选择内容分类</option>
+                    </select>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label class="layui-form-label">是否重访</label>
+                    <div class="layui-input-block">
+                        <input type="radio" name="isRepeat" value="1" title="是" >
+                        <input type="radio" name="isRepeat" value="0" title="否" checked>
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">涉及人数</label>
+                    <div class="layui-input-block">
+                        <input id="involveNum" type="text" name="involveNum" required  lay-verify="required" placeholder="请输入涉及人数" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label class="layui-form-label">重点领域</label>
+                    <div class="layui-input-block">
+                        <input type="radio" name="isKeyArea" value="1" lay-filter="isKeyArea" title="是">
+                        <input type="radio" name="isKeyArea" value="0" lay-filter="isKeyArea" title="否" checked>
+                    </div>
+                </div>
+                <div id="keyAreaIdBox" class="layui-inline" style="display:none">
+                    <label class="layui-form-label">领域分类</label>
+                    <div class="layui-input-block">
+                        <select id="keyAreaId" name="keyAreaId" lay-filter="keyAreaId">
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label class="layui-form-label">是否跟访</label>
+                    <div class="layui-input-block">
+                        <input type="radio" name="isFollowVisit" lay-filter="isFollowVisit" value="1" title="是" >
+                        <input type="radio" name="isFollowVisit" lay-filter="isFollowVisit" value="0" title="否" checked>
+                    </div>
+                </div>
+                <div class="layui-inline" id="followVisitContentBox" style="display: none;">
+                    <label class="layui-form-label">跟访内容</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="followVisitContent" placeholder="请输入跟访内容" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">是否滞留</label>
+                <div class="layui-input-block">
+                    <input type="radio" name="isStaye" value="1" title="是" >
+                    <input type="radio" name="isStaye" value="0" title="否" checked>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label class="layui-form-label">领导包案</label>
+                    <div class="layui-input-block">
+                        <input type="radio" name="isLeaderHad" lay-filter="isLeaderHad" value="1" title="是" >
+                        <input type="radio" name="isLeaderHad" lay-filter="isLeaderHad"  value="0" title="否" checked>
+                    </div>
+                </div>
+                <div class="layui-inline" id="leaderIdBox" style="display: none;">
+                    <label class="layui-form-label">领导姓名</label>
+                    <div class="layui-input-block">
+                        <select id="leaderId" name="leaderId" >
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label class="layui-form-label">上访地点</label>
+                    <div class="layui-input-block">
+                        <input type="radio" name="visitPlaceStatus" lay-filter="visitPlaceStatus" value="1" title="正常" checked>
+                        <input type="radio" name="visitPlaceStatus" lay-filter="visitPlaceStatus"  value="0" title="异常">
+                    </div>
+                </div>
+                <div class="layui-inline" id="abnormalPlaceIdsBox" style="display: none;">
+                    <label class="layui-form-label">异常地点</label>
+                    <div class="layui-input-block">
+                        <select id="abnormalPlaceIds" name="abnormalPlaceIds" xm-select="abnormalPlaceIds">
+
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label class="layui-form-label">上访行为</label>
+                    <div class="layui-input-block">
+                        <input type="radio" name="visitActionStatus" lay-filter="visitActionStatus" value="1" title="正常" checked>
+                        <input type="radio" name="visitActionStatus" lay-filter="visitActionStatus"  value="0" title="异常">
+                    </div>
+                </div>
+                <div class="layui-inline" id="abnormalActionIdsBox" style="display: none;">
+                    <label class="layui-form-label">异常行为</label>
+                    <div class="layui-input-block">
+                        <select id="abnormalActionIds" name="abnormalActionIds" xm-select="abnormalActionIds">
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </fieldset>
+    <fieldset class="layui-elem-field">
+        <legend>责任部门信息</legend>
+        <div class="layui-field-box">
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label class="layui-form-label">责任单位</label>
+                    <div class="layui-input-block">
+                        <select id="dutyUnitId" name="dutyUnitId" lay-filter="dutyUnitId">
+                        </select>
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">配合单位</label>
+                    <div class="layui-input-block">
+                        <select id="coUnitIds" name="coUnitIds" xm-select="coUnitIds">
+
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">工作建议</label>
+                <div class="layui-input-block">
+                    <input id="workProposal" type="text" name="workProposal"   lay-verify="" placeholder="请填写工作建议" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">接访人</label>
+                <div class="layui-input-block">
+                    <input id="" type="text" name=""   lay-verify="" placeholder="请输入接访人" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+        </div>
+    </fieldset>
+   <!-- <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button id="submitBtn" class="layui-btn" lay-submit lay-filter="formDemo">立即提交</button>
+            <button id="resetBtn" type="reset" class="layui-btn layui-btn-primary">重置</button>
+            <button id="editBtn" class="layui-btn"  style="display:none;">修改信息</button>
+            <button id="saveEditBtn" class="layui-btn" lay-submit lay-filter="formDemo" style="display:none;">保存修改</button>
+        </div>
+    </div>-->
+</form>
+    <script type="text/javascript" src="/assets/libs/jquery-3.2.1.min.js"></script>
+    <script type="text/javascript" src="/assets/libs/q.js"></script>
+    <script type="text/javascript" src="/assets/libs/pandyle.min.js"></script>
+    <script type="text/javascript" src="/assets/libs/layui/layui.js"></script>
+    <script src="https://gw.alipayobjects.com/os/antv/pkg/_antv.g2-3.3.1/dist/g2.min.js"></script>
+    <script src="https://gw.alipayobjects.com/os/antv/pkg/_antv.data-set-0.9.6/dist/data-set.min.js"></script>
+<script type="text/javascript">
+    layui.config({
+        debug: true,
+        base: '/module/'
+    }).extend({
+        formSelects: 'formSelects/formSelects-v4',
+        inputSelect: 'inputSelect/inputSelect-v1.0',
+        treeTable: 'treeTable/treeTable',
+        iconPicker: 'iconPicker/iconPicker'
+    }).use(['form', 'crab','laydate','formSelects'], function(){
+        var form = layui.form;
+        var crab = layui.crab;
+        var laydate = layui.laydate;
+        var formSelects = layui.formSelects;
+        var edit = false;
+        form.render();
+        initLayDate();
+        initSelectBox();
+
+        function initSelectBox(){
+            //加载下拉框
+            loadSingleSelectBox(crab,form,'/sys/dict/event_place/list_effective','eventPlaceId');
+            loadSingleSelectBox(crab,form,'/sys/dict/key_area/list_effective','keyAreaId');
+            loadSingleSelectBox(crab,form,'/sys/dict/unit/list_effective','dutyUnitId');
+            loadCheckbox(crab,form,'/sys/dict/abnormal_place/list_effective','abnormalPlaceIds');
+            loadCheckbox(crab,form,'/sys/dict/abnormal_action/list_effective','abnormalActionIds');
+            loadCheckbox(crab,form,'/sys/dict/unit/list_effective','coUnitIds');
+            loadCheckbox(crab,form,'/sys/dict/leader/list_effective','leaderId');
+            loadLeaderGroup(crab,form);
+        }
+
+        //初始化日期
+        function initLayDate(){
+            //日期
+            laydate.render({
+                elem: '#birthDate'
+                ,value: '1940-01-01'
+            });
+            laydate.render({
+                elem: '#visitDate'
+                ,value: new Date()
+            });
+        }
+
+        changeRadio('isKeyArea','keyAreaIdBox',true);
+        changeRadio('isFollowVisit','followVisitContentBox',true);
+        changeRadio('isLeaderHad','leaderIdBox',true);
+        changeRadio('visitPlaceStatus','abnormalPlaceIdsBox',false);
+        changeRadio('visitActionStatus','abnormalActionIdsBox',false);
+        //参数依次为：改变判断选择框；其相应的内容选择框；反转标志，true：1的时候显示 ，false：0的时候显示
+        function changeRadio(keyName,valueName,flag){
+            form.on("radio("+keyName+")", function (data) {
+                if(flag){
+                    if (this.value == '0') {
+                        $('#'+valueName).hide();
+                    } else if (this.value == '1') {
+                        $('#'+valueName).show();
+                    }
+                }else{
+                    if (this.value == '1') {
+                        $('#'+valueName).hide();
+                    } else if (this.value == '0') {
+                        $('#'+valueName).show();
+                    }
+                }
+            });
+        }
+
+        // 回显的登记人信息
+        var user = crab.getTempData('p_eventInfo');
+        crab.putTempData(); //清除缓存，否则会一直为编辑状态
+        if (user) {
+            $('#idcard').attr('disabled',true);
+            console.log('user:'+JSON.stringify(user));
+            //赋值下拉框
+            loadSingleSelectBox(crab,form,'/sys/dict/event_place/list_effective','eventPlaceId',user.eventPlaceId);
+            loadSingleSelectBox(crab,form,'/sys/dict/key_area/list_effective','keyAreaId',user.keyAreaId);
+            loadSingleSelectBox(crab,form,'/sys/dict/unit/list_effective','dutyUnitId',user.dutyUnitId);
+            loadCheckbox(crab,form,'/sys/dict/abnormal_place/list_effective','abnormalPlaceIds',user.abnormalPlaceIds);
+            loadCheckbox(crab,form,'/sys/dict/abnormal_action/list_effective','abnormalActionIds',user.abnormalActionIds);
+            loadCheckbox(crab,form,'/sys/dict/unit/list_effective','coUnitIds',user.coUnitIds);
+            loadCheckbox(crab,form,'/sys/dict/leader/list_effective','leaderId',user.leaderId);
+            loadLeaderGroup(crab,form);
+            form.val('userinfo_form', user);
+            if(user.name){
+                console.log('user.name:'+user.name);
+                edit = true;
+            }
+
+        }
+
+        $("#editBtn").click(function(){
+            $('#editBtn').hide();
+            $('#saveEditBtn').show();
+            changeFieldDisabled(false);
+            return false;
+        });
+
+        //监听提交
+        form.on('submit(formDemo)', function(data){
+            //layer.msg(JSON.stringify(data.field));
+            console.log("data.field:"+data.field);
+            console.log("data.field_json:"+JSON.stringify(data.field));
+            if(edit){
+                crab.post('/djc/edit', data.field, function (data) {
+                    layer.msg('修改成功',{time:2000});
+                    crab.finishPopupCenter();
+                });
+            }else{
+                crab.post('/jdc/djxx', data.field, function (data) {
+                    layer.msg('登记成功',{time:2000});
+                    $("#userinfo_form")[0].reset();
+                    form.render();
+                    initLayDate();
+                    initSelectBox();
+                });
+            }
+            return false;
+        });
+
+        // 加载单选下拉选择框
+        function loadSingleSelectBox(crab,form,url,selectIdName,selectedId){
+            crab.get(url, {}, function (data) {
+                var l = data.length;
+                if (l > 0) {
+                    var option = '<option value=""></option>',_selectedId;
+                    if(selectedId){
+                        _selectedId = selectedId
+                    }
+                    for (var i = 0; i < l; i++) {
+                        option += '<option value="' + data[i].id + '" '+((''+data[i].id===''+_selectedId)?"selected":"")+'>' + data[i].name + '</option>';
+                    }
+                    $('#'+selectIdName).empty().append(option);
+                    form.render('select');
+                }
+            });
+        }
+        // 加载多选选择框
+        function loadCheckbox(crab,form,url,selectIdName,selectedId){
+            crab.get(url, {}, function (data) {
+                var l = data.length;
+                if (l > 0) {
+                    var option = '<option value=""></option>',_selectedId;
+                    if(selectedId){
+                        _selectedId = selectedId
+                    }
+                    for (var i = 0; i < l; i++) {
+                        option += '<option value="' + data[i].id + '" '+((''+data[i].id===''+_selectedId)?"selected":"")+'>' + data[i].name + '</option>';
+                    }
+                    $('#'+selectIdName).empty().append(option);
+                    formSelects.render(selectIdName,['select', 'remove'], {show: 'name'});
+                }
+            });
+        }
+        // 加载分组选择框
+        function loadLeaderGroup(crab,form,selectedId){
+            crab.get('/sys/dict/leader_level/list_effective', {}, function (data) {
+                var l = data.length;
+                if (l > 0) {
+                    var option = '<option value=""></option>',_selectedId;
+                    if(selectedId){
+                        _selectedId = selectedId
+                    }
+                    crab.get('/sys/dict/leader/list_effective', {}, function (leaderData) {
+                        var leaderLenght = leaderData.length;
+                        if (leaderLenght > 0) {
+                            if(selectedId){
+                                _selectedId = selectedId
+                            }
+                            for (var i = 0; i < l; i++) {
+                                option += '<optgroup label="'+data[i].name+'">';
+                                for (var j = 0; j < leaderLenght; j++) {
+                                    if(leaderData[j].leaderLevelId == data[i].id){
+                                        option += '<option value="' + leaderData[j].id + '" '+((''+leaderData[j].id===''+_selectedId)?"selected":"")+'>' + leaderData[j].name + '</option>';
+                                    }
+                                }
+                                option += '</optgroup>';
+                            }
+                            $('#leaderId').empty().append(option);
+                            form.render('select');
+                        }
+                    });
+                }
+            });
+        }
+
+        // 上级菜单
+        crab.get('/sys/dict/content_type/list_effective', {}, function (data) {
+            var l = data.length;
+            if (l >= 0) {
+                var contentTypeData = new Array();
+                //resourceData.push({id:'0',pid:'0',name: '无', value: '0'});
+                for (var i = 0; i < data.length; i++) {
+                    contentTypeData.push({id:data[i].id,pid:data[i].pid,name: data[i].name, value: data[i].id});
+                }
+                formSelects.data('contentTypeId', 'local', {arr: crab.createTreeData(contentTypeData,'0'),linkage: true});
+                /*if (resource) {
+                 formSelects.value('resource', [resource.pid])
+                 }*/
+            }
+        });
+    });
+</script>

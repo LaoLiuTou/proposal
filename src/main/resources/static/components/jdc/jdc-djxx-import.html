@@ -1,0 +1,166 @@
+
+<!-- 打印类项选择弹窗 -->
+<div class="layui-card">
+    <div class="layui-card-body">
+
+
+        <div class="layui-collapse" id="coUnitIds">
+            <div class="layui-colla-item" >
+
+                <h2 class="layui-colla-title">文件名</h2>
+                <div class="layui-colla-content layui-show">
+                    <table class="layui-table">
+                        <colgroup>
+                            <col width="150">
+                            <col width="200">
+                            <col>
+                        </colgroup>
+                        <thead>
+                        <tr>
+                            <th>行号</th>
+                            <th>事件编号</th>
+                            <th>列名</th>
+                            <th>内容</th>
+                            <th>错误原因</th>
+                        </tr>
+                        </thead>
+                        <tbody  >
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="layui-form-item model-form-footer">
+
+            <button class="layui-btn layui-btn-primary reverse-choose" type="button" ew-event="closeDialog" >关闭</button>
+
+        </div>
+
+    </div></div>
+<style>
+    .layui-unselect.layui-form-switch{
+        margin-top: 5px;
+    }
+    .layui-form-item.layui-form-item-limit-height{
+        overflow: auto;
+        max-height: 600px;
+    }
+    div.layui-collapse{
+        max-height: 600px;
+        overflow: auto;
+    }
+    .red{
+        color: red;
+    }
+    .green{
+        color: green;
+    }
+    .weight{
+        font-weight: bold;
+    }
+    .mytitle{
+        position: relative;
+        height: 42px;
+        line-height: 42px;
+        padding: 0 15px 0 15px;
+        color: #333;
+        background-color: #f2f2f2;
+        cursor: pointer;
+        font-size: 14px;
+        overflow: hidden;
+    }
+    .mytitle-p{
+        border-top-width: 1px;
+        border-top-style: solid;
+        border-color: #e6e6e6;
+        -webkit-tap-highlight-color: rgba(0,0,0,0);
+    }
+    .model-form-footer {
+
+        margin-top: 15px;
+    }
+
+</style>
+<script type="text/javascript">
+    layui.use(['laydate','form', 'crab', 'layer', 'element'], function(){
+        const crab = layui.crab,
+            form = layui.form,
+            $ = layui.jquery,
+            layer = layui.layer;
+        var element = layui.element;
+
+        //执行一个laydate实例
+        var importError = crab.getTempData('import_error');
+
+        console.log(importError)
+        loadCheckbox(crab,importError,'coUnitIds');
+
+        // 加载多选下拉选择框
+        function loadCheckbox(crab,data,selectedId){
+                var data_length=data.length;
+            var content="";
+                for(var j =0;j<data_length;j++){
+                    if(data[j].errorNums!=0){ content+=" <div class=\"layui-colla-item\" >" +
+                        "<h2 class='layui-colla-title'>文件名：<span class='weight'>"+data[j].errorFileName+" </span>" +
+                        "&nbsp;&nbsp;&nbsp;状态：<span class='red weight'> 导入失败</span> " +
+                        "&nbsp;&nbsp;&nbsp;总事项：<span class='weight'>"+data[j].totalEventNums+"</span> " +
+                        "&nbsp;&nbsp;&nbsp;检测出错误：<span class='red weight'>"+data[j].errorNums+"</span> </h2>";
+                        content+=
+                            "                <div class=\"layui-colla-content layui-show\">\n" +
+                            "                    <table class=\"layui-table\">\n" +
+                            "                        <colgroup>\n" +
+                            "                            <col width=\"150\">\n" +
+                            "                            <col width=\"200\">\n" +
+                            "                            <col>\n" +
+                            "                        </colgroup>\n" +
+                            "                        <thead>\n" +
+                            "                        <tr>\n" +
+                            "                            <th>行号</th>\n" +
+                            "                            <th>事件编号</th>\n" +
+                            "                            <th>列名</th>\n" +
+                            "                            <th>内容</th>\n" +
+                            "                            <th>错误原因</th>\n" +
+                            "                        </tr>\n" +
+                            "                        </thead>\n" +
+                            "                        <tbody>"
+                        var l = data[j].errorList.length;
+                        if (l > 0) {
+                            for (var i = 0; i < l; i++) {
+                                content+='<tr><td>'+data[j].errorList[i].errorLineNumber+'</td>' +
+                                    '<td>'+data[j].errorList[i].eventNum+'</td>' +
+                                    '<td>'+data[j].errorList[i].tableHeadText+'</td>' +
+                                    '<td class=\'red\'>'+data[j].errorList[i].errorContent+'</td>' +
+                                    '<td>'+data[j].errorList[i].reason+'</td></tr>';
+
+                            }
+                        }
+                        content+="  </tbody>\n" +
+                            "                    </table>\n" +
+                            "                </div></div>";
+                    }else{
+                        content+=" <div class=\"mytitle-p\" ><h2 class='mytitle'><i class=\"layui-icon\">&#x1005;</i> 文件名：<span class='weight'>"+data[j].errorFileName+"</span> " +
+                            "&nbsp;&nbsp;&nbsp;状态：<span class='green weight'> 导入成功</span>" +
+                            "&nbsp;&nbsp;&nbsp;总事项：<span class='weight'>"+data[j].totalEventNums+"</span> " +
+                            "&nbsp;&nbsp;&nbsp;成功导入：<span class='green weight'>"+data[j].successEventNums+"</span> </h2></div>";
+
+                    }
+
+
+                }
+            $('#'+selectedId).empty().append(content);
+            layui.element.render();
+
+        }
+
+
+
+    });
+</script>
+
+<!--JSON.stringify({-->
+<!--checkedUnitIdList:checkedUnitId,-->
+<!--isUseDateLimit:data.field.isUseDateLimit,-->
+<!--beginDate:data.field.beginDate,-->
+<!--endDate:data.field.endDate-->
+<!--})-->

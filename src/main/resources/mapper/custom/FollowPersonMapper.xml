@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fangao.dev.sys.mapper.FollowPersonMapper">
+    <select id="getFollowPersonListByEventId" resultType="com.fangao.dev.sys.dto.FollowPersonDTO">
+        (SELECT DISTINCT
+        `a`.`id` AS `eventId`,
+        `b`.`idcard` AS `idcard`,
+        `b`.`name` AS `name`,
+        `b`.`sex` AS `sex`,
+        `b`.`nation` AS `nation`,
+        `b`.`birth_date` AS `birthDate`,
+        `b`.`permanent_address` AS `permanentAddress`,
+        `b`.`current_address` AS `currentAddress`,
+        `b`.`mobile_no` AS `mobileNo`
+        FROM
+        `follow_person` `a`
+        LEFT JOIN `petitioner_info` `b` ON `a`.`idcard` = `b`.`idcard`
+        WHERE `a`.`deleted`=0
+        <if test="eventId != null">
+            AND `a`.`id` = #{eventId}
+        </if>
+        )
+        UNION
+        (SELECT DISTINCT
+        `a`.`event_id` AS `eventId`,
+        `a`.`idcard` AS `idcard`,
+        `a`.`name` AS `name`,
+        `a`.`sex` AS `sex`,
+        `a`.`nation` AS `nation`,
+        `a`.`birth_date` AS `birthDate`,
+        `a`.`permanent_address` AS `permanentAddress`,
+        `a`.`current_address` AS `currentAddress`,
+        `a`.`mobile_no` AS `mobileNo`
+        FROM
+        `follow_person_extra` `a`
+        WHERE `a`.`deleted`=0
+        <if test="eventId != null">
+            AND `a`.`event_id` = #{eventId}
+        </if>
+        )
+    </select>
+</mapper>

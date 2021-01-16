@@ -1,0 +1,37 @@
+<div style="padding: 20px;">
+    <input type="text" class="layui-input" readonly id="date">
+</div>
+<style>
+    .layui-laydate-content table tbody tr {transition-duration: .3s; -webkit-transition-duration: .3s;}
+    .layui-laydate-content table tbody tr:hover{background-color: #eaeaea; color: #333;}
+</style>
+<script>
+    layui.use(['laydate','layer'], function () {
+        const laydate = layui.laydate;
+        function prev(num){
+            return num>9?num:'0'+num;
+        }
+        function getWeek(date){
+            let weekStart = new Date(date.getTime()-date.getDay()*24*60*60*1000),
+                weekEnd = new Date(date.getTime()+(6-date.getDay())*24*60*60*1000),
+                weekStart_str = weekStart.getFullYear()+'年'+prev(weekStart.getMonth()+1)+'月'+prev(weekStart.getDate())+'日',
+                weekEnd_str = weekEnd.getFullYear()+'年'+prev(weekEnd.getMonth()+1)+'月'+prev(weekEnd.getDate())+'日';
+            return weekStart_str+' ~ '+weekEnd_str;
+        }
+        laydate.render({
+            elem: '#date'
+            ,format: 'yyyy-MM-dd'
+            ,type: 'date'
+            ,max:new Date().getTime()
+            ,btns: ['now']
+            ,done: function(value, date, endDate){
+                let openDiv = layui.sessionData('dateLayer')['openDiv'];
+                let week = getWeek(new Date(value)).split('~');
+                layui.sessionData('dateLayer', {key: openDiv+'_type', value: '1'});
+                layui.sessionData('dateLayer', {key: openDiv+'_start', value: $.trim(week[0])});
+                layui.sessionData('dateLayer', {key: openDiv+'_end', value: $.trim(week[1])});
+                layer.close(layui.sessionData('dateLayer')['index']);
+            }
+        });
+    });
+</script>

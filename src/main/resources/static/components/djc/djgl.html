@@ -1,0 +1,188 @@
+<div class="layui-card">
+    <div class="layui-card-header">
+        <h2 class="header-title">登记信息管理</h2>
+    </div>
+    <div class="layui-card-body">·
+        <!-- 搜索条件 -->
+        <div class="layui-form toolbar">
+            <form id="searchForm" onsubmit="return false;">
+                姓名：<input name="name" class="layui-input search-input" type="text" placeholder="输入姓名"/>&emsp;
+                身份证号：<input name="idcard" class="layui-input search-input" type="text" placeholder="输入身份证号"/>&emsp;
+                来访日期：<input name="visitDate" id="_visitDate" class="layui-input search-input" type="text" placeholder="输入来访日期"/>&emsp;
+                接待地点：<select id="_receptionOrgId" name="receptionOrgId"></select>
+                <button id="user-btn-search" class="layui-btn icon-btn"><i class="layui-icon">&#xe615;</i>搜索</button>
+            </form>
+        </div>
+        <!-- 表格顶部操作列 -->
+        <script type="text/html" id="user-toolbar">
+            <div class="layui-btn-container">
+                <button class="layui-btn layui-btn-sm" lay-event="add"><i
+                        class="layui-icon">&#xe654;</i>添加
+                </button>
+                <button class="layui-btn layui-btn-primary layui-btn-sm" lay-event="printEmpty"><i class="layui-icon">&#xe63c;</i>打印空表
+                </button>
+            </div>
+        </script>
+        <table class="layui-table" id="user-table" lay-filter="user-table"></table>
+    </div>
+</div>
+<style>
+    /*#receptionOrgId+.layui-form-select input{*/
+        /*width:260px;*/
+    /*}*/
+</style>
+
+<!-- 表格操作列 -->
+<script type="text/html" id="user-table-bar">
+    <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="edit">查看</a>
+    <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="print">打印</a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs {{(d.deleteCheckStatus==0 || d.status!=0)?'layui-btn-disabled':''}}" lay-event="del">删除</a>
+</script>
+
+<!-- 表格状态列 -->
+<script type="text/html" id="user-tpl-status">
+    <input type="checkbox" lay-filter="user-tpl-status" value="{{d.id}}" lay-skin="switch"
+           lay-text="正常|禁用" {{d.status==0?'checked':''}}/>
+</script>
+
+<script>
+    layui.use(['form', 'table', 'config', 'crab','laydate'], function () {
+        var form = layui.form;
+        var table = layui.table;
+        var config = layui.config;
+        var layer = layui.layer;
+        var crab = layui.crab;
+        var laydate = layui.laydate;
+
+        laydate.render({
+            elem: '#_visitDate'
+        });
+        // 加载单选下拉选择框
+        function loadSingleSelectBox(crab,form,url,selectIdName,selectedId){
+            crab.get(url, {}, function (data) {
+                var l = data.length;
+                if (l > 0) {
+                    var option = '<option value=""></option>',_selectedId;
+                    if(selectedId){
+                        _selectedId = selectedId
+                    }
+                    for (var i = 0; i < l; i++) {
+                        var add = '';
+                        if(data[i].address) add = '&nbsp;，&nbsp;'+data[i].address;
+                        option += '<option value="' + data[i].id + '" '+((''+data[i].id===''+_selectedId)?"selected":"")+'>' + data[i].name + add +'</option>';
+                    }
+                    $('#'+selectIdName).empty().append(option);
+                    form.render('select');
+                }
+            });
+        }
+        loadSingleSelectBox(crab,form,'/djc/djxx/listReceptionOrg','_receptionOrgId');
+
+        // 渲染表格
+        var userTable = table.render({
+            elem: '#user-table',
+            toolbar: '#user-toolbar',
+            url: config.base_server + '/djc/djgl/page',
+            parseData: config.parseData,
+            page: true,
+            cols: [[
+                {type: 'numbers'},
+                {field: 'name', title: '姓名', width: 90},
+                {field: 'idcard', title: '身份证号', width: 180},
+                {field: 'mobileNo', title: '联系电话', width: 120},
+                {field: 'eventNum', title: '信访事件编号', width: 130},
+                {field: 'statusName', title: '信访事件状态', width: 130},
+                {field: 'showOrgs', title: '接待地点',width: 250},
+                {field: 'visitDate', title: '来访日期',width: 110},
+                {field: 'operator', title: '录入人'},
+                {field: 'createTime', title: '创建时间', sort: true, width: 150},
+                {fixed: 'right', align: 'center', toolbar: '#user-table-bar', title: '操作', width: 180}
+            ]]
+        });
+        // 表格顶部操作列
+        table.on('toolbar(user-table)', function (obj) {
+            if (obj.event === 'add') {
+                location.replace('./#djc-djxx');
+            }else if(obj.event === 'printEmpty'){
+                let height = ($(window).height()-30)>=1050?1050:($(window).height()-30);
+                layer.open({
+                    type: 2,
+                    content: '/components/print/djc.html',
+                    title: false,
+                    area: ['860px', height+'px']
+                });
+            }
+        });
+        // 表格操作列事件
+        table.on('tool(user-table)', function (obj) {
+            var data = obj.data;
+            var layEvent = obj.event;
+
+            if (layEvent === 'edit') {
+                // 修改
+                showEditModel(data);
+            } else if (obj.event === 'print') {
+                let height = ($(window).height()-30)>=1050?1050:($(window).height()-30);
+
+                layer.open({
+                    type: 2,
+                    content: '/components/print/djc.html?' +
+                    'event_num='+data.eventNum +
+                    '&name='+data.name +
+                    '&idcard='+data.idcard +
+                    '&mobile_no='+data.mobileNo +
+                    '&visit_date='+data.visitDate +
+                    '&current_address='+data.currentAddress +
+                    '&reception_org='+data.showOrgs.substring(data.showOrgs.lastIndexOf('/')+1)+(data.orgAddress!=null?'&nbsp;&nbsp;'+data.orgAddress:'') +
+                    '&sex='+ (''+data.sex==='0'?'男':'女'),
+                    title: false,
+                    area: ['860px', height+'px']
+                });
+            } else if (obj.event === 'del') {
+                // 删除
+                if(''+data.status === '0' && ''+data.deleteCheckStatus !== '0'){
+                    layer.confirm('确定申请删除该条信息记录吗？', function () {
+                        crab.delete('/djc/remove/' + obj.data.eventId,'', function(){
+                            layer.msg('删除申请已提交！');
+                            userTable.reload('user-table', {});
+                        });
+                    });
+                }else if(''+data.deleteCheckStatus === '0'){
+                    layer.msg('该事项已提交删除审核');
+                } else if(''+data.status === '1'){
+                    layer.msg('该事项正在处理中<br>无法删除');
+                } else if(''+data.status === '2'){
+                    layer.msg('该事项已处理<br>无法删除');
+                }
+            }
+        });
+
+        //显示表单弹窗
+        var showEditModel = function (data) {
+            crab.putFormData(data);
+            crab.popupCenter({
+                title: data ? '修改登记人信息' : '添加登记人',
+                area: ['800px','450px'],
+                offset:'15px',
+                path: '/components/djc/djxx-edit.html',
+                finish: function () {
+                    userTable.reload('user-table', {});
+                }
+            });
+        };
+
+        // 搜索按钮点击事件
+        $('#user-btn-search').click(function () {
+            userTable.reload({where: crab.getSearchForm()});
+        });
+
+        // 修改user状态
+        form.on('switch(user-tpl-status)', function (obj) {
+            crab.put('/sys/user/status_' + obj.elem.value, {
+                status: obj.elem.checked ? 0 : -1
+            }, function () {
+                layer.msg('用户状态修改成功', {icon: 1});
+            });
+        });
+    });
+</script>

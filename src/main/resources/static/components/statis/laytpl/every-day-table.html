@@ -1,0 +1,112 @@
+<script id="everyDayTable" type="text/html">
+    {{#
+        function prev(num){return num>9?num:'0'+num;}
+        function changeZero(count){return ''+count==='0'?'-':''+count}
+        let ind = 0,batchSum = 0,peopleSum = 0,fiveOverSum = 0,fiftyOverSum = 0,oneHundredOverSum = 0,twoHundredOverSum = 0,
+        now = new Date(),year=''+now.getFullYear(),today = prev(now.getMonth()+1)+'-'+prev(now.getDate()),todayIndex = -1;
+        while(ind < d.tableCount){
+        let curList = d.list.slice(ind*d.count,(ind+1)*d.count)
+    }}
+    <table class="layui-table tpl-table day-table">
+        <thead>
+        <tr>
+            <th class="title"></th>
+            {{# layui.each(curList, function(index, item){ }}
+            <th class="day data-td data-{{= index+1}} {{= (today===item.day && year===item.year)?(todayIndex=(ind*d.count+index),'today'):''}}" data-i="{{= index+1}}" data-date="{{= item.year+'-'+item.day}}">{{item.day}}</th>
+            {{#  });
+                if((ind+1) === d.tableCount){ }}
+            <th class="day">合计</th>
+            {{#   }
+            }}
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td>批次</td>
+            {{#
+                layui.each(curList, function(index, item){
+                batchSum += item.batch
+            }}
+            <td class="data-td data-{{= index+1}} {{= todayIndex===(ind*d.count+index)?'today':''}}" data-i="{{= index+1}}" data-date="{{= item.year+'-'+item.day}}">{{= changeZero(item.batch)}}</td>
+            {{#  });
+                if((ind+1) === d.tableCount){
+                document.getElementById('everyDayBatchSum').innerHTML=batchSum;
+            }}
+            <td>{{batchSum}}</td>
+            {{#   }
+            }}
+        </tr>
+        <tr>
+            <td>人次</td>
+            {{#
+                layui.each(curList, function(index, item){
+                peopleSum += item.people
+            }}
+            <td class="data-td data-{{= index+1}} {{= todayIndex===(ind*d.count+index)?'today':''}}" data-i="{{= index+1}}" data-date="{{= item.year+'-'+item.day}}">{{= changeZero(item.people)}}</td>
+            {{#  });
+                if((ind+1) === d.tableCount){
+                document.getElementById('everyDayPeopleSum').innerHTML=peopleSum;
+            }}
+            <td>{{peopleSum}}</td>
+            {{#   }
+            }}
+        </tr>
+        <tr>
+            <td>5人以上批次</td>
+            {{#
+            layui.each(curList, function(index, item){
+            fiveOverSum += item.fiveOver
+            }}
+            <td class="data-td data-{{= index+1}} {{= item.fiveOver>0?'focus':''}} {{= todayIndex===(ind*d.count+index)?'today':''}}" data-i="{{= index+1}}" data-date="{{= item.year+'-'+item.day}}">{{= changeZero(item.fiveOver)}}</td>
+            {{#  });
+            if((ind+1) === d.tableCount){ }}
+            <td>{{fiveOverSum}}</td>
+            {{#   }
+            }}
+        </tr>
+        <tr>
+            <td>50人以上批次</td>
+            {{#
+                layui.each(curList, function(index, item){
+                fiftyOverSum += item.fiftyOver
+            }}
+            <td class="data-td data-{{= index+1}} {{= item.fiftyOver>0?'focus':''}} {{= todayIndex===(ind*d.count+index)?'today':''}}" data-i="{{= index+1}}" data-date="{{= item.year+'-'+item.day}}">{{= changeZero(item.fiftyOver)}}</td>
+            {{#  });
+                if((ind+1) === d.tableCount){ }}
+            <td>{{fiftyOverSum}}</td>
+            {{#   }
+            }}
+        </tr>
+        <tr>
+            <td>100人以上批次</td>
+            {{#
+            layui.each(curList, function(index, item){
+            oneHundredOverSum += item.oneHundredOver
+            }}
+            <td class="data-td data-{{= index+1}} {{= item.oneHundredOver>0?'focus':''}} {{= todayIndex===(ind*d.count+index)?'today':''}}" data-i="{{= index+1}}" data-date="{{= item.year+'-'+item.day}}">{{= changeZero(item.oneHundredOver)}}</td>
+            {{#  });
+            if((ind+1) === d.tableCount){ }}
+            <td>{{oneHundredOverSum}}</td>
+            {{#   }
+            }}
+        </tr>
+        <tr>
+            <td>200人以上批次</td>
+            {{#
+            layui.each(curList, function(index, item){
+            twoHundredOverSum += item.twoHundredOver
+            }}
+            <td class="data-td data-{{= index+1}} {{= item.twoHundredOver>0?'focus':''}} {{= todayIndex===(ind*d.count+index)?'today':''}}" data-i="{{= index+1}}" data-date="{{= item.year+'-'+item.day}}">{{= changeZero(item.twoHundredOver)}}</td>
+            {{#  });
+            if((ind+1) === d.tableCount){ }}
+            <td>{{twoHundredOverSum}}</td>
+            {{#   }
+            }}
+        </tr>
+        </tbody>
+    </table>
+    {{#
+        ind++;
+        }
+    }}
+</script>

@@ -1,0 +1,1067 @@
+<div class="layui-card">
+    <div id="pageHead" class="layui-card-header">
+        <h2 class="header-title">接待信息修改</h2>
+        <!--<span class="layui-breadcrumb pull-right">
+          <a><cite>打印</cite></a>
+          <a><cite>扫描</cite></a>
+        </span>-->
+    </div>
+    <div class="layui-card-body">
+        <form class="layui-form" id="userinfo_form" lay-filter="userinfo_form">
+            <input name="id" type="hidden"/>
+            <fieldset class="layui-elem-field">
+                <legend>信访人信息</legend>
+                <div class="layui-field-box">
+                    <div class="layui-form-item">
+                        <div class="layui-row">
+                            <div class="layui-col-md3">
+                                <label class="layui-form-label"><span style="color: red">*</span>姓名</label>
+                                <div class="layui-input-block">
+                                    <input id="petitionerName" type="text" name="petitionerName" required  lay-verify="required" placeholder="请输入姓名" autocomplete="off" class="layui-input">
+                                </div>
+                            </div>
+                            <div class="layui-col-md3">
+                                <label class="layui-form-label">民族</label>
+                                <div class="layui-input-block">
+                                    <input id="nation" value="汉" type="text" name="nation"  placeholder="请输入民族" autocomplete="off" class="layui-input">
+                                </div>
+                            </div>
+                            <div class="layui-col-md3">
+                                <label class="layui-form-label">性别</label>
+                                <div class="layui-input-block">
+                                    <input type="radio" name="sex" value="0" title="男" checked>
+                                    <input type="radio" name="sex" value="1" title="女">
+                                </div>
+                            </div>
+                            <div class="layui-col-md1 layui-col-md-offset2" style="text-align: right">
+                                <button type="button" class="layui-btn " id="scanId">扫描
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <div class="layui-row">
+                            <div class="layui-col-md6">
+                                <label class="layui-form-label"><span style="color: red">*</span>身份证号</label>
+                                <div class="layui-input-block">
+                                    <input id="idcard" type="text" name="idcard" required  lay-verify="required|identity" placeholder="请输入身份证号" autocomplete="off" class="layui-input">
+                                </div>
+                            </div>
+                            <div class="layui-col-md2" style="text-align: right;height: 38px;line-height: 38px;">
+                                <button class="layui-btn" type="button" id="subBirthFromIdcardBtn">截取出生年月<i class="layui-icon">&#xe602;</i></button>
+                            </div>
+                            <div class="layui-col-md4">
+                                <label class="layui-form-label"><span style="color: red">*</span>出生年月</label>
+                                <div class="layui-input-block">
+                                    <input type="text" name="birthDate" id="birthDate" required lay-verify="required|date" placeholder="yyyy-MM-dd" autocomplete="off" class="layui-input">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <div class="layui-row">
+                            <div class="layui-col-md10">
+                                <label class="layui-form-label"><span style="color: red">*</span>户籍地址</label>
+                                <div class="layui-input-block">
+                                    <input id="permanentAddress" type="text" name="permanentAddress" required  lay-verify="required" placeholder="请输入户籍地址" autocomplete="off" class="layui-input">
+                                </div>
+                            </div>
+                            <div class="layui-col-md2" style="text-align: right;height: 38px;line-height: 38px;">
+                                <button class="layui-btn" type="button" id="copyPAddToCAddBtn">复制到现住地址 <i class="layui-icon">&#xe61a;</i></button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label"><span style="color: red">*</span>现住地址</label>
+                        <div class="layui-input-block">
+                            <input id="currentAddress" type="text" name="currentAddress" required  lay-verify="required" placeholder="请输入现居住地" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <div class="layui-row">
+                            <div class="layui-col-md3">
+                                <label class="layui-form-label">联系电话</label>
+                                <div class="layui-input-block">
+                                    <input id="mobileNo" type="text" name="mobileNo" placeholder="请输入11位联系电话" autocomplete="off" class="layui-input">
+                                </div>
+                            </div>
+                            <div class="layui-col-md3">
+                                <label class="layui-form-label"><span style="color: red">*</span>来访日期</label>
+                                <div class="layui-input-block">
+                                    <input type="text" name="visitDate" id="visitDate" required lay-verify="required|date" placeholder="yyyy-MM-dd" autocomplete="off" class="layui-input">
+                                </div>
+                            </div>
+                            <div class="layui-col-md6"></div>
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label"> 随访人信息</label>
+                        <div class="layui-input-block">
+                            <button id="scanFollowId" type="button" class="layui-btn">扫描添加</button>
+                            <button id="inputFollowId" type="button" class="layui-btn">手动填写</button>
+                        </div>
+                        <table class="layui-table" id="follower-table" lay-filter="follower-table"></table>
+                    </div>
+                </div>
+            </fieldset>
+            <fieldset class="layui-elem-field form-edit-field">
+                <legend>信访事项基本信息</legend>
+                <div class="layui-field-box">
+                    <div class="layui-form-item">
+                        <div class="layui-row">
+                            <div class="layui-col-md8">
+                                <label class="layui-form-label"><span style="color: red">*</span>事件名称</label>
+                                <div class="layui-input-block">
+                                    <input id="name" type="text" name="name" required  lay-verify="required" placeholder="请输入名称" autocomplete="off" class="layui-input">
+                                </div>
+                            </div>
+                            <div class="layui-col-md4"></div>
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <div class="layui-row">
+                            <div class="layui-col-md4">
+                                <label class="layui-form-label">信访件编号</label>
+                                <div class="layui-input-block">
+                                    <input id="eventNum"  type="text" name="eventNum" placeholder="系统自动生成"  autocomplete="off" class="layui-input" disabled>
+                                </div>
+                            </div>
+                            <div class="layui-col-md4">
+                                <div class="layui-row">
+                                    <div class="layui-col-md3">
+                                        <label class="layui-form-label"><span style="color: red">*</span>事发地</label>
+                                    </div>
+                                    <div class="layui-col-md3" style="text-align: center">
+                                        <input type="checkbox" name="isNewEventPlaceId" lay-filter="isNewEventPlaceId" lay-skin="switch" lay-text="新建|已有">
+                                    </div>
+                                    <div class="layui-col-md6">
+                                        <div id="eventPlaceIdSelectBox">
+                                            <select id="eventPlaceId" name="eventPlaceId" lay-search="eventPlaceId" lay-search></select>
+                                        </div>
+                                        <div id="eventPlaceIdInputBox" style="display: none">
+                                            <input type="text" name="eventPlaceName" placeholder="请输入事发地" autocomplete="off" class="layui-input">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="layui-col-md4">
+                                <div class="layui-row layui-col-space10">
+                                    <div class="layui-col-md4" style="text-align: right">
+                                        <button type="button" class="layui-btn" id="checkRepeat">判重</button>
+                                        <button type="button" class="layui-btn layui-btn-primary" id="cancelRepeatLink" style="display: none">取消关联</button>
+                                    </div>
+                                    <div class="layui-col-md8 repeat-tip-box">
+                                        <p class="repeat-tip">信访人、事件名称（至少一项）<br>事发地、反映问题、主要诉求（可选）</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">反映问题</label>
+                        <div class="layui-input-block">
+                            <textarea name="eventContent" id="eventContent" placeholder="请输入反映问题" class="layui-textarea" style="height: 150px;"></textarea>
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">主要诉求</label>
+                        <div class="layui-input-block">
+                            <textarea name="mainDemand" id="mainDemand" placeholder="请输入主要诉求" class="layui-textarea" style="min-height: 50px;"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item">
+                        <label class="layui-form-label"><span style="color: red">*</span>内容分类</label>
+                        <div class="layui-input-block">
+                            <select name="contentTypeIdStr" xm-select="contentTypeId" xm-select-radio lay-verify="required">
+                                <option value="">请选择内容分类</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <div class="layui-inline">
+                            <label class="layui-form-label"><span style="color: red">*</span>来访人数</label>
+                            <div class="layui-input-block">
+                                <input id="comeNum" type="text" name="comeNum" required  lay-verify="required|number" placeholder="请输入来访人数" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label">涉及人数</label>
+                            <div class="layui-input-block">
+                                <input id="involveNum" type="text" name="involveNum" placeholder="请输入涉及人数" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <div class="layui-inline">
+                            <label class="layui-form-label">是否重访</label>
+                            <div class="layui-input-block">
+                                <input type="radio" name="isRepeat" value="1" title="是" >
+                                <input type="radio" name="isRepeat" value="0" title="否" checked>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <div class="layui-inline">
+                            <label class="layui-form-label">重点领域</label>
+                            <div class="layui-input-block">
+                                <input type="radio" name="isKeyArea" value="1" lay-filter="isKeyArea" title="是">
+                                <input type="radio" name="isKeyArea" value="0" lay-filter="isKeyArea" title="否" checked>
+                            </div>
+                        </div>
+                        <div id="keyAreaIdBox" class="layui-inline" style="display:none">
+                            <label class="layui-form-label">领域分类</label>
+                            <div class="layui-input-block">
+                                <select id="keyAreaId" name="keyAreaId" lay-filter="keyAreaId">
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item">
+                        <div class="layui-inline">
+                            <label class="layui-form-label">是否跟访</label>
+                            <div class="layui-input-block">
+                                <input type="radio" name="isFollow" lay-filter="isFollow" value="1" title="是" >
+                                <input type="radio" name="isFollow" lay-filter="isFollow" value="0" title="否" checked>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-form-item" id="followContentBox" style="display: none">
+                        <label class="layui-form-label">跟访内容</label>
+                        <div class="layui-input-block">
+                            <input type="text" name="followContent" placeholder="请输入跟访内容" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">是否滞留</label>
+                        <div class="layui-input-block">
+                            <input type="radio" name="isHoldUp" value="1" title="是" >
+                            <input type="radio" name="isHoldUp" value="0" title="否" checked>
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <div class="layui-inline">
+                            <label class="layui-form-label">上访地点</label>
+                            <div class="layui-input-block">
+                                <input type="radio" name="visitPlaceStatus" lay-filter="visitPlaceStatus" value="1" title="正常" checked>
+                                <input type="radio" name="visitPlaceStatus" lay-filter="visitPlaceStatus"  value="0" title="异常">
+                            </div>
+                        </div>
+                        <div class="layui-inline" id="abnormalPlaceIdsBox" style="display: none;">
+                            <label class="layui-form-label">异常地点</label>
+                            <div class="layui-input-block">
+                                <select id="abnormalPlaceIds" name="abnormalPlaceIds" xm-select="abnormalPlaceIds">
+
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <div class="layui-inline">
+                            <label class="layui-form-label">上访行为</label>
+                            <div class="layui-input-block">
+                                <input type="radio" name="visitActionStatus" lay-filter="visitActionStatus" value="1" title="正常" checked>
+                                <input type="radio" name="visitActionStatus" lay-filter="visitActionStatus"  value="0" title="异常">
+                            </div>
+                        </div>
+                        <div class="layui-inline" id="abnormalActionIdsBox" style="display: none;">
+                            <label class="layui-form-label">异常行为</label>
+                            <div class="layui-input-block">
+                                <select id="abnormalActionIds" name="abnormalActionIds" xm-select="abnormalActionIds">
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </fieldset>
+            <fieldset class="layui-elem-field form-edit-field">
+                <legend>责任部门信息</legend>
+                <div class="layui-field-box">
+                    <div class="layui-form-item">
+                        <div class="layui-row">
+                            <div class="layui-col-md4">
+                                <div class="layui-row">
+                                    <div class="layui-col-md3">
+                                        <label class="layui-form-label"><span style="color: red">*</span>责任单位</label>
+                                    </div>
+                                    <div class="layui-col-md3" style="text-align: center">
+                                        <input type="checkbox" name="isNewDutyUnitId" lay-filter="isNewDutyUnitId" lay-skin="switch" lay-text="新建|已有">
+                                    </div>
+                                    <div class="layui-col-md6">
+                                        <div id="dutyUnitIdSelectBox">
+                                            <select id="dutyUnitId" name="dutyUnitId" lay-filter="dutyUnitId" lay-search></select>
+                                        </div>
+                                        <div id="dutyUnitIdInputBox" style="display: none">
+                                            <input type="text" name="dutyUnitName" placeholder="请输入责任单位" autocomplete="off" class="layui-input">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="layui-col-md4">
+                                <div class="layui-row">
+                                    <div class="layui-col-md3">
+                                        <label class="layui-form-label">配合单位</label>
+                                    </div>
+                                    <div class="layui-col-md3" style="text-align: center">
+                                        <a id="addCoUnitBtn" href="javascript:;" class="layui-btn layui-btn-primary layui-btn-sm">新增</a>
+                                    </div>
+                                    <div class="layui-col-md6">
+                                        <select id="coUnitIds" name="coUnitIds" xm-select="coUnitIds" xm-select-search=""></select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="layui-col-md4">
+                                <div class="layui-row">
+                                    <div class="layui-col-md3">
+                                        <label class="layui-form-label">稳控单位</label>
+                                    </div>
+                                    <div class="layui-col-md3" style="text-align: center">
+                                        <input type="checkbox" name="isNewWkdw" lay-filter="isNewWkdw" lay-skin="switch" lay-text="新建|已有">
+                                    </div>
+                                    <div class="layui-col-md6">
+                                        <div id="wkdwNameSelectBox">
+                                            <select  id="wkdwName" name="wkdwName" lay-filter="wkdwName" lay-search>
+                                            </select>
+                                        </div>
+                                        <div id="wkdwNameInputBox" style="display: none">
+                                            <input type="text" name="wkdwNameInput" placeholder="请输入单位名" autocomplete="off" class="layui-input">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">工作建议</label>
+                        <div class="layui-input-block">
+                            <input id="workProposal" type="text" name="workProposal" placeholder="请填写工作建议" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label"><span style="color: red">*</span>接访人</label>
+                        <div class="layui-input-block">
+                            <select id="receptionId" required  lay-verify="required" name="receptionId" lay-filter="receptionId"></select>
+                        </div>
+                    </div>
+                </div>
+            </fieldset>
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <button id="submitBtn" class="layui-btn" lay-submit lay-filter="submitBtn">保存</button>
+                    <!--<button id="submitBtn" class="layui-btn"  type="button">立即提交</button>-->
+                    <!--<button id="resetBtn" type="button" class="layui-btn layui-btn-primary">重置</button>-->
+                </div>
+            </div>
+
+            <object id="CertCtl" style="height: 0" clsid="{41D8EDD7-BC34-4A31-BEC8-47714A1E4046}" type="application/x-itst-activex" width="200px" height="18px"></object>
+
+            </object>
+
+            <object id="CertCtl_follow"  style="height: 0" clsid="{41D8EDD7-BC34-4A31-BEC8-47714A1E4046}" type="application/x-itst-activex" width="200px" height="18px"></object>
+
+            </object>
+        </form>
+
+
+    </div>
+</div>
+<!--判重列表-->
+<script type="text/html" id="repeat-model">
+    <table class="layui-table" id="repeat-table" lay-filter="repeat-table"></table>
+</script>
+<!-- 判重表格操作列 -->
+<script type="text/html" id="repeat-table-bar">
+    <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="view">查看</a>
+    <a class="layui-btn layui-btn-xs" lay-event="link">关联</a>
+</script>
+<!-- 随访人表格操作列 -->
+<script type="text/html" id="follower-table-bar">
+    <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="delete">删除</a>
+</script>
+<style>
+    .layui-elem-field legend{
+        font-size: 15px;
+    }
+    .xm-select-linkage .xm-select-linkage-group.xm-select-linkage-group2{
+        left: 250px !important;
+    }
+    .xm-select-linkage .xm-select-linkage-group.xm-select-linkage-group3{
+        left: 500px !important;
+    }
+    .repeat-tip-box{
+        vertical-align:bottom !important;
+        word-wrap:break-word;
+        word-break:break-all;
+        height:44px;
+    }
+    p.repeat-tip{
+        font-size: 13px;
+        line-height: 15px;
+        color:#9a9a9a;
+    }
+</style>
+<script type="text/javascript">
+    layui.use(['form', 'crab','laydate','formSelects','table', 'config'], function(){
+        const form = layui.form,
+            crab = layui.crab,
+            table = layui.table,
+            laydate = layui.laydate,
+            formSelects = layui.formSelects;
+        let edit = false,
+            trueEdit=false,
+            repeatLayer = null,//判重表格弹出框对象
+            repeatFlag=0,//0：无关联事项，1：关联事项为处理中，2：关联事项为已完成
+            repeatId=0,
+            user = crab.getFormData(),
+            editData = crab.getTempData('editData'),
+            followerTable = null;
+
+        crab.putFormData(); //清除缓存，否则会一直为编辑状态
+        crab.putTempData('editData');
+        form.render();
+        initLayDate();
+        initSelectBox();
+        //清空随访人
+        crab.putTempData("followerDataJson");
+
+        // 待接待人页面跳转过来的,需要自动填充信访人信息
+        if (user) {
+            $('#idcard').attr('disabled',true);
+            delete user.comeNum;
+            form.val('userinfo_form', user);
+            edit = true;
+        }
+
+        if(editData){
+            $('#idcard').prop('disabled',true);
+            $('#eventNum').prop('disabled',true);
+            initEditData();
+            trueEdit = true;
+        }
+
+        function initEditData() {
+            crab.get('/jdc/djxx/edit_data',{id:editData.id},function(data){
+                console.log(data);
+                // layui中设置radio时需要value为字符串
+                data.sex = ''+data.sex;
+                data.isRepeat = ''+data.isRepeat;
+                data.isFollow = ''+data.isFollow;
+                data.isHoldUp= ''+data.isHoldUp;
+                data.eventPlaceId = ''+data.eventPlaceId;
+                data.isKeyArea = ''+data.isKeyArea;
+                data.dutyUnitId = ''+data.dutyUnitId;
+                data.visitPlaceStatus = ''+data.visitPlaceStatus;
+                data.visitActionStatus = ''+data.visitActionStatus;
+                // layui组件formSelects设置value，多级需要“['1/4/7','2/5']”格式，复选需要“['1','4','7']”格式
+                if(data.contentTypeIds) formSelects.value('contentTypeId', [''+data.contentTypeIds]);
+                if(data.coUnitIds) formSelects.value('coUnitIds', data.coUnitIds.split(','));
+                if(data.abnormalPlaceIds) formSelects.value('abnormalPlaceIds', data.abnormalPlaceIds.split(','));
+                if(data.abnormalActionIds) formSelects.value('abnormalActionIds', data.abnormalActionIds.split(','));
+                // layui设置form值，不包含组件formSelects
+                form.val('userinfo_form', data);
+                // 根据radio值，显示或隐藏对应input
+                var $keyAreaIdBox = $('#keyAreaIdBox'),
+                    $followContentBox = $('#followContentBox'),
+                    $abnormalPlaceIdsBox = $('#abnormalPlaceIdsBox'),
+                    $abnormalActionIdsBox = $('#abnormalActionIdsBox');
+                ''+data.isKeyArea==='1' ? $keyAreaIdBox.show():$keyAreaIdBox.hide();
+                ''+data.isFollow==='1' ? $followContentBox.show():$followContentBox.hide();
+                ''+data.visitPlaceStatus==='0' ? $abnormalPlaceIdsBox.show():$abnormalPlaceIdsBox.hide();
+                ''+data.visitActionStatus==='0' ? $abnormalActionIdsBox.show():$abnormalActionIdsBox.hide();
+                if(data.followers !== null && data.followers.length > 0){
+                    delete data.followers.eventId;
+                    crab.putTempData('followerDataJson',data.followers)
+                }
+                // layui要求，改变select值后需要刷新
+                form.render();
+                renderOrReloadFollowerTable();
+            });
+        }
+
+        //扫描来访人
+        $("#scanId").click(function(){
+            scan(false);
+            return false;
+        });
+        //扫描随访人
+        $("#scanFollowId").click(function(){
+            scan(true);
+            return false;
+        });
+        //扫描
+        function scan(followFlag) {
+            var obj;
+            if(followFlag){
+                obj = document.getElementById("CertCtl");
+            }else{
+                obj = document.getElementById("CertCtl_follow");
+            }
+            var retValue = obj.idcard_scan(1);
+            if (0 == retValue){
+                var petitionerName =  obj.userName;
+                var idcard =  obj.userIDCode;
+                var permanentAddress = obj.userAddress;
+                var nation = obj.userNation;
+                var sexValue = 1;
+                if(obj.userSex == "男"){
+                    sexValue = 0;
+                }
+                var bithdayStr = obj.userBirthDay;
+
+                if(followFlag){
+                    var dataJson = crab.getTempData("followerDataJson");
+                    console.log("typedataJson0:"+typeof(dataJson));
+                    console.log("dataJson0:"+dataJson);
+                    //拼表格data数组
+                    if(dataJson == null || dataJson == undefined || dataJson == "undefined" || typeof(dataJson) == undefined || dataJson === false || dataJson === "false" ){
+                        console.log(0);
+                        dataJson = [];
+                    }
+                    console.log("0:"+dataJson);
+                    var petioner = new Object();
+                    petioner.name = petitionerName;
+                    petioner.sex  = sexValue;
+                    petioner.nation = nation;
+                    petioner.birthDate = bithdayStr.substr(0,4)+'-'+bithdayStr.substr(4,2)+'-'+bithdayStr.substr(6,2);
+                    petioner.idcard = idcard;
+                    petioner.permanentAddress = permanentAddress;
+                    dataJson.push(petioner);
+                    console.log("dataJson:"+dataJson);
+                    crab.putTempData("followerDataJson",dataJson);
+                    renderOrReloadFollowerTable();
+                }else{
+                    $("#petitionerName").val(obj.userName);
+                    $("#idcard").val(obj.userIDCode);
+                    $("#permanentAddress").val(obj.userAddress);
+                    $('input[name="sex"][value="'+sexValue+'"]').prop('checked','checked');
+                    form.render();
+                    $("#nation").val(obj.userNation);
+                    $("#birthDate").val(bithdayStr.substr(0,4)+'-'+bithdayStr.substr(4,2)+'-'+bithdayStr.substr(6,2));
+                }
+
+            }else if(1 == retValue){
+                layer.msg('错误:端口打开失败', {
+                    time: 2000 //2s后自动关闭
+                });
+            }else if(2 == retValue){
+                layer.msg('错误:寻卡失败', {
+                    time: 2000 //2s后自动关闭
+                });
+            }else if(3 == retValue){
+                layer.msg('错误:选卡失败', {
+                    time: 2000 //2s后自动关闭
+                });
+            }else if(4 == retValue){
+                layer.msg('错误:初始化失败', {
+                    time: 2000 //2s后自动关闭
+                });
+            }else if(5 == retValue){
+                layer.msg('错误:身份证读取错误', {
+                    time: 2000 //2s后自动关闭
+                });
+            }else if(6 == retValue){
+                layer.msg('错误:身份证读取异常', {
+                    time: 2000 //2s后自动关闭
+                });
+            }else if(20 == retValue){
+                layer.msg('错误:获取姓名信息失败', {
+                    time: 2000 //2s后自动关闭
+                });
+            }else if(25 == retValue){
+                layer.msg('错误:获取卡号信息失败', {
+                    time: 2000 //2s后自动关闭
+                });
+            }else if(50<=retValue){
+                layer.msg('错误:设备驱动加载失败', {
+                    time: 2000 //2s后自动关闭
+                });
+            }
+        }
+        //渲染随访人表格
+        function renderOrReloadFollowerTable(){
+            let dataJson = crab.getTempData("followerDataJson");
+            console.log(dataJson);
+            if(dataJson !== undefined){
+                followerTable = table.render({
+                    elem: '#follower-table',
+                    page: false,
+                    data: dataJson,
+                    cols: [[
+                        {type: 'numbers'},
+                        {field: 'name', title: '姓名', width: 90},
+                        {field: 'idcard', title: '身份证号', width: 180},
+                        {field: 'mobileNo', title: '联系方式', width: 120},
+                        {field: 'permanentAddress', title: '户籍地址'},
+                        {field: 'currentAddress', title: '现住地址'},
+                        {fixed: 'right', align: 'center', toolbar: '#follower-table-bar', title: '操作', width: 120}
+                    ]]
+                });
+            }else{
+                followerTable = null;
+                let $followerTableDiv = $('div[lay-id="follower-table"]');
+                if($followerTableDiv.length>0){
+                    $followerTableDiv.remove();
+                }
+            }
+        }
+        //手动填写随访人
+        $('#inputFollowId').click(function(){
+            showFollowerEditModel();
+        });
+        //显示表单弹窗
+        const showFollowerEditModel = function (data) {
+            crab.putTempData(data);
+            crab.popupCenter({
+                title: data ? '修改随访人信息' : '添加随访人',
+                area: ['800px','450px'],
+                offset:'15px',
+                path: '/components/jdc/jdc-follower.html',
+                finish: function () {
+                    renderOrReloadFollowerTable();
+                }
+            });
+        };
+        //随访人表格操作
+        table.on('tool(follower-table)', function (obj) {
+            let layEvent = obj.event;
+            let tr = obj.tr;
+            if(''+layEvent === 'delete'){
+                layer.confirm('你确定要删除？',function(i){
+                    let index = $(tr).data('index');
+                    let dataJson = crab.getTempData("followerDataJson");
+                    dataJson.splice(index,1);
+                    crab.putTempData("followerDataJson",dataJson);
+                    renderOrReloadFollowerTable();
+                    layer.close(i);
+                });
+            }
+        });
+
+        //从身份证截取出生年月
+        $('#subBirthFromIdcardBtn').click(function(){
+            let reg = /(^\d{18}$)|(^\d{17}(\d|X|x)$)/;
+            let idcard = $.trim($('#idcard').val());
+            if(idcard === '' || !reg.test(idcard)){
+                layer.msg('请填写正确的身份证号');
+                return false;
+            }
+            $('#birthDate').val(idcard.substr(6,4)+'-'+idcard.substr(10,2)+'-'+idcard.substr(12,2));
+        });
+        //复制户籍地址到现住地址
+        $('#copyPAddToCAddBtn').click(function(){
+            let permanentAddress = $.trim($('#permanentAddress').val());
+            if(permanentAddress === ''){
+                layer.msg('请填写户籍地址');
+                return false;
+            }
+            $('#currentAddress').val(permanentAddress);
+        });
+
+        //初始化下拉框
+        function initSelectBox(){
+            loadSingleSelectBox(crab,form,'/sys/dict/event_place/list_effective_by_reception_org_id/'+editData.receptionOrgId,'eventPlaceId');
+            loadSingleSelectBox(crab,form,'/sys/dict/key_area/list_effective','keyAreaId');
+            loadSingleSelectBox(crab,form,'/sys/dict/unit/list_effective','dutyUnitId');
+            loadSingleSelectBox(crab,form,'/jdry/list_xfld/'+editData.receptionOrgId,'receptionId');
+            loadCheckbox(crab,form,'/sys/dict/abnormal_place/list_effective','abnormalPlaceIds');
+            loadCheckbox(crab,form,'/sys/dict/abnormal_action/list_effective','abnormalActionIds');
+            loadCheckbox(crab,form,'/sys/dict/unit/list_effective','coUnitIds');
+            loadcontentType(crab,form);
+            wkdwNameBox(crab,form,'/sys/dict/stability/list_effective','wkdwName');
+        }
+        //初始化日期
+        function initLayDate(){
+            //日期
+            laydate.render({
+                elem: '#birthDate'
+                ,value: '1940-01-01'
+            });
+            laydate.render({
+                elem: '#visitDate'
+                ,value: new Date()
+            });
+        }
+
+        changeRadio('isKeyArea','keyAreaIdBox',true);
+        changeRadio('isFollow','followContentBox',true);
+        changeRadio('visitPlaceStatus','abnormalPlaceIdsBox',false);
+        changeRadio('visitActionStatus','abnormalActionIdsBox',false);
+        //参数依次为：改变判断选择框；其相应的内容选择框；反转标志，true：1的时候显示 ，false：0的时候显示
+        function changeRadio(keyName,valueName,flag){
+            form.on("radio("+keyName+")", function (data) {
+                if(flag){
+                    if (''+this.value === '0') {
+                        $('#'+valueName).hide();
+                    } else if (''+this.value === '1') {
+                        $('#'+valueName).show();
+                    }
+                }else{
+                    if (''+this.value === '1') {
+                        $('#'+valueName).hide();
+                    } else if (''+this.value === '0') {
+                        $('#'+valueName).show();
+                    }
+                }
+            });
+        }
+
+        //新增配合单位
+        $('#addCoUnitBtn').click(function(){
+            crab.popupCenter({
+                title: '新增配合单位',
+                path: '/components/jdc/jdc-dict-unit-form.html',
+                area:'340px',
+                finish: function () {
+                    loadCheckbox(crab,form,'/sys/dict/unit/list_effective','coUnitIds');
+                }
+            });
+        });
+
+        //监听是否新建稳控单位
+        form.on('switch(isNewWkdw)', function(data){
+            if(data.elem.checked){
+                $('#wkdwNameSelectBox').val("");
+                $('#wkdwNameSelectBox').hide();
+                $('#wkdwNameInputBox').show();
+            }else{
+                $('#wkdwNameInputBox').val("");
+                $('#wkdwNameInputBox').hide();
+                $('#wkdwNameSelectBox').show();
+            }
+        });
+        //监听是否新建事发地
+        form.on('switch(isNewEventPlaceId)', function(data){
+            if(data.elem.checked){
+                $('#eventPlaceIdSelectBox').hide();
+                $('#eventPlaceIdInputBox').show();
+            }else{
+                $('#eventPlaceIdInputBox').hide();
+                $('#eventPlaceIdSelectBox').show();
+            }
+        });
+        //监听是否新建责任单位
+        form.on('switch(isNewDutyUnitId)', function(data){
+            if(data.elem.checked){
+                $('#dutyUnitIdSelectBox').hide();
+                $('#dutyUnitIdInputBox').show();
+            }else{
+                $('#dutyUnitIdInputBox').hide();
+                $('#dutyUnitIdSelectBox').show();
+            }
+        });
+
+        //取消关联按钮点击事件，只放开编辑，不清空事项相关信息
+        $('#cancelRepeatLink').click(function(){
+            resetRepeat();
+        });
+        //判重按钮点击事件，信访人、名称、事发地、反映问题、主要诉求进行引擎搜索相似度排序
+        $('#checkRepeat').click(function(){
+            var getParam = {},
+                petitionerName = $.trim($('#petitionerName').val()),
+                name = $.trim($('#name').val()),
+                eventPlaceId = $.trim($('#eventPlaceId').val()),
+                eventContent = $.trim($('#eventContent').val()),
+                mainDemand = $.trim($('#mainDemand').val());
+            if(petitionerName === '' && name === ''){
+                layer.msg('请至少填写信访人和事项名称其中一项');
+                return false;
+            }
+            if(petitionerName !== '') getParam.petitionerName = petitionerName;
+            if(name !== '') getParam.name = name;
+            if(eventPlaceId !== '') getParam.eventPlaceId = eventPlaceId;
+            if(eventContent !== '') getParam.eventContent = eventContent;
+            if(mainDemand !== '') getParam.mainDemand = mainDemand;
+            crab.get('/jdc/djxx/repeatList',getParam,function(list){
+                console.log(list);
+                if(list.length > 0){
+                    // 打开判重表格弹出框
+                    repeatLayer = layer.open({
+                        type: 1,
+                        title: '类似事项',
+                        area: '1200px',
+                        offset: '60px',
+                        content: $('#repeat-model').html(),
+                        success: function () {
+                            // 渲染判重表格
+                            table.render({
+                                elem: '#repeat-table',
+                                data:list,
+                                page: false,
+                                limit: 100,
+                                height: '430',
+                                cols: [[
+                                    {type: 'numbers'},
+                                    {field: 'name', title: '名称'},
+                                    {field: 'visitDate', title: '来访时间', width: 110},
+                                    {field: 'eventNum', title: '事项编号', width: 130},
+                                    {field: 'eventPlaceName', align: 'center', title: '事发地', width: 80},
+                                    {field: 'status', align: 'center', title: '状态', width: 80, templet:function(d){
+                                            var status = ''+d.status;
+                                            if(status === '1'){
+                                                return '处理中';
+                                            }else if(status === '2'){
+                                                return '已处理';
+                                            }
+                                        }
+                                    },
+                                    {field: 'petitionerName', align: 'center', title: '信访人', width: 80},
+                                    {field: 'idcard', align: 'center', title: '身份证号', width: 180},
+                                    {fixed: 'right', align: 'center', toolbar: '#repeat-table-bar', title: '操作', width: 110}
+                                ]]
+                            });
+                        }
+                    });
+                }else{
+                    layer.msg("不存在类似事项",{time:1500});
+                }
+            });
+        });
+        // 判重表格操作列事件
+        table.on('tool(repeat-table)', function (obj) {
+            var data = obj.data;
+            var layEvent = obj.event;
+            if(layEvent === 'view'){
+                // 查看事项详情
+                crab.putTempData('p_eventInfo', data);
+                let height = $(window).height()-30;
+                let detail_layer_index = crab.popupCenter({
+                    closeBtn:0,
+                    path: '/components/jdc/jdc-djxx-table.html',
+                    title: false,
+                    offset: '15px',
+                    area: ['800px', height+'px']
+                });
+                crab.putTempData('detail_layer_index', detail_layer_index);
+            } else if (layEvent === 'link') {
+                // 回显所关联的事项数据
+                function initLinkData(data){
+                    // console.log(data);
+                    // 所关联事项id
+                    repeatId = data.id;
+                    // 删除所关联事件的信访人信息，防止覆盖当前信访人信息
+                    delete data.id;
+                    delete data.eventNum;
+                    delete data.petitionerName;
+                    delete data.idcard;
+                    delete data.sex;
+                    delete data.nation;
+                    delete data.birthDate;
+                    delete data.permanentAddress;
+                    delete data.currentAddress;
+                    delete data.mobileNo;
+
+                    delete data.visitDate;
+                    // 从“待接待人”页点击“接待”的当前信访人数据，合并到data中
+                    if(user) $.extend(data,user);
+                    // 是否重访，默认为1
+                    data.isRepeat = '1';
+                    // layui中设置radio时需要value为字符串
+                    data.isFollow = ''+data.isFollow;
+                    data.isHoldUp= ''+data.isHoldUp;
+                    data.eventPlaceId = ''+data.eventPlaceId;
+                    data.isKeyArea = ''+data.isKeyArea;
+                    data.dutyUnitId = ''+data.dutyUnitId;
+                    data.visitPlaceStatus = ''+data.visitPlaceStatus;
+                    data.visitActionStatus = ''+data.visitActionStatus;
+                    // layui组件formSelects设置value，多级需要“['1/4/7','2/5']”格式，复选需要“['1','4','7']”格式
+                    if(data.contentTypeIds) formSelects.value('contentTypeId', [''+data.contentTypeIds]);
+                    if(data.coUnitIds) formSelects.value('coUnitIds', data.coUnitIds.split(','));
+                    if(data.abnormalPlaceIds) formSelects.value('abnormalPlaceIds', data.abnormalPlaceIds.split(','));
+                    if(data.abnormalActionIds) formSelects.value('abnormalActionIds', data.abnormalActionIds.split(','));
+                    // layui设置form值，不包含组件formSelects
+                    form.val('userinfo_form', data);
+                    // 根据radio值，显示或隐藏对应input
+                    var $keyAreaIdBox = $('#keyAreaIdBox'),
+                        $followContentBox = $('#followContentBox'),
+                        $abnormalPlaceIdsBox = $('#abnormalPlaceIdsBox'),
+                        $abnormalActionIdsBox = $('#abnormalActionIdsBox');
+                    ''+data.isKeyArea==='1' ? $keyAreaIdBox.show():$keyAreaIdBox.hide();
+                    ''+data.isFollow==='1' ? $followContentBox.show():$followContentBox.hide();
+                    ''+data.visitPlaceStatus==='0' ? $abnormalPlaceIdsBox.show():$abnormalPlaceIdsBox.hide();
+                    ''+data.visitActionStatus==='0' ? $abnormalActionIdsBox.show():$abnormalActionIdsBox.hide();
+                    // layui要求，改变select值后需要刷新
+                    form.render();
+                    // 关闭判重表格弹出框
+                    layer.close(repeatLayer);
+                    // 隐藏判重按钮，显示取消关联按钮
+                    $('#checkRepeat').hide();
+                    $('#cancelRepeatLink').show();
+                }
+                repeatFlag = data.status;
+                if(''+repeatFlag === '1' || ''+repeatFlag === '2'){
+                    layer.confirm('您确定要关联该事项？',
+                        {icon: 3, title:'提示'},
+                        function(index){
+                            initLinkData(data);
+                            layer.close(index);
+                        });
+                }
+            }
+        });
+
+        // 重置重访关联，只放开编辑限制，不清除信息
+        function resetRepeat (){
+            repeatFlag=0;
+            repeatId=0;
+            //信访件编号是后台自动生成的或者待接待人页面传过来的，禁止编辑
+            $('#eventNum').val('').prop('disabled',true);
+            //取消关联按钮隐藏，显示判重按钮
+            $('#cancelRepeatLink').hide();
+            $('#checkRepeat').show();
+            //layui要求，改变select值后需要刷新
+            form.render();
+        }
+        // 重置form
+        function resetForm(flag){
+            $("#userinfo_form")[0].reset();
+            formSelects.render();
+            $('#keyAreaIdBox').hide();
+            $('#followContentBox').hide();
+            $('#leaderIdBox').hide();
+            $('#abnormalPlaceIdsBox').hide();
+            $('#abnormalActionIdsBox').hide();
+            initLayDate();
+            if(flag) {user=undefined;edit=false;trueEdit=false;}
+            if (user) form.val('userinfo_form', user);
+            loadcontentType(crab,form);
+            //layui要求，改变select值后需要刷新
+            form.render();
+        }
+        // 监听重置
+        $('#resetBtn').click(function(){
+            resetRepeat();
+            resetForm();
+        });
+
+        //监听提交
+        form.on('submit(submitBtn)', function(data){
+            if(''+data.field.isNewEventPlaceId === 'on'){
+                data.field.eventPlaceId = -1;
+                if($.trim(data.field.eventPlaceName) === ''){layer.msg("请输入新建的事发地"); return false;}
+            }else{
+                data.field.eventPlaceName = '-1';
+                if(''+data.field.eventPlaceId === ''){layer.msg("请选择事发地"); return false;}
+            }
+            if(''+data.field.isNewDutyUnitId === 'on'){
+                data.field.dutyUnitId = -1;
+                if($.trim(data.field.dutyUnitName) === ''){layer.msg("请输入新建的责任单位"); return false;}
+            }else{
+                data.field.dutyUnitName = '-1';
+                if(''+data.field.dutyUnitId === ''){layer.msg("请选择责任单位"); return false;}
+            }
+            // 规范数据
+            (function (data){
+                ''+data.isKeyArea==='0' && (delete data.keyAreaId);
+                ''+data.isFollow==='0' && (delete data.followContent);
+                ''+data.visitPlaceStatus==='1' && (delete data.abnormalPlaceIds);
+                ''+data.visitActionStatus==='1' && (delete data.abnormalActionIds);
+                data.repeatFlag = repeatFlag;
+                data.repeatId = repeatId;
+                data.wkdwName = ''+data.isNewWkdw === 'on' ? data.wkdwNameInput:data.wkdwName;
+                data.eventPlaceName = $.trim(data.eventPlaceName);
+                data.dutyUnitName = $.trim(data.dutyUnitName);
+                data.followerList = crab.getTempData("followerDataJson");
+            }(data.field));
+            if(trueEdit){
+                crab.put('/jdc/djxx/edit_xfld', data.field, function (data) {
+                    //清空随访人
+                    crab.putTempData("followerDataJson");
+                    layer.msg('修改成功', {
+                        time: 0
+                        ,btn: ['关闭']
+                        ,yes: function(index){
+                            layer.close(index);
+                            location.replace('./#jdc-xxgl');
+                        }
+                    });
+                });
+            }else{
+                crab.post('/jdc/djxx', data.field, function (data) {
+                    //清空随访人
+                    crab.putTempData("followerDataJson");
+                    renderOrReloadFollowerTable();
+                    layer.msg('登记成功', {
+                        time: 0
+                        ,btn: ['关闭']
+                        ,yes: function(index){
+                            layer.close(index);
+                            resetRepeat();
+                            resetForm(true);
+                        }
+                    });
+                });
+            }
+            return false;
+        });
+
+        // 加载稳控单位下拉框,value值为name
+        function wkdwNameBox(crab,form,url,selectIdName,selectedId){
+            crab.get(url, {}, function (data) {
+                var l = data.length;
+                if (l > 0) {
+                    var option = '<option value=""></option>',_selectIdName;
+                    if(selectedId){
+                        _selectIdName = selectedId;
+                    }
+                    for (var i = 0; i < l; i++) {
+                        option += '<option value="' + data[i].name + '"'+((''+data[i].name===''+_selectIdName)?"selected":"")+'>' + data[i].name + '</option>';
+                    }
+                    $('#' + selectIdName).empty().append(option);
+                    form.render('select');
+                }
+            });
+        }
+        // 加载单选下拉选择框
+        function loadSingleSelectBox(crab,form,url,selectIdName,selectedId){
+            crab.get(url, {}, function (data) {
+                var l = data.length;
+                if (l > 0) {
+                    var option = '<option value=""></option>',_selectedId;
+                    if(selectedId){
+                        _selectedId = selectedId
+                    }
+                    for (var i = 0; i < l; i++) {
+                        option += '<option value="' + data[i].id + '" '+((''+data[i].id===''+_selectedId)?"selected":"")+'>' + data[i].name + '</option>';
+                    }
+                    $('#'+selectIdName).empty().append(option);
+                    form.render('select');
+                }
+            });
+        }
+        // 加载多选下拉选择框
+        function loadCheckbox(crab,form,url,selectIdName,selectedId){
+            crab.get(url, {}, function (data) {
+                var l = data.length;
+                if (l > 0) {
+                    var option = '<option value=""></option>',_selectedId;
+                    if(selectedId){
+                        _selectedId = selectedId
+                    }
+                    for (var i = 0; i < l; i++) {
+                        option += '<option value="' + data[i].id + '" '+((''+data[i].id===''+_selectedId)?"selected":"")+'>' + data[i].name + '</option>';
+                    }
+                    $('#'+selectIdName).empty().append(option);
+                    formSelects.btns(selectIdName,['select', 'remove'], {show: 'name'});
+                    formSelects.render(selectIdName);
+                }
+            });
+        }
+        // 三级内容分类联动下拉选择框
+        function loadcontentType(crab,form){
+            crab.get('/sys/dict/content_type/list_effective', {}, function (data) {
+                var l = data.length;
+                if (l >= 0) {
+                    var contentTypeData = new Array();
+                    //resourceData.push({id:'0',pid:'0',name: '无', value: '0'});
+                    for (var i = 0; i < data.length; i++) {
+                        contentTypeData.push({id:data[i].id,pid:data[i].pid,name: data[i].name, value: data[i].id});
+                    }
+                    formSelects.data('contentTypeId', 'local', {arr: crab.createTreeData(contentTypeData,'0'),linkage: true});
+                }
+                form.render('select');
+            });
+        }
+    });
+</script>

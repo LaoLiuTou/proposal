@@ -1,0 +1,57 @@
+<script id="unitTable" type="text/html">
+    {{#
+        let index = 0,batchSum = 0,peopleSum = 0;
+        while(index < d.tableCount){
+        let curList = d.list.slice(index*d.count,(index+1)*d.count)
+    }}
+    <table class="layui-table tpl-table unit-table">
+        <thead>
+        <tr>
+            <th class="title"></th>
+            {{# layui.each(curList, function(index, item){ }}
+            <th class="unit {{= ''+item.id==='0'?'city-unit':'data-td'}} data-{{= index+1}}" data-i="{{= index+1}}" data-unit="{{item.ids}}">{{item.item}}</th>
+            {{#  });
+                if((index+1) === d.tableCount){ }}
+            <th class="unit">合计</th>
+            {{#   }
+            }}
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td>批次</td>
+            {{#
+                layui.each(curList, function(index, item){
+                batchSum += item.batch
+            }}
+            <td class="{{= ''+item.id==='0'?'city-unit':'data-td'}} data-{{= index+1}}" data-i="{{= index+1}}" data-unit="{{item.ids}}">{{item.batch}}</td>
+            {{#  });
+                if((index+1) === d.tableCount){
+                document.getElementById('dutyUnitBatchSum').innerHTML=batchSum;
+            }}
+            <td>{{batchSum}}</td>
+            {{#   }
+            }}
+        </tr>
+        <tr>
+            <td>人次</td>
+            {{#
+                layui.each(curList, function(index, item){
+                peopleSum += item.people
+            }}
+            <td class="{{= ''+item.id==='0'?'city-unit':'data-td'}} data-{{= index+1}}" data-i="{{= index+1}}" data-unit="{{item.ids}}">{{item.people}}</td>
+            {{#  });
+                if((index+1) === d.tableCount){
+                document.getElementById('dutyUnitPeopleSum').innerHTML=peopleSum;
+            }}
+            <td>{{peopleSum}}</td>
+            {{#   }
+            }}
+        </tr>
+        </tbody>
+    </table>
+    {{#
+        index++;
+        }
+    }}
+</script>

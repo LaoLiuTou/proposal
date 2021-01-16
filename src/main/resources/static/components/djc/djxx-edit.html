@@ -1,0 +1,491 @@
+<div class="layui-card">
+    <div id="pageHead" class="layui-card-header">
+        <h2 class="header-title">登记人信息</h2>
+        <span class="layui-breadcrumb pull-right">
+          <a><cite id="printEmpty">打印空表</cite></a>
+          <a><cite id="scanId">扫描</cite></a>
+        </span>
+    </div>
+    <div class="layui-card-body">
+        <input name="eventId" type="hidden"/>
+        <!-- 身份表单 -->
+        <form class="layui-form" id="userinfo_form" lay-filter="userinfo_form">
+            <div class="layui-form-item">
+                <label class="layui-form-label"><span style="color: red">*</span>姓名</label>
+                <div class="layui-input-block">
+                    <input id="name" type="text" name="name" required  lay-verify="required" placeholder="请输入姓名" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label"><span style="color: red">*</span>身份证号</label>
+                <div class="layui-input-block">
+                    <input id="idcard" type="text" name="idcard" required  lay-verify="required|identity" placeholder="请输入身份证号" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div id="sexItem" class="layui-form-item">
+                <label class="layui-form-label">性别</label>
+                <div class="layui-input-block">
+                    <input type="radio" name="sex" value="0" title="男" checked>
+                    <input type="radio" name="sex" value="1" title="女">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label class="layui-form-label">民族</label>
+                    <div class="layui-input-block">
+                        <input id="nation" value="汉" type="text" name="nation"  placeholder="请输入民族" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label"><span style="color: red">*</span>出生年月</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="birthDate" id="birthDate" required lay-verify="required|date" placeholder="yyyy-MM-dd" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label"><span style="color: red">*</span>户籍地址</label>
+                <div class="layui-input-block">
+                    <input id="permanentAddress" type="text" name="permanentAddress" required  lay-verify="required" placeholder="请输入户籍地址" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label"><span style="color: red">*</span>现住地址</label>
+                <div class="layui-input-block">
+                    <input id="currentAddress" type="text" name="currentAddress" required  lay-verify="required" placeholder="请输入现居住地" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">联系电话</label>
+                <div class="layui-input-block">
+                    <input id="mobileNo" type="text" name="mobileNo" placeholder="请输入11位联系电话" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label"><span style="color: red">*</span>来访日期</label>
+                <div class="layui-input-block">
+                    <input type="text" name="visitDate" id="visitDate" required lay-verify="required|date" placeholder="yyyy-MM-dd" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label"><span style="color: red">*</span>指定接待处</label>
+                <div class="layui-input-block">
+                    <select id="receptionOrgId" name="receptionOrgId" lay-verify="required"></select>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <button id="submitBtn" class="layui-btn" lay-submit lay-filter="formDemo">提交</button>
+                    <button id="submitAndPrintBtn" class="layui-btn" lay-submit lay-filter="formSubmitAndPrint">提交并打印</button>
+                    <button id="resetBtn" type="reset" class="layui-btn layui-btn-primary">重置</button>
+                    <button id="editBtn" class="layui-btn"  style="display:none;">修改信息</button>
+                    <button id="saveEditBtn" class="layui-btn" lay-submit lay-filter="formDemo" style="display:none;">保存修改</button>
+                </div>
+            </div>
+        </form>
+
+    </div>
+</div>
+<style>
+    #scanId{
+        cursor: pointer;
+    }
+</style>
+<script type="text/javascript">
+
+    var isIE = true;
+
+    //页面关闭时,关闭读卡
+    window.onbeforeunload = function(event) {
+        StopICWork();
+    }
+
+
+    //加载控件
+    function loadActiveX() {
+        //判断是不是IE浏览器
+        if (navigator.userAgent.indexOf('MSIE') >= 0) {
+            isIE = true;
+            document.getElementById("ActiveXDivOne").innerHTML = "<OBJECT id=\"axCam_Ocx\"  classid=\"clsid:D5BD5B4A-4FC0-4869-880B-27EE9869D706\" width=\"1px\" height=\"1px\" ></OBJECT>";
+        }else {
+            isIE = false;
+            if (!window.WebSocket) {
+                alert("WebSocket not supported by this browser!");
+            }
+            WsInit(0,0,0,0,false);
+        }
+    }
+
+    function LoadOver(){
+        StartIC();
+    }
+
+    //初始化模块
+    function funStartIC(){
+        StartIC();
+    }
+
+    //开始自动读卡
+    function funStartICWork(){
+        StartICWork();
+    }
+
+    //关闭自动读卡
+    function funStopICWork(){
+        StopICWork();
+    }
+
+
+    //信息回调
+    function InfoCallback(op) {
+
+        var text = "";
+        if(op == 0){
+            text = "连接成功\r\n";
+        }else if(op == 0x01){
+            text = "断开成功\r\n";
+        }else if(op == 0x02){
+            text = "设备已经连接\r\n";
+        }else if(op == 0x03){
+            text = "设备已经关闭\r\n";
+        }else if(op == 0x04){
+            text = "拍照成功\r\n";
+        }else if(op == 0x05){
+            text = "pdf添加文件成功\r\n";
+        }else if(op == 0x06){
+            text = "pdf保存成功\r\n";
+        }else if(op == 0x07){
+            text = "图片合并成功\r\n";
+        }else if(op == 0x08){
+            text = "智能连拍启动\r\n";
+        }else if(op == 0x09){
+            text = "定时连拍启动\r\n";
+        }else if(op == 0x10){
+            text = "定时连拍成功\r\n";
+        }else if(op == 0x11){
+            text = "定时连拍关闭\r\n";
+        }else if(op == 0x12){
+            text = "文件上传服务器成功\r\n";
+        }else if(op == 0x13){
+            text = "水印开启\r\n";
+        }else if(op == 0x14){
+            text = "水印关闭\r\n";
+        }else if(op == 0x15){
+            text = "此设备属于本公司\r\n";
+        }else if(op == 0x16){
+            text = "此设备不属于本公司\r\n";
+        }else if(op == 0x17){
+            text = "自动曝光启动\r\n";
+        }else if(op == 0x18){
+            text = "自动曝光关闭\r\n";
+        }else if(op == 0x19){
+            text = "身份证功能启动成功\r\n";
+            StartICWork();
+        }else if(op == 0x1a){
+            text = "身份证功能启动失败\r\n";
+        }else if(op == 0x1b){
+            text = "身份证读卡成功\r\n";
+        }else if(op == 0x1c){
+            text = "身份证读卡失败\r\n";
+        }else if(op == 0x1d){
+            text = "重新操作\r\n";
+        }else if(op == 0x1e){
+            text = "未发现模块\r\n";
+        }else if(op == 0x1f){
+            text = "未启动身份证功能\r\n";
+        }else if(op == 0x20){
+            text = "启动身份证自动读卡\r\n";
+        }else if(op == 0x21){
+            text = "关闭身份证自动读卡\r\n";
+        }else if(op == 0x22){
+            text = "启动拍照只生成base64\r\n";
+        }else if(op == 0x23){
+            text = "关闭拍照只生成base64\r\n";
+        }else if(op == 0x24){
+            //webSocket启动成功
+            StartIC();
+        }
+
+
+        else if(op == 0xa0){
+            text = "没有对应分辨率\r\n";
+        }else if(op == 0xa1){
+            text = "pdf没有添加任何文件\r\n";
+        }else if(op == 0xa2){
+            text = "文件不存在\r\n";
+        }else if(op == 0xa3){
+            text = "意外断开\r\n";
+        }else if(op == 0xa4){
+            text = "连接不上\r\n";
+        }else if(op == 0xa5){
+            text = "pdf添加文件不是jpg格式\r\n";
+        }else if(op == 0xa6){
+            text = "没有发现摄像头\r\n";
+        }else if(op == 0xa7){
+            text = "camid无效\r\n";
+        }else if(op == 0xa8){
+            text = "图片尺寸太小\r\n";
+        }else if(op == 0xa9){
+            text = "文件上传服务器失败\r\n";
+        }else if(op == 0xaa){
+            text = "该设备没有副头\r\n";
+        }else if(op == 0xab){
+            text = "条码识别失败\r\n";
+        }else if(op == 0xac){
+            text = "二维码识别失败\r\n";
+        }else if(op == 0xad){
+            text = "图片合并失败\r\n";
+        }else if(op == 0xae){
+            text = "设置路径文件不存在\r\n";
+        }
+        // var obj = document.getElementById("TextArea1");
+        // obj.value = text+ obj.value;
+    }
+
+    //信息回调
+    function InfoTextCallback(type,str){
+        var text = "";
+        if(type == 0){
+            text = "图片路径:"+str+"\r\n";
+        }else if(type == 1){
+            text = "默认路径:    "+str+"\r\n";
+
+        }else if(type == 2){
+            text = "条码:    "+str+"\r\n";
+
+        }else if(type == 3){
+            text = "文件上传服务器成功:"+str+"\r\n";
+
+        }else if(type == 4){
+            text = "文件上传服务器失败:"+str+"\r\n";
+
+        }else if(type == 5){
+            //text = "base64编码成功\r\n";
+            text ="data:;base64," +str+"\r\n";
+        }else if(type == 6){
+            text = "删除文件成功:"+str+"\r\n";
+        }else if(type == 7){
+            text = "二维码:"+str+"\r\n";
+        }else if(type == 8){
+            text = "拍照失败:"+str+"\r\n";
+        }
+
+        else if(type == 9){
+            text = "身份证名字:"+str+"\r\n";
+            console.log('身份证名字',str);
+            document.getElementById('name').value = str;
+        }else if(type == 10){
+            text = "身份证号码:"+str+"\r\n";
+            console.log('身份证号码',str);
+            document.getElementById('idcard').value = str;
+        }else if(type == 11){
+            text = "身份证性别:"+str+"\r\n";
+            console.log('身份证性别',str);
+            var _sex = 1;
+            if(''+str === '男') _sex = 0;
+            var radios = document.getElementsByName("sex");
+            console.log(radios);
+            for(var i=0;i<radios.length;i++) {
+                if(radios[i].value == _sex) {
+                    radios[i].checked = true;
+                    break;
+                }
+            }
+            layui.use(['form'], function(){
+                const form = layui.form;
+                form.render();
+            });
+        }else if(type == 12){
+            text = "身份证民族:"+str+"\r\n";
+        }else if(type == 13){
+            text = "身份证生日:"+str+"\r\n";
+            console.log('身份证生日',str);
+            document.getElementById('birthDate').value = str.substr(0,4)+'-'+str.substr(4,2)+'-'+str.substr(6,2);
+        }else if(type == 14){
+            text = "身份证地址:"+str+"\r\n";
+            console.log('身份证地址',str);
+            document.getElementById('permanentAddress').value = str;
+            document.getElementById('currentAddress').value = str;
+        }else if(type == 15){
+            text = "身份证签发机关:"+str+"\r\n";
+        }else if(type == 16){
+            text = "身份证有效开始日期:"+str+"\r\n";
+        }else if(type == 17){
+            text = "身份证有效截至日期:"+str+"\r\n";
+        }else if(type == 18){
+            text = "安全模块号:"+str+"\r\n";
+        }else if(type == 19){
+            // var imgobj1 = document.getElementById("img1");
+            // imgobj1.src = "data:;base64," + str;
+        }else if(type == 21){
+            text ="data:;base64," +str+"\r\n";
+        }
+        // var obj = document.getElementById("TextArea1");
+        // obj.value = text+ obj.value;
+
+        funStopICWork();
+    }
+    layui.use(['form'], function(){
+        $("#scanId").click(function(){
+            funStartIC();
+            funStartICWork();
+            return false;
+        });
+    });
+
+</script>
+<script type="text/javascript">
+    layui.use(['form', 'crab','laydate'], function(){
+        var form = layui.form;
+        var crab = layui.crab;
+        var laydate = layui.laydate;
+        var edit = false;
+        form.render();
+        initLayDate();
+        loadActiveX();
+
+        //初始化日期
+        function initLayDate(){
+            //日期
+            laydate.render({
+                elem: '#birthDate'
+                ,value: '1940-01-01'
+            });
+            laydate.render({
+                elem: '#visitDate'
+                ,value: new Date()
+            });
+        }
+
+        //打印空表
+        $("#printEmpty").click(function(){
+            let height = ($(window).height()-30)>=1050?1050:($(window).height()-30);
+            layer.open({
+                type: 2,
+                content: '/components/print/djc.html',
+                title: false,
+                area: ['860px', height+'px']
+            });
+        });
+
+        loadSingleSelectBox(crab,form,'/djc/djxx/listReceptionOrg','receptionOrgId');
+
+        // 加载单选下拉选择框
+        function loadSingleSelectBox(crab,form,url,selectIdName,selectedId){
+            crab.get(url, {}, function (data) {
+                var l = data.length;
+                if (l > 0) {
+                    var option = '<option value=""></option>',_selectedId;
+                    if(selectedId){
+                        _selectedId = selectedId
+                    }
+                    for (var i = 0; i < l; i++) {
+                        var add = '';
+                        if(data[i].address) add = '&nbsp;，&nbsp;'+data[i].address;
+                        option += '<option value="' + data[i].id + '" '+((''+data[i].id===''+_selectedId)?"selected":"")+'>' + data[i].name + add+'</option>';
+                    }
+                    $('#'+selectIdName).empty().append(option);
+                    form.render('select');
+                    initEdit();
+                }
+            });
+        }
+
+        // 编辑的登记人信息
+        var user = crab.getFormData();
+        crab.putFormData(); //清除缓存，否则会一直为编辑状态
+        if (user) {
+            $('#pageHead').remove();
+            $('#submitBtn').hide();
+            $('#submitAndPrintBtn').hide();
+            $('#resetBtn').hide();
+            $('#editBtn').show();
+            $('#idcard').prop('disabled',true);
+            changeFieldDisabled(true);
+            changeReceptionOrgDisabled(true);
+            console.log(user);
+            edit = true;
+        }
+        function changeFieldDisabled(disabledVal) {
+            $('#name').prop('disabled',disabledVal);
+            $('#nation').prop('disabled',disabledVal);
+            $('#permanentAddress').prop('disabled',disabledVal);
+            $('#currentAddress').prop('disabled',disabledVal);
+            $('#mobileNo').prop('disabled',disabledVal);
+            $('#birthDate').prop('disabled',disabledVal);
+            $('#visitDate').prop('disabled',disabledVal);
+            $('input[name="sex"]').prop('disabled',disabledVal);
+            form.render();
+        }
+        function changeReceptionOrgDisabled(disabledVal){
+            $('#receptionOrgId').prop('disabled',disabledVal);
+            form.render();
+        }
+        //回显数据
+        function initEdit(){
+            if (edit) {
+                user.sex = ''+user.sex;
+                form.val('userinfo_form', user);
+                form.render();
+            }
+        }
+
+        $("#editBtn").click(function(){
+            $('#editBtn').hide();
+            $('#saveEditBtn').show();
+            changeFieldDisabled(false);
+            (''+user.status==='0') && changeReceptionOrgDisabled(false);
+            return false;
+        });
+
+        //监听提交
+        form.on('submit(formDemo)', function(data){
+            console.log(data.field);
+            data.field.mobileNo = $.trim(data.field.mobileNo);
+            if(edit){
+                data.field.eventId = user.eventId;
+                crab.post('/djc/edit', data.field, function (data) {
+                    layer.msg('修改成功',{time:2000});
+                    crab.finishPopupCenter();
+                });
+            }else{
+                crab.post('/djc/djxx', data.field, function (data) {
+                    layer.msg('登记成功',{time:2000});
+                    $("#userinfo_form")[0].reset();
+                    form.render();
+                    initLayDate();
+                });
+            }
+            return false;
+        });
+        form.on('submit(formSubmitAndPrint)', function(data){
+            crab.post('/djc/djxx_eventnum', data.field, function (d) {
+                let str = d.split('_');
+                if(''+str[0] !== ''){
+                    layer.msg('登记成功',{time:2000});
+                    let height = ($(window).height()-30)>=1050?1050:($(window).height()-30);
+                    layer.open({
+                        type: 2,
+                        content: '/components/print/djc.html?' +
+                        'event_num='+str[0] +
+                        '&name='+data.field.name +
+                        '&idcard='+data.field.idcard +
+                        '&mobile_no='+data.field.mobileNo +
+                        '&visit_date='+data.field.visitDate +
+                        '&current_address='+data.field.currentAddress +
+                        '&reception_org='+ str[1]+(str.length===3?'&nbsp;&nbsp;'+str[2]:'') +
+                            '&sex='+ (''+data.sex==='0'?'男':'女'),
+                        title: false,
+                        area: ['860px', height+'px']
+                    });
+                    $("#userinfo_form")[0].reset();
+                    form.render();
+                    initLayDate();
+                }else{
+                    layer.msg('登记失败',{time:2000});
+                }
+            });
+            return false;
+        });
+    });
+</script>

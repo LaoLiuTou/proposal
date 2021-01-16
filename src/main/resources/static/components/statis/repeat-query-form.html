@@ -1,0 +1,63 @@
+<!-- 单位表单弹窗 -->
+<form id="repeat-query-form" lay-filter="repeat-query-form" class="layui-form model-form">
+    <div class="layui-form-item">
+        <label class="layui-form-label">事项名称</label>
+        <div class="layui-input-block">
+            <input id="repeatQueryName" placeholder="请输入事项名称" type="text" class="layui-input"/>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">信访人姓名</label>
+        <div class="layui-input-block">
+            <input id="repeatQueryPetitionerName" placeholder="请输入信访人姓名" type="text" class="layui-input"/>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">来访时间</label>
+        <div class="layui-input-block">
+            <input type="text" class="layui-input" readonly id="repeatQueryDate">
+        </div>
+    </div>
+    <div class="layui-form-item model-form-footer">
+        <button class="layui-btn layui-btn-primary close" ew-event="closeDialog" type="button">取消</button>
+        <button class="layui-btn" type="button" id="saveUnitBtn">保存</button>
+    </div>
+</form>
+
+<script>
+    layui.use(['layer', 'crab', 'form', 'laydate'], function () {
+        const layer = layui.layer;
+        const crab = layui.crab;
+        const laydate = layui.laydate;
+
+        let queryData={};
+
+        laydate.render({
+            elem: '#repeatQueryDate'
+            ,format: 'yyyy-MM-dd'
+            ,type: 'date'
+            ,range: '~'
+            ,max:new Date().getTime()
+            ,btns: ['confirm']
+            ,done: function(value, date, endDate){
+                let custom = value.split('~');
+                queryData.start = $.trim(custom[0]);
+                queryData.end = $.trim(custom[1]);
+            }
+        });
+
+        // 保存点击事件
+        $('#saveUnitBtn').click(function(){
+            let name = $.trim($('#repeatQueryName').val());
+            if(name !== '') queryData.name = name;
+            let petitionerName = $.trim($('#repeatQueryPetitionerName').val());
+            if(petitionerName !== '') queryData.petitionerName = petitionerName;
+            if(JSON.stringify(queryData) === '{}') {
+                layer.msg('请填写搜索项');
+                return false;
+            }
+            crab.putTempData('repeatQueryData', queryData);
+            crab.finishPopupCenter();
+        });
+    });
+</script>

@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fangao.dev.sys.mapper.PetitionerInfoMapper">
+    <select id="selectPetitionerOfEventNum" resultType="com.fangao.dev.sys.dto.DjcDTO">
+        SELECT a.idcard as idcard,
+        a.`name` as name,
+        a.sex as sex,
+        a.nation as nation,
+        a.birth_date as birthDate,
+        a.permanent_address as permanentAddress,
+        a.current_address as currentAddress,
+        a.mobile_no as mobileNo,
+        a.operator as operator,
+        a.create_time as createTime,
+        b.id as eventId,
+        b.event_num as eventNum,
+        b.reception_id as receptionId,
+        b.reception_org_id as receptionOrgId,
+        b.visit_date as visitDate,
+        b.status as status,
+        IF(`d`.`status` = 0,'删除审核中',IF(`b`.`status` = 0,'待接待',IF(`b`.`status` = 1,'处理中',IF(`b`.`status` = 2,'已处理',IF(`b`.`status` = -1,'已放弃',''))))) AS `statusName`,
+        d.status as deleteCheckStatus,
+        `queryOrgParentsName` (`b`.`reception_org_id`) AS showOrgs,
+        c.address AS orgAddress
+        from petitioner_info a RIGHT JOIN petition_event_info b on a.idcard=b.idcard
+        LEFT JOIN sys_org c ON c.id=b.reception_org_id
+        LEFT JOIN (
+        SELECT `x`.`petition_event_info_id`,`x`.`status`
+        FROM `delete_check` `x` RIGHT JOIN
+        (SELECT MAX(`z`.`id`) AS `id`,`z`.`petition_event_info_id` AS `eventId` FROM `delete_check` `z` GROUP BY `z`.`petition_event_info_id`) `y`
+        ON `x`.`id`=`y`.`id` AND `x`.`petition_event_info_id`=`y`.`eventId`
+        ) `d` ON `d`.`petition_event_info_id` = `b`.`id`
+        where a.deleted=0
+        <if test="djcDTO.djcOrgId != null">
+            AND b.djc_org_id = #{djcDTO.djcOrgId}
+        </if>
+        <if test="djcDTO.visitDate != null">
+            AND b.visit_date = #{djcDTO.visitDate}
+        </if>
+        <if test="djcDTO.name != null and djcDTO.name != ''">
+            <bind name="likeName" value="'%' + djcDTO.name + '%'" />
+            AND a.`name` LIKE #{likeName}
+        </if>
+        <if test="djcDTO.idcard != null and djcDTO.idcard != ''">
+            <bind name="likeIdcard" value="'%' + djcDTO.idcard + '%'" />
+            AND a.idcard LIKE #{likeIdcard}
+        </if>
+        <if test="djcDTO.receptionOrgId != null">
+            AND b.reception_org_id = #{djcDTO.receptionOrgId}
+        </if>
+        ORDER by b.event_num DESC
+    </select>
+
+    <update id="updateForSet" >
+        update petitioner_info
+        <set>
+            <if test="petitionerInfo.name != null">
+                `name` = #{petitionerInfo.name},
+            </if>
+            <if test="petitionerInfo.sex != null">
+                sex = #{petitionerInfo.sex},
+            </if>
+            <if test="petitionerInfo.nation != null">
+                nation = #{petitionerInfo.nation},
+            </if>
+            <if test="petitionerInfo.birthDate != null">
+                birth_date = #{petitionerInfo.birthDate},
+            </if>
+            <if test="petitionerInfo.permanentAddress != null">
+                permanent_address = #{petitionerInfo.permanentAddress},
+            </if>
+            <if test="petitionerInfo.currentAddress != null">
+                current_address = #{petitionerInfo.currentAddress},
+            </if>
+            <if test="petitionerInfo.mobileNo != null">
+                mobile_no = #{petitionerInfo.mobileNo}
+            </if>
+         </set>
+        where  deleted=0  AND idcard = #{petitionerInfo.idcard}
+    </update>
+
+    <select id="countPetitonerNumOfDate" resultType="com.fangao.dev.sys.dto.CountPetitonerNumDTO">
+        SELECT b.visit_date as visitDate,count(a.idcard) as number
+        from petitioner_info a RIGHT JOIN petition_event_info b on a.idcard = b.idcard
+        where a.deleted=0 and b.deleted=0
+        GROUP BY b.visit_date ORDER BY visitDate
+    </select>
+
+    <select id="countPetitonerSex" resultType="com.fangao.dev.sys.dto.CountPetitonerSexDTO">
+        SELECT case sex when 0 then '男' ELSE '女' end as sex,ROUND(count(*)/(SELECT count(*) from petitioner_info where deleted=0),4) as sold from petitioner_info where deleted=0 GROUP BY sex
+    </select>
+
+    <select id="countPetitonerAge" resultType="com.fangao.dev.sys.dto.CountPetitonerAgeDTO">
+        SELECT name as item,COUNT(name) as count,ROUND(COUNT(name)/(SELECT COUNT(*) from petitioner_info where deleted=0)*100,2) as percent from(SELECT
+        CASE
+        WHEN age &lt; 20 THEN	'19岁及以下'
+        WHEN age &lt;= 29 THEN	'20-29岁'
+        WHEN age &lt;= 39 THEN	'30-39岁'
+        WHEN age &lt;= 49 THEN	'40-49岁'
+        ELSE	'50岁及以上'
+        END AS NAME
+        FROM
+        (select TIMESTAMPDIFF(YEAR,petitioner_info.birth_date,CURDATE())AS age
+        from
+        petitioner_info
+        WHERE petitioner_info.birth_date is not NULL and deleted = 0
+        ) t
+        ) f GROUP BY name
+
+    </select>
+
+</mapper>

@@ -1,0 +1,27 @@
+<div style="padding: 20px;">
+    <input type="text" class="layui-input" readonly id="date">
+</div>
+<script>
+    layui.use(['laydate','layer'], function () {
+        const laydate = layui.laydate;
+        laydate.render({
+            elem: '#date'
+            ,format: 'yyyy年MM月dd日'
+            ,type: 'date'
+            ,range: '~'
+            ,max:new Date().getTime()
+            ,btns: ['confirm']
+            ,done: function(value, date, endDate){
+                let openDiv = layui.sessionData('dateLayer')['openDiv'];
+                let custom = value.split('~');
+                layui.sessionData('dateLayer', {key: openDiv+'_type', value: '4'});
+                layui.sessionData('dateLayer', {key: openDiv+'_start', value: $.trim(custom[0])});
+                layui.sessionData('dateLayer', {key: openDiv+'_end', value: $.trim(custom[1])});
+                layer.close(layui.sessionData('dateLayer')['index']);
+            }
+        });
+        function prev(num){
+            return num>9?num:'0'+num;
+        }
+    });
+</script>

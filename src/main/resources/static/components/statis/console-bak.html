@@ -1,0 +1,803 @@
+<div class="layui-row layui-col-space15">
+    <div class="layui-col-xs6 layui-col-md3">
+        <div class="layui-card">
+            <div class="layui-card-header">
+                登记室登记数
+                <div class="layui-btn-group layuiadmin-btn-group pull-right">
+                    <a href="javascript:;" class="date-btn date-btn-dj layui-btn layui-btn-primary btn-gray layui-btn-xs date-default" layui-type="0" layui-c="dj">日</a>
+                    <a href="javascript:;" class="date-btn date-btn-dj layui-btn layui-btn-primary layui-btn-xs" layui-type="1" layui-c="dj">周</a>
+                    <a href="javascript:;" class="date-btn date-btn-dj layui-btn layui-btn-primary layui-btn-xs" layui-type="2" layui-c="dj">月</a>
+                    <a href="javascript:;" class="date-btn date-btn-dj layui-btn layui-btn-primary layui-btn-xs" layui-type="3" layui-c="dj">年</a>
+                </div>
+            </div>
+            <div class="layui-card-body">
+                <p class="lay-big-font" id="djNum"></p>
+                <p>总计登记数量<span class="pull-right" id="djSum">734<i class="layui-icon layui-icon-chart"></i></span></p>
+            </div>
+        </div>
+    </div>
+    <div class="layui-col-xs6 layui-col-md3">
+        <div class="layui-card">
+            <div class="layui-card-header">
+                接待数
+                <div class="layui-btn-group layuiadmin-btn-group pull-right">
+                    <a href="javascript:;" class="date-btn date-btn-jd layui-btn layui-btn-primary btn-gray layui-btn-xs date-default" layui-type="0" layui-c="jd">日</a>
+                    <a href="javascript:;" class="date-btn date-btn-jd layui-btn layui-btn-primary layui-btn-xs" layui-type="1" layui-c="jd">周</a>
+                    <a href="javascript:;" class="date-btn date-btn-jd layui-btn layui-btn-primary layui-btn-xs" layui-type="2" layui-c="jd">月</a>
+                    <a href="javascript:;" class="date-btn date-btn-jd layui-btn layui-btn-primary layui-btn-xs" layui-type="3" layui-c="jd">年</a>
+                </div>
+            </div>
+            <div class="layui-card-body">
+                <p class="lay-big-font" id="jdNum"></p>
+                <p>总计接待数量<span class="pull-right" id="jdSum">723<i class="layui-icon layui-icon-chart"></i></span></p>
+            </div>
+        </div>
+    </div>
+    <div class="layui-col-xs6 layui-col-md3">
+        <div class="layui-card">
+            <div class="layui-card-header">
+                重访数
+                <div class="layui-btn-group layuiadmin-btn-group pull-right">
+                    <a href="javascript:;" class="date-btn date-btn-cf layui-btn layui-btn-primary btn-gray layui-btn-xs date-default" layui-type="0" layui-c="cf">日</a>
+                    <a href="javascript:;" class="date-btn date-btn-cf layui-btn layui-btn-primary layui-btn-xs" layui-type="1" layui-c="cf">周</a>
+                    <a href="javascript:;" class="date-btn date-btn-cf layui-btn layui-btn-primary layui-btn-xs" layui-type="2" layui-c="cf">月</a>
+                    <a href="javascript:;" class="date-btn date-btn-cf layui-btn layui-btn-primary layui-btn-xs" layui-type="3" layui-c="cf">年</a>
+                </div>
+            </div>
+            <div class="layui-card-body">
+                <p class="lay-big-font" id="cfNum"></p>
+                <p>总计重访数量<span class="pull-right" id="cfSum">27<i class="layui-icon layui-icon-chart"></i></span></p>
+            </div>
+        </div>
+    </div>
+    <div class="layui-col-xs6 layui-col-md3">
+        <div class="layui-card">
+            <div class="layui-card-header">
+                已处理数
+                <div class="layui-btn-group layuiadmin-btn-group pull-right">
+                    <a href="javascript:;" class="date-btn date-btn-ycl layui-btn layui-btn-primary btn-gray layui-btn-xs date-default" layui-type="0" layui-c="ycl">日</a>
+                    <a href="javascript:;" class="date-btn date-btn-ycl layui-btn layui-btn-primary layui-btn-xs" layui-type="1" layui-c="ycl">周</a>
+                    <a href="javascript:;" class="date-btn date-btn-ycl layui-btn layui-btn-primary layui-btn-xs" layui-type="2" layui-c="ycl">月</a>
+                    <a href="javascript:;" class="date-btn date-btn-ycl layui-btn layui-btn-primary layui-btn-xs" layui-type="3" layui-c="ycl">年</a>
+                </div>
+            </div>
+            <div class="layui-card-body">
+                <p class="lay-big-font" id="yclNum"></p>
+                <p>总计已处理数量<span class="pull-right" id="yclSum">672<i class="layui-icon layui-icon-chart"></i></span></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="layui-row layui-col-space15">
+    <div class="layui-col-sm12">
+        <div class="layui-card">
+            <div class="layui-card-header">
+                <h2 class="header-title">登记接待量</h2>
+                <div class="layui-btn-group layuiadmin-btn-group pull-right">
+                    <a href="javascript:;" class="date-btn date-btn-tb layui-btn layui-btn-primary btn-gray layui-btn-xs date-default" layui-type="0" layui-c="tb">日</a>
+                    <a href="javascript:;" class="date-btn date-btn-tb layui-btn layui-btn-primary layui-btn-xs" layui-type="1" layui-c="tb">周</a>
+                    <a href="javascript:;" class="date-btn date-btn-tb layui-btn layui-btn-primary layui-btn-xs" layui-type="2" layui-c="tb">月</a>
+                    <a href="javascript:;" class="date-btn date-btn-tb layui-btn layui-btn-primary layui-btn-xs" layui-type="3" layui-c="tb">年</a>
+                    <a href="javascript:;" class="date-btn date-btn-tb layui-btn layui-btn-primary layui-btn-xs" layui-type="4" layui-c="tb">总</a>
+                </div>
+            </div>
+            <div class="layui-card-body">
+                <div class="layui-row">
+                    <div class="layui-col-sm8" id="mountLine" style="height: 350px">
+                    </div>
+                    <div class="layui-col-sm4" id="petitionPie">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="layui-row layui-col-space15">
+    <div class="layui-col-sm12">
+        <div class="layui-card">
+            <div class="layui-card-header">
+                <h2 class="header-title">登记数据统计</h2>
+            </div>
+            <div class="layui-card-body">
+                <div class="layui-row layui-col-space15">
+                    <div class="layui-col-xs12 layui-col-sm12 layui-col-md8">
+                        <div class="layui-card">
+                            <div class="layui-card-header">
+                                <i class="layui-icon layui-icon-engine"></i>&nbsp;日登记人数
+                            </div>
+                            <div class="layui-card-body">
+                                <div id="countUserOfDay"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-col-xs12 layui-col-sm12 layui-col-md4">
+                        <div class="layui-card">
+                            <div class="layui-card-header">
+                                <i class="layui-icon layui-icon-engine"></i>&nbsp;男女比例
+                            </div>
+                            <div class="layui-card-body">
+                                <div id="countSex" class="layui-main"></div>
+                            </div>
+                        </div>
+
+                        <div class="layui-card">
+                            <div class="layui-card-header">
+                                <i class="layui-icon layui-icon-engine"></i>&nbsp;年龄段
+                            </div>
+                            <div class="layui-card-body">
+                                <div id="countAge" class="layui-main"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="layui-row layui-col-space15">
+    <div class="layui-col-sm12">
+        <div class="layui-card">
+            <div class="layui-card-header">
+                <h2 class="header-title">接待数据统计</h2>
+            </div>
+            <div class="layui-card-body">
+                <div class="layui-row layui-col-space15">
+                    <div class="layui-col-xs12 layui-col-sm12 layui-col-md4">
+                        <div class="layui-card ">
+                            <div class="layui-card-header">
+                                <i class="layui-icon layui-icon-engine"></i>&nbsp;接待数量
+                            </div>
+                            <div class="layui-card-body" style="height: 350px">
+                                <div id="jdCountPie"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-col-xs12 layui-col-sm12 layui-col-md4">
+                        <div class="layui-card">
+                            <div class="layui-card-header">
+                                <i class="layui-icon layui-icon-engine"></i>&nbsp;事发地
+                            </div>
+                            <div class="layui-card-body" style="height: 350px">
+                                <div id="placeCountPie"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-col-xs12 layui-col-sm12 layui-col-md4">
+                        <div class="layui-card">
+                            <div class="layui-card-header">
+                                <i class="layui-icon layui-icon-engine"></i>&nbsp;责任单位
+                            </div>
+                            <div class="layui-card-body" style="height: 350px">
+                                <div id="unitCountPie"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-col-xs12 layui-col-sm12 layui-col-md12">
+                        <div class="layui-card">
+                            <div class="layui-card-header">
+                                <i class="layui-icon layui-icon-engine"></i>&nbsp;内容分类
+                            </div>
+                            <div class="layui-card-body" style="height: 400px">
+                                <div id="contentCountInterval"></div>
+                                <div id="contentCountIntervalSlider"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style type="text/css">
+    .btn-gray{background-color: #ddd;}
+</style>
+<script type="text/javascript" src="/assets/libs/countUp.min.js"></script>
+<script>
+    layui.use(['table', 'config', 'crab'], function () {
+        var crab = layui.crab;
+        var $ = layui.jquery;
+        var pieFirst = true,lineFirst = true,pieChart,lineChart;
+
+        function clickDateBtn(that,_class){
+            var type = $(that).attr('layui-type');
+            var flag = 1;
+            $('.'+_class).removeClass('btn-gray');
+            $(that).addClass('btn-gray');
+            if(_class === 'date-btn-tb') flag = 3;
+            getNum(_class,type,flag);
+        }
+        function getNum(_class,type,flag){
+            var url = '',url2='',ele = '',sum_ele = '';
+            if(_class === 'date-btn-dj'){
+                url = '/djc/statis/console_'+type;
+                ele = 'djNum';
+                sum_ele = 'djSum';
+            }
+            if(_class === 'date-btn-jd'){
+                url = '/jdc/statis/console_'+type;
+                ele = 'jdNum';
+                sum_ele = 'jdSum';
+            }
+            if(_class === 'date-btn-cf'){
+                url = '/jdc/statis/console_cf_'+type;
+                ele = 'cfNum';
+                sum_ele = 'cfSum';
+            }
+            if(_class === 'date-btn-ycl'){
+                url = '/jdc/statis/console_ycl_'+type;
+                ele = 'yclNum';
+                sum_ele = 'yclSum';
+            }
+            if(_class === 'date-btn-tb'){
+                url = '/jdc/statis/console_pie_'+type;
+                url2 = '/jdc/statis/console_line_'+type;
+            }
+            crab.get(url, {}, function (data) {
+                if(flag === 1){
+                    new CountUp(ele, 0, data, 0, 3, {
+                        useEasing: true,
+                        useGrouping: true,
+                        separator: ',',
+                        decimal: '.'
+                    }).start();
+                }else if(flag === 2){
+                    $('#'+sum_ele).html(data+'&nbsp;<i class="layui-icon layui-icon-chart"></i>');
+                }else if(flag === 3){
+                    if(pieFirst){
+                        pieFirst = false;
+                        pieChart = drawPie.drawPie(data);
+                    }else{
+                        drawPie.reDrawPie(data);
+                    }
+                }
+            });
+            if(url2 !== ''){
+                crab.get(url2, {}, function (data) {
+                    if(flag === 3){
+                        if(lineFirst){
+                            lineFirst = false;
+                            lineChart = drawLine.draw(data);
+                        }else{
+                            drawLine.reDraw(data);
+                        }
+                    }
+                });
+            }
+        }
+        $('.date-btn').click(function(){
+            var c = $(this).attr('layui-c');
+            clickDateBtn(this,'date-btn-'+c);
+        });
+        var drawPie = {
+            getSum:function(data){
+                var sum = 0;
+                for(var i=0;i<data.length;i++){
+                    sum += data[i].count;
+                }
+                return sum;
+            },
+            drawPie:function (data){
+                var chart = new G2.Chart({
+                    container: 'petitionPie',
+                    forceFit: true,
+                    height: 350,
+                    padding:'auto'
+                });
+                var brefs = {
+                    percent: {
+                        formatter: function formatter(val) {
+                            val = val + '%';
+                            return val;
+                        }
+                    }
+                };
+                chart.source(data, brefs);
+                chart.legend({
+                    position:'top-center'
+                });
+                chart.coord('theta', {
+                    radius: 0.6,
+                    innerRadius: 0.7
+                });
+                chart.tooltip({
+                    showTitle: false,
+                    itemTpl: '<li><span style="background-color:{color};" class="g2-tooltip-marker"></span>{name}<br>{count} {value}</li>'
+                });
+
+                // 辅助文本
+                chart.guide().html({
+                    position: ['50%', '50%'],
+                    html: '<div style="color:#8c8c8c;font-size: 14px;text-align: center;width: 10em;">信访事项<br><span style="color:#8c8c8c;font-size:20px">'+drawPie.getSum(data)+'</span>件</div>',
+                    alignX: 'middle',
+                    alignY: 'middle'
+                });
+                var interval = chart.intervalStack()
+                    .position('percent')
+                    .color('item',['#ff7f0e','#1f77b4',  '#2ca02c'])
+                    .label('count', {
+                        formatter: function formatter(val, item) {
+                            return item.point.item + ': ' + val+'件';
+                        }})
+                    .tooltip('item*count*percent', function(item, count, percent) {
+                        count = count + '件';
+                        percent = percent + '%';
+                        return {
+                            name: item,
+                            count: count,
+                            value: percent
+                        };})
+                    .style({
+                        lineWidth: 1,
+                        stroke: '#fff'});
+                chart.render();
+                interval.setSelected(data[0]);
+                return chart;
+            },
+            reDrawPie:function (data){
+                pieChart.guide().clear();
+                // 辅助文本
+                pieChart.guide().html({
+                    position: ['50%', '50%'],
+                    html: '<div style="color:#8c8c8c;font-size: 14px;text-align: center;width: 10em;">信访事项<br><span style="color:#8c8c8c;font-size:20px">'+drawPie.getSum(data)+'</span>件</div>',
+                    alignX: 'middle',
+                    alignY: 'middle'
+                });
+                pieChart.changeData(data);
+            }
+        };
+        var drawLine = {
+            draw:function(data){
+                var chart = new G2.Chart({
+                    container: 'mountLine',
+                    forceFit: true,
+                    height: 350,
+                    padding: 'auto'
+                });
+                chart.scale('rate', {
+                    alias: '接待率（%）',
+                    max: 100,
+                    min: 0,
+                    tickCount: 5
+                });
+                chart.axis('rate', {
+                    label: {
+                        textStyle: {
+                            fill: '#aaaaaa'
+                        }
+                    },
+                    title: {
+                        offset: 50
+                    }
+                });
+                chart.scale('value', {
+                    alias: '件数',
+                    min: 0
+                });
+                chart.axis('value', {
+                    label: {
+                        textStyle: {
+                            fill: '#aaaaaa'
+                        }
+                    },
+                    title: {
+                        offset: 50
+                    }
+                });
+                chart.source(data);
+                chart.legend({
+                    position:'top-center'
+                });
+                chart.tooltip({
+                    crosshairs: {
+                        type:'cross'
+                    }
+                });
+
+                chart.interval()
+                    .position('date*value')
+                    .color('type')
+                    .opacity(1)
+                    .adjust([{
+                        type: 'dodge',
+                        marginRatio: 1 / 32
+                    }]);
+                chart.line().position('date*rate').color('#fdae6b').size(2).shape('line');
+                chart.point().position('date*rate').color('#fdae6b').size(3).shape('circle');
+                chart.render();
+                return chart;
+            },
+            reDraw:function(data){
+                lineChart.changeData(data);
+            }
+        };
+
+        // 登记统计
+        function drawColumnChart(data){
+            const chart = new G2.Chart({
+                container: 'countUserOfDay',
+                height: 535,
+                forceFit: true,
+                padding:'auto'
+            });
+            chart.scale('number', {
+                alias: '人数'
+            });
+            chart.axis('visitDate', {
+                label: {
+                    textStyle: {
+                        fill: '#aaaaaa'
+                    }
+                }
+            });
+            chart.source(data,{
+                visitDate:{
+                    range: [ 0.1, 0.9 ]
+                }
+            });
+            chart.legend(false);
+            chart.interval().position('visitDate*number').color('number',['#00FFFF']);
+            chart.render();
+        }
+        function drawSexBasicCircleChart(data){
+            var _G = G2,
+                Shape = _G.Shape;
+
+            Shape.registerShape('interval', 'radiusPie', {
+                draw: function draw(cfg, container) {
+                    // 将归一化后的数据转换为画布上的坐标
+                    var points = cfg.origin.points;
+                    var path = [];
+                    for (var i = 0; i < cfg.origin.points.length; i += 4) {
+                        path.push(['M', points[i].x, points[i].y]);
+                        path.push(['L', points[i + 1].x, points[i + 1].y]);
+                        path.push(['L', points[i + 2].x, points[i + 2].y]);
+                        path.push(['L', points[i + 3].x, points[i + 3].y]);
+                        path.push(['L', points[i].x, points[i].y]);
+                        path.push(['z']);
+                    }
+                    path = this.parsePath(path, true);
+                    var rect = container.addShape('path', {
+                        attrs: {
+                            fill: cfg.color || '#00D9DF',
+                            path: path
+                        }
+                    });
+                    var minH = Math.min(path[1][7], path[2][2]);
+                    var minW = Math.min(path[1][6], path[2][1]);
+                    var diffH = Math.abs(path[1][7] - path[2][2]);
+                    var diffW = Math.abs(path[1][6] - path[2][1]);
+                    container.addShape('circle', {
+                        attrs: {
+                            x: minW + diffW / 2,
+                            y: minH + diffH / 2,
+                            fill: cfg.color,
+                            radius: diffH / 2
+                        }
+                    });
+
+                    var minHH = Math.min(path[3][7], path[4][2]);
+                    var minWW = Math.min(path[3][6], path[4][1]);
+                    var diffHH = Math.abs(path[3][7] - path[4][2]);
+                    var diffWW = Math.abs(path[3][6] - path[4][1]);
+                    container.addShape('circle', {
+                        attrs: {
+                            x: minWW + diffWW / 2,
+                            y: minHH + diffHH / 2,
+                            fill: cfg.color,
+                            radius: diffH / 2
+                        }
+                    });
+                    return rect;
+                }
+            });
+
+            var chart = new G2.Chart({
+                container: 'countSex',
+                forceFit: true,
+                height: 225,
+                padding:['auto',20]
+            });
+
+            var COLORS = ['#1890ff', '#f04864'];
+
+            chart.coord('theta', {
+                radius: 0.6
+            });
+            chart.source(data);
+            chart.legend(false);
+            chart.tooltip({
+                showTitle: false
+            });
+            chart.intervalStack().position('sold').shape('radiusPie').color('sex', COLORS).label('sold', {
+                useHtml: true,
+                htmlTemplate: function htmlTemplate(text, item) {
+                    var isFemale = item._origin.sex === '女';
+                    var src = isFemale ? 'https://gw.alipayobjects.com/zos/rmsportal/mweUsJpBWucJRixSfWVP.png' : 'https://gw.alipayobjects.com/zos/rmsportal/oeCxrAewtedMBYOETCln.png';
+                    var color = isFemale ? COLORS[1] : COLORS[0];
+                    var IMG = '<img style="width:40px" src="' + src + '" /><br/>';
+                    return '<div style="text-align:center;color:' + color + '">' + IMG + (text * 100).toFixed(0) + '%</div>';
+                }
+            });
+
+            chart.render();
+
+        }
+        function drawAgeCircleChart(data,total){
+            var chart = new G2.Chart({
+                container: 'countAge',
+                forceFit: true,
+                height: 225,
+                padding:['auto',20]
+            });
+            chart.source(data, {
+                percent: {
+                    formatter: function formatter(val) {
+                        val = val + '%';
+                        return val;
+                    }
+                }
+            });
+            chart.legend(false);
+            chart.coord('theta', {
+                radius: 0.6,
+                innerRadius: 0.8
+            });
+            chart.tooltip({
+                showTitle: false,
+                itemTpl: '<li><span style="background-color:{color};" class="g2-tooltip-marker"></span>{name}<br>{count} {value}</li>'
+            });
+
+            // 辅助文本
+            chart.guide().html({
+                position: ['50%', '50%'],
+                html: '<div style="color:#8c8c8c;font-size: 14px;text-align: center;width: 6em;">人数<br><span style="color:#8c8c8c;font-size:18px">'+total+'</span>人</div>',
+                alignX: 'middle',
+                alignY: 'middle'
+            });
+            var interval = chart.intervalStack()
+                .position('percent')
+                .color('item')
+                .label('count', {
+                    formatter: function formatter(val, item) {
+                        return item.point.item + ': ' + val+'人';
+                    }})
+                .tooltip('item*count*percent', function(item, count, percent) {
+                    count = count + '人';
+                    percent = percent + '%';
+                    return {
+                        name: item,
+                        count: count,
+                        value: percent
+                    };})
+                .style({
+                    lineWidth: 1,
+                    stroke: '#fff'});
+            chart.render();
+            interval.setSelected(data[0]);
+        }
+
+        // 接待统计
+        function drawJDCountPie(data){
+
+            var chart = new G2.Chart({
+                container: 'jdCountPie',
+                forceFit: true,
+                height: 350,
+                padding:['auto',50]
+            });
+            var brefs = {
+                percent: {
+                    formatter: function formatter(val) {
+                        val = val + '%';
+                        return val;
+                    }
+                }
+            };
+            chart.source(data, brefs);
+            chart.coord('theta', {
+                radius: 0.6
+            });
+            chart.tooltip({
+                showTitle: false,
+                itemTpl: '<li><span style="background-color:{color};" class="g2-tooltip-marker"></span>{name}<br>{count} {value}</li>'
+            });
+
+            var interval = chart.intervalStack()
+                .position('percent')
+                .color('item')
+                .label('count', {
+                    formatter: function formatter(val, item) {
+                        return item.point.item + ': ' + val+'件';
+                    }})
+                .tooltip('item*count*percent', function(item, count, percent) {
+                    count = count + '件';
+                    percent = percent + '%';
+                    return {
+                        name: item,
+                        count: count,
+                        value: percent
+                    };})
+                .style({
+                    lineWidth: 1,
+                    stroke: '#fff'});
+            chart.render();
+        }
+        function drawPlaceCountPie(data){
+
+            var chart = new G2.Chart({
+                container: 'placeCountPie',
+                forceFit: true,
+                height: 350,
+                padding:['auto',50]
+            });
+            var brefs = {
+                percent: {
+                    formatter: function formatter(val) {
+                        val = val + '%';
+                        return val;
+                    }
+                }
+            };
+            chart.source(data, brefs);
+            chart.coord('theta', {
+                radius: 0.6
+            });
+            chart.tooltip({
+                showTitle: false,
+                itemTpl: '<li><span style="background-color:{color};" class="g2-tooltip-marker"></span>{name}<br>{count} {value}</li>'
+            });
+
+            var interval = chart.intervalStack()
+                .position('percent')
+                .color('item')
+                .label('count', {
+                    formatter: function formatter(val, item) {
+                        return item.point.item + ': ' + val+'件';
+                    }})
+                .tooltip('item*count*percent', function(item, count, percent) {
+                    count = count + '件';
+                    percent = percent + '%';
+                    return {
+                        name: item,
+                        count: count,
+                        value: percent
+                    };})
+                .style({
+                    lineWidth: 1,
+                    stroke: '#fff'});
+            chart.render();
+        }
+        function drawUnitCountPie(data){
+
+            var chart = new G2.Chart({
+                container: 'unitCountPie',
+                forceFit: true,
+                height: 350,
+                padding:['auto',50]
+            });
+            var brefs = {
+                percent: {
+                    formatter: function formatter(val) {
+                        val = val + '%';
+                        return val;
+                    }
+                }
+            };
+            chart.source(data, brefs);
+            chart.coord('theta', {
+                radius: 0.6
+            });
+            chart.tooltip({
+                showTitle: false,
+                itemTpl: '<li><span style="background-color:{color};" class="g2-tooltip-marker"></span>{name}<br>{count} {value}</li>'
+            });
+
+            var interval = chart.intervalStack()
+                .position('percent')
+                .color('item')
+                .label('count', {
+                    formatter: function formatter(val, item) {
+                        return item.point.item + ': ' + val+'件';
+                    }})
+                .tooltip('item*count*percent', function(item, count, percent) {
+                    count = count + '件';
+                    percent = percent + '%';
+                    return {
+                        name: item,
+                        count: count,
+                        value: percent
+                    };})
+                .style({
+                    lineWidth: 1,
+                    stroke: '#fff'});
+            chart.render();
+        }
+        function drawContentCountInterval(data){
+            var chart = new G2.Chart({
+                container: 'contentCountInterval',
+                forceFit: true,
+                height: 350,
+                padding: ['auto',50]
+            });
+            chart.source(data);
+            chart.scale('value', {
+                alias: '数量（件）'
+            });
+            chart.axis('type', {
+                label: {
+                    textStyle: {
+                        fill: '#aaaaaa',
+                        rotate: 0.38
+                    },
+                    formatter: function formatter(text){
+                        return text.length>8?(text.substring(0,8)+'...'):text;
+                    }
+                },
+                autoRotate: true,
+                tickLine: {
+                    alignWithLabel: false,
+                    length: 0
+                }
+            });
+
+            chart.axis('value', {
+                label: {
+                    textStyle: {
+                        fill: '#aaaaaa'
+                    },
+                    formatter: function formatter(text) {
+                        return text.replace(/(\d)(?=(?:\d{3})+$)/g, '$1,');
+                    }
+                },
+                title: {
+                    offset: 30
+                }
+            });
+            chart.interval().position('type*value').color('cat').opacity(1);
+            chart.render();
+        }
+
+        // 默认显示
+        (function defaultData(){
+            // 登记接待量
+            $('.date-default').trigger('click');
+            getNum('date-btn-dj',4,2);
+            getNum('date-btn-jd',4,2);
+            getNum('date-btn-cf',4,2);
+            getNum('date-btn-ycl',4,2);
+
+            // 登记统计
+            crab.get('/djc/statistics/countUserOfDate', {}, function (data) {
+                drawColumnChart(data);
+            });
+            crab.get('/djc/statistics/countPetitonerSex', {}, function (data) {
+                drawSexBasicCircleChart(data);
+            });
+            crab.get('/djc/statistics/countPetitonerAge', {}, function (data) {
+                drawAgeCircleChart(data.listData,data.total);
+            });
+
+            // 接待统计
+            /**
+             * Todo 后台请求数据，参照上方登记统计
+             */
+            crab.get('/jdc/statis/console/jdpie', {}, function (data) {
+                drawJDCountPie(data);
+            });
+            crab.get('/jdc/statis/console/placepie', {}, function (data) {
+                drawPlaceCountPie(data);
+            });
+            crab.get('/jdc/statis/console/unitpie', {}, function (data) {
+                drawUnitCountPie(data);
+            });
+            crab.get('/jdc/statis/console/contentinterval', {}, function (data) {
+                drawContentCountInterval(data);
+            });
+        }());
+
+    });
+</script>

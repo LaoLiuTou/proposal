@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fangao.dev.sys.mapper.OrgMapper">
+
+    <select id="selectTopList" resultType="com.fangao.dev.sys.entity.Org">
+        SELECT id,pid,code,name,address,remark,`code` AS description FROM sys_org WHERE rid=#{topOrgId} AND deleted=0
+        ORDER BY id
+    </select>
+
+    <select id="listAll" resultType="com.fangao.dev.sys.entity.Org">
+        SELECT id,pid,name,id AS `value` FROM sys_org WHERE deleted=0 ORDER BY id
+    </select>
+
+    <select id="listReceptionOrg" resultType="com.fangao.dev.sys.vo.ReceptionOrgSelectedVO">
+        SELECT a.id,queryOrgParentsName(a.id) AS `name`,a.address
+        FROM sys_org a
+        RIGHT JOIN (
+        SELECT DISTINCT x.org_id
+        FROM sys_user_org x
+        JOIN sys_user y ON x.user_id=y.id AND y.`status`=0
+        JOIN sys_user_role z ON z.user_id= y.id AND z.role_id=2
+        ) b ON a.id=b.org_id
+        WHERE a.`deleted`=0
+        ORDER BY id ASC
+    </select>
+
+    <select id="getUserByOrgIdAndRoleId" resultType="com.fangao.dev.sys.dto.UserInfoDTO">
+        SELECT DISTINCT
+        `a`.`id` AS `id`,
+        `a`.`username` AS `username`,
+        `a`.`real_name` AS `real_name`,
+        `a`.`nick_name` AS `nick_name`,
+        `a`.`avatar` AS `avatar`,
+        `a`.`sex` AS `sex`,
+        `a`.`phone` AS `phone`,
+        `a`.`email` AS `email`
+        FROM
+        `sys_user` a
+        RIGHT JOIN sys_user_org b ON a.id=b.user_id
+        RIGHT JOIN sys_user_role c ON a.id=c.user_id
+        WHERE c.role_id=#{roleId}
+        AND b.org_id=#{orgId}
+        AND a.deleted=0
+    </select>
+    <select id="getJdcDtoByOrgIdAndUnitId" resultType="com.fangao.dev.sys.dto.JdcDTO">
+       SELECT
+       petition_event_info.event_num as event_num,
+       petition_event_info.name as name,
+       petitioner_info.name as petitioner_name,
+       dict_petition_event_place.name as event_place_name,
+       petition_event_info.event_content as event_content
+      from
+      sys_org,
+      petition_event_info,
+      petitioner_info,
+      dict_petition_event_place
+      where sys_org.id=#{orgId}
+      and sys_org.id=petition_event_info.reception_org_id
+      and petition_event_info.status=1
+      and petition_event_info.deleted =0
+      and petition_event_info.idcard=petitioner_info.idcard
+      and dict_petition_event_place.id=petition_event_info.event_place_id
+      and duty_unit_id=#{unitId}
+    </select>
+
+    <select id="getJdcDtoByOrgIdAndUnitIdAndTime" resultType="com.fangao.dev.sys.dto.JdcDTO">
+       SELECT
+       petition_event_info.event_num as event_num,
+       petition_event_info.name as name,
+       petitioner_info.name as petitioner_name,
+       dict_petition_event_place.name as event_place_name,
+       petition_event_info.event_content as event_content
+      from
+      sys_org,
+      petition_event_info,
+      petitioner_info,
+      dict_petition_event_place
+      where sys_org.id=#{orgId}
+      and sys_org.id=petition_event_info.reception_org_id
+      and petition_event_info.status=1
+      and petition_event_info.deleted =0
+      and petition_event_info.idcard=petitioner_info.idcard
+      and dict_petition_event_place.id=petition_event_info.event_place_id
+      and petition_event_info.duty_unit_id=#{unitId}
+      and petition_event_info.create_time>= #{beginDate}
+      and #{endDate}>=petition_event_info.create_time
+    </select>
+</mapper>

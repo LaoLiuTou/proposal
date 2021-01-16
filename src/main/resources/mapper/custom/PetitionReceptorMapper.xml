@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fangao.dev.sys.mapper.PetitionReceptorMapper">
+
+    <select id="queryPetitionReceptor" resultType="com.fangao.dev.sys.entity.PetitionReceptor">
+        SELECT DISTINCT
+        `x`.`id` AS `id`,
+        `x`.`name` AS `name`,
+        `x`.`idcard` AS `idcard`,
+        `x`.`sex` AS `sex`,
+        `x`.`sort` AS `sort`,
+        `x`.`status` AS `status`,
+        `x`.`deleted` AS `deleted`,
+        `x`.`operator` AS `operator`,
+        `x`.`create_time` AS `create_time`,
+        `y`.`org_id` AS `orgs`,
+        queryOrgParentsName(`y`.`org_id`) AS `orgsName`
+        FROM
+        `petition_receptor` `x`
+        JOIN `link_receptor_org` `y` ON `x`.`id` = `y`.`receptor_id`
+        WHERE `x`.`deleted` = 0
+        <if test="receptor.name != null and receptor.name != ''">
+            <bind name="receptor.name" value="'%' + receptor.name + '%'" />
+            AND `x`.`name` LIKE #{receptor.name}
+        </if>
+        <if test="receptor.idcard != null and receptor.idcard != ''">
+            <bind name="likeIdcard" value="'%' + receptor.idcard + '%'" />
+            AND `x`.`idcard` LIKE #{likeIdcard}
+        </if>
+        <if test="receptor.orgs != null and receptor.orgs != ''">
+            AND `y`.`org_id` = #{receptor.orgs}
+        </if>
+        <if test="receptor.status != null">
+            AND `x`.`status` = #{receptor.status}
+        </if>
+        ORDER BY `x`.`id`
+    </select>
+</mapper>

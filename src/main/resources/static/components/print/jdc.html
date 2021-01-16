@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Cache-Control" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>信访事项详情单</title>
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+        }
+
+        html, body {
+            width: 840px;
+            height: 100%;
+            font-size: 17px;
+        }
+        .title{font-size: 19px;}
+
+        .style-div {
+            border-width: 30px 20px;
+            border-style: solid;
+            border-color: transparent;
+            -webkit-box-sizing: border-box;
+            -moz-box-sizing: border-box;
+            box-sizing: border-box;
+            height: 100%;
+        }
+
+        .style-table {
+            width: 100%;
+            table-layout: fixed;
+            border-top: 1px solid #000;
+            border-left: 1px solid #000;
+            margin-bottom: 20px;
+        }
+
+        .style-table tbody tr {
+            height: 30px;
+        }
+
+        .style-table tbody tr td:not(.no-center) {
+            text-align: left;
+        }
+        .style-table tbody tr td{
+            border-right: 1px solid #000;
+            border-bottom: 1px solid #000;
+            padding: 5px 10px;
+        }
+
+        .style-table tbody tr td.font-bold{
+            font-weight: bold;
+        }
+
+        .style-table p {
+            padding: 4px 0;
+        }
+        .style-table caption h1{
+            font-weight:normal;
+            font-size: 35px;
+            font-family: "SimHei","Microsoft YaHei","微软雅黑";
+            text-align: center;
+
+        }
+        .style-table caption p{
+            text-align: left;
+        }
+        .btn-print{
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            padding: 5px 10px;
+            background: #20a6bb;
+            color: #fff;
+            border: 1px solid #3199ac;
+            border-radius: 3px;
+        }
+        .placeholder{visibility: hidden;color: transparent;}
+        .display-none{display:none}
+    </style>
+</head>
+<body style="">
+<button class="btn-print" id="btnPrint" style="width: 80px;height: 30px;">打印</button>
+<div class="style-div">
+    <table class="style-table" border="0" cellspacing="0" cellpadding="0">
+        <caption>
+            <h1><span id="top_org">长春新区</span>群众来访详情单</h1>
+            <p class="display-none" id="show-detail-eventNum-box">信访件编号：<span id="show-detail-eventNum"></span></p>
+        </caption>
+        <tbody>
+        <tr class="display-none" id="show-detail-name-box">
+            <td class="title">事项名称</td>
+            <td colspan="3" id="show-detail-name"></td>
+        </tr>
+        <tr class="display-none" id="show-detail-petitioner-idcard-box">
+            <td class="title">姓名</td>
+            <td id="show-detail-petitioner"></td>
+            <td class="title">身份证号</td>
+            <td id="show-detail-idcard"></td>
+        </tr>
+        <tr class="display-none" id="show-detail-permanentAddress-currentAddress-box">
+            <td class="title">户籍地址</td>
+            <td id="show-detail-permanentAddress"></td>
+            <td class="title">居住地</td>
+            <td id="show-detail-currentAddress"></td>
+        </tr>
+        <tr class="display-none" id="show-detail-mobileNo-visitDate-box">
+            <td class="title">联系电话</td>
+            <td id="show-detail-mobileNo"></td>
+            <td class="title">来访日期</td>
+            <td id="show-detail-visitDate"></td>
+        </tr>
+        <tr class="display-none" id="show-detail-djOrg-eventPlace-box">
+            <td class="title">登记地点</td>
+            <td id="show-detail-djOrg"></td>
+            <td class="title">事发地</td>
+            <td id="show-detail-eventPlace"></td>
+        </tr>
+        <tr class="display-none" id="show-detail-eventContent-box">
+            <td class="title">反映问题</td>
+            <td colspan="3" id="show-detail-eventContent"></td>
+        </tr>
+        <tr class="display-none" id="show-detail-mainDemand-box">
+            <td class="title">主要诉求</td>
+            <td colspan="3" id="show-detail-mainDemand"></td>
+        </tr>
+        <tr class="display-none" id="show-detail-isKeyArea-keyArea-box">
+            <td class="title">是否重点领域</td>
+            <td id="show-detail-isKeyArea"></td>
+            <td class="title">重点领域分类</td>
+            <td id="show-detail-keyArea"></td>
+        </tr>
+        <tr class="display-none" id="show-detail-comeNum-involveNum-box">
+            <td class="title">来访人数</td>
+            <td id="show-detail-comeNum"></td>
+            <td class="title">涉及人数</td>
+            <td id="show-detail-involveNum"></td>
+        </tr>
+        <tr class="display-none" id="show-detail-isGroupVisit-followPerson-box">
+            <td class="title">是否集体访</td>
+            <td id="show-detail-isGroupVisit"></td>
+            <td class="title">随访人信息</td>
+            <td id="show-detail-followPerson"></td>
+        </tr>
+        <tr class="display-none" id="show-detail-isRepeat-contentType-box">
+            <td class="title">是否重访</td>
+            <td id="show-detail-isRepeat"></td>
+            <td class="title">问题分类</td>
+            <td id="show-detail-contentType"></td>
+        </tr>
+        <tr class="display-none" id="show-detail-visitPlaceStatus-abnormalPlace-box">
+            <td class="title">上访地点</td>
+            <td id="show-detail-visitPlaceStatus"></td>
+            <td class="title">上访异常地点</td>
+            <td id="show-detail-abnormalPlace"></td>
+        </tr>
+        <tr class="display-none" id="show-detail-visitActionStatus-abnormalAction-box">
+            <td class="title">上访行为</td>
+            <td id="show-detail-visitActionStatus"></td>
+            <td class="title">上访异常行为</td>
+            <td id="show-detail-abnormalAction"></td>
+        </tr>
+        <tr class="display-none" id="show-detail-dutyUnit-coUnit-box">
+            <td class="title">责任单位</td>
+            <td id="show-detail-dutyUnit"></td>
+            <td class="title">配合单位</td>
+            <td id="show-detail-coUnit"></td>
+        </tr>
+        <tr class="display-none" id="show-detail-wkdwName-isHoldUp-box">
+            <td class="title">稳控单位</td>
+            <td id="show-detail-wkdwName"></td>
+            <td class="title">是否滞留</td>
+            <td id="show-detail-isHoldUp"></td>
+        </tr>
+        <tr class="display-none" id="show-detail-isFollow-solveState-box">
+            <td class="title">是否跟访</td>
+            <td id="show-detail-isFollow"></td>
+            <td class="title">是否办结</td>
+            <td id="show-detail-solveState"></td>
+        </tr>
+        <tr class="display-none" id="show-detail-followContent-box">
+            <td class="title">跟访内容</td>
+            <td colspan="3" id="show-detail-followContent"></td>
+        </tr>
+        <tr class="display-none" id="show-detail-workProposal-box">
+            <td class="title">工作建议</td>
+            <td id="show-detail-workProposal" colspan="3"></td>
+        </tr>
+        <tr class="display-none" id="show-detail-crux-box">
+            <td class="title">问题症结</td>
+            <td colspan="3" id="show-detail-crux"></td>
+        </tr>
+        <tr class="display-none" id="show-detail-isVerified-isReasonable-box">
+            <td class="title">问题是否属实</td>
+            <td id="show-detail-isVerified"></td>
+            <td class="title">诉求合理性</td>
+            <td id="show-detail-isReasonable"></td>
+        </tr>
+        <tr class="display-none" id="show-detail-verifyDetail-box">
+            <td class="title">核实情况</td>
+            <td colspan="3" id="show-detail-verifyDetail"></td>
+        </tr>
+        <tr class="display-none" id="show-detail-unreasonableReason-box">
+            <td class="title">理由</td>
+            <td colspan="3" id="show-detail-unreasonableReason"></td>
+        </tr>
+        <tr class="display-none" id="show-detail-isLeaderHad-leader-box">
+            <td class="title">是否领导包案</td>
+            <td id="show-detail-isLeaderHad"></td>
+            <td class="title">领导层级及姓名</td>
+            <td id="show-detail-leader"></td>
+        </tr>
+        <tr class="display-none" id="show-detail-newestProgress-box">
+            <td class="title">最新工作进展</td>
+            <td colspan="3" id="show-detail-newestProgress"></td>
+        </tr>
+        <tr class="display-none" id="show-detail-isFinalOpinion-box">
+            <td class="title">是否有最终处理意见</td>
+            <td colspan="3" id="show-detail-isFinalOpinion"></td>
+        </tr>
+        <tr class="display-none" id="show-detail-finalOpinion-box">
+            <td class="title">最终处理意见</td>
+            <td colspan="3" id="show-detail-finalOpinion"></td>
+        </tr>
+        <tr class="display-none" id="show-detail-dictSatisfaction-dictSolve-box">
+            <td class="title">满意度</td>
+            <td id="show-detail-dictSatisfaction"></td>
+            <td class="title">化解方式</td>
+            <td id="show-detail-dictSolve"></td>
+        </tr>
+        <tr class="display-none" id="show-detail-extraMeeting-box">
+            <td class="title">协调会记录</td>
+            <td colspan="3" id="show-detail-extraMeeting"></td>
+        </tr>
+        <tr class="display-none" id="show-detail-extraHandle-box">
+            <td class="title">督办记录</td>
+            <td colspan="3" id="show-detail-extraHandle"></td>
+        </tr>
+        <tr class="display-none" id="show-detail-extraRevisit-box">
+            <td class="title">回访情况记录</td>
+            <td colspan="3" id="show-detail-extraRevisit"></td>
+        </tr>
+        <tr class="display-none" id="show-detail-extraPraise-box">
+            <td class="title">上级表扬</td>
+            <td colspan="3" id="show-detail-extraPraise"></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<script type="text/javascript">
+    (function(){
+        let data = JSON.parse(sessionStorage.getItem('catePrintData')),
+            dataType = JSON.parse(sessionStorage.getItem('catePrintDataType'));
+        sessionStorage.removeItem('catePrintData');
+        sessionStorage.removeItem('catePrintDataType');
+        function checkBlank(obj) {
+            return obj!==null&&obj!==undefined;
+        }
+        function checkTwoBlank(data,item1,item2){
+            if(checkBlank(data[''+item1]) || checkBlank(data[''+item2])){
+                document.getElementById('show-detail-'+item1+'-'+item2+'-box').classList.remove('display-none');
+                let _item = {},_another = {};
+                if(checkBlank(data[''+item1]) && checkBlank(data[''+item2])){
+                    document.getElementById('show-detail-'+item1).innerHTML=data[''+item1];
+                    document.getElementById('show-detail-'+item2).innerHTML=data[''+item2];
+                }else {
+                    if(checkBlank(data[''+item1])){
+                        _item = document.getElementById('show-detail-'+item1);
+                        _another = document.getElementById('show-detail-'+item2);
+                        _item.innerHTML=data[''+item1];
+                    }else if(checkBlank(data[''+item2])){
+                        _item = document.getElementById('show-detail-'+item2);
+                        _another = document.getElementById('show-detail-'+item1);
+                        _item.innerHTML=data[''+item2];
+                    }
+                    let _another_title = _another.previousElementSibling;
+                    _another.classList.add('display-none');
+                    _another_title.classList.add('display-none');
+                    _item.colSpan='3';
+                }
+            }
+        }
+        if(checkBlank(data)){
+            for(var i in data){
+                if(''+dataType[''+i] === '3'){
+                    if(checkBlank(data[''+i])) {
+                        document.getElementById('show-detail-'+i+'-box').classList.remove('display-none');
+                        document.getElementById('show-detail-'+i).innerHTML=data[''+i];
+                    }
+                }
+                if(''+dataType[''+i] === '2'){
+                    if(checkBlank(data[''+i])) {
+                        let box = document.getElementById('show-detail-'+i+'-box'),
+                            parentBox = box.parentNode,
+                            div = document.getElementById('show-detail-'+i);
+                        box.classList.remove('display-none');
+                        let list = data[''+i],length = list.length;
+                        if(length > 0){
+                            if(length >1) box.getElementsByTagName('td')[0].rowSpan = length;
+                            for(let i=length-1;i>=0;i--){
+                                let dateTD = document.createElement('td'),
+                                    contentTD = document.createElement('td');
+                                dateTD.innerHTML=list[i].contentDate;
+                                contentTD.colSpan=2;
+                                contentTD.innerHTML=list[i].content;
+                                if(i>0){
+                                    let trTD = document.createElement('tr');
+                                    trTD.appendChild(dateTD);
+                                    trTD.appendChild(contentTD);
+                                    parentBox.insertBefore(trTD,box.nextSibling);
+                                }else{
+                                    box.appendChild(dateTD);
+                                    box.appendChild(contentTD);
+                                }
+                            }
+                            div.classList.add('display-none');
+                        }
+                    }
+                }
+            }
+            checkTwoBlank(data,'petitioner','idcard');
+            checkTwoBlank(data,'permanentAddress','currentAddress');
+            checkTwoBlank(data,'mobileNo','visitDate');
+            checkTwoBlank(data,'djOrg','eventPlace');
+            checkTwoBlank(data,'isKeyArea','keyArea');
+            checkTwoBlank(data,'comeNum','involveNum');
+            checkTwoBlank(data,'isGroupVisit','followPerson');
+            checkTwoBlank(data,'isRepeat','contentType');
+            checkTwoBlank(data,'visitPlaceStatus','abnormalPlace');
+            checkTwoBlank(data,'visitActionStatus','abnormalAction');
+            checkTwoBlank(data,'dutyUnit','coUnit');
+            checkTwoBlank(data,'wkdwName','isHoldUp');
+            checkTwoBlank(data,'isFollow','solveState');
+            checkTwoBlank(data,'dutyUnit','coUnit');
+            checkTwoBlank(data,'isVerified','isReasonable');
+            checkTwoBlank(data,'isLeaderHad','leader');
+            checkTwoBlank(data,'dictSatisfaction','dictSolve');
+        }
+    })();
+
+    let btnPrint = document.getElementById("btnPrint");
+    btnPrint.addEventListener("click", function(e){
+        this.style.display="none";
+        window.print()
+    });
+    const beforePrint = function() {
+        btnPrint.style.display="none"
+    };
+    const afterPrint = function() {
+        btnPrint.style.display="block"
+    };
+    if (window.matchMedia) {
+        let mediaQueryList = window.matchMedia('print');
+        mediaQueryList.addListener(function(mql) {
+            if (mql.matches) {
+                beforePrint();
+            } else {
+                afterPrint();
+            }
+        });
+    }
+
+</script>
+</body></html>

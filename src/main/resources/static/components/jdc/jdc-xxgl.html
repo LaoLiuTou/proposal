@@ -1,0 +1,420 @@
+<div class="layui-card" id="JdcxxglDiv">
+    <div class="layui-card-header">
+        <h2jdc-xxgl class="header-title">接待信息管理</h2jdc-xxgl>
+        <button class="layui-btn layui-btn-primary layui-btn-sm fright" lay-event="statistic_export" id="statistic_export">
+        <i class="layui-icon">&#xe63c;</i>统计导出</button>
+        <button class="layui-btn layui-btn-primary layui-btn-sm fright" lay-event="export" id="export">
+        <i class="layui-icon">&#xe63c;</i>导出处理进度EXCEL</button>
+        <button type="button"  class="layui-btn layui-btn-primary layui-btn-sm fright"  id="uploadExcel">
+        <i class="layui-icon">&#xe67c;</i>导入处理进度EXCEL</button>
+    </div>
+    <div class="layui-card-body">
+        <!-- 搜索条件 -->
+        <div class="layui-form toolbar">
+            <form id="searchForm" onsubmit="return false;">
+                事件名称：<input name="name" class="layui-input search-input" type="text" placeholder="输入事件名称关键字"/>&emsp;
+                信访人：<input name="petitionerName" class="layui-input search-input" type="text" placeholder="输入信访人姓名"/>&emsp;
+                事件编号：<input name="eventNum" id="eventNum" class="layui-input search-input" type="text" placeholder="输入事件编号"/>&emsp;
+                事件状态：<select name="status" lay-verify="">
+               <option value="-2">请选择</option><!-- 因后台status为Integer,为空时默认为0，故此处不为空，对-2进行处理 -->
+                <option value="0">待接待</option>
+                <option value="1">处理中</option>
+                <option value="2">已处理</option>
+                <option value="-3">删除审核中</option>
+                <option value="-1">已放弃</option>
+            </select>
+                <button id="user-btn-search" class="layui-btn icon-btn"><i class="layui-icon">&#xe615;</i>搜索</button>
+                <a href="javascript:;" id="high-search">高级搜索</a>
+             </form>
+        </div>
+        <!-- 表格顶部操作列 -->
+        <script type="text/html" id="user-toolbar">
+            <div class="layui-btn-container">
+                <button class="layui-btn layui-btn-sm" lay-event="add"><i
+                        class="layui-icon">&#xe654;</i>添加接待
+                </button>
+                <button class="layui-btn layui-btn-sm" id="exportData">
+                    <i class="iconfont icon-export"></i> 导出
+                </button>
+           </div>
+</script>
+        <table class="layui-table" id="user-table" lay-filter="user-table"></table>
+    </div>
+</div>
+
+<!-- 表格操作列 -->
+<script type="text/html" id="user-table-bar">
+    <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="view">详情</a>
+    <a class="layui-btn layui-btn-xs {{(d.deleteCheckStatus==0 || d.status==2)?'layui-btn-disabled':''}}" lay-event="solve">办结</a>
+    <a class="layui-btn layui-btn-normal layui-btn-xs {{(d.deleteCheckStatus==0 || d.status==2)?'layui-btn-disabled':''}}" lay-event="addProgress">反馈</a>
+    <a class="layui-btn layui-btn-warm layui-btn-xs" lay-event="progress">进度</a>
+    <a class="layui-btn layui-btn-normal layui-btn-xs" style="display:{{editR?'inline-block':'none'}}" lay-event="edit">编辑</a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs {{(d.deleteCheckStatus==0 || d.status==2)?'layui-btn-disabled':''}}" style="display:{{delR?'inline-block':'none'}}" lay-event="del">删除</a>
+    <br>
+    <a class="layui-btn layui-btn-primary layui-btn-xs" style="display:{{dictSolveR?'inline-block':'none'}}" lay-event="dictSolve">化解</a>
+    <a class="layui-btn layui-btn-primary layui-btn-xs" style="display:{{revisitR?'inline-block':'none'}}" lay-event="revisit">回访</a>
+    <a class="layui-btn layui-btn-primary layui-btn-xs" style="display:{{meetingR?'inline-block':'none'}}" lay-event="meeting">协调会</a>
+    <a class="layui-btn layui-btn-primary layui-btn-xs" style="display:{{satisfactionR?'inline-block':'none'}}" lay-event="satisfaction">满意度</a>
+    <a class="layui-btn layui-btn-primary layui-btn-xs" style="display:{{praiseR?'inline-block':'none'}}" lay-event="praise">上级表扬</a>
+</script>
+
+<!-- 表格状态列 -->
+<script type="text/html" id="user-tpl-status">
+    <input type="checkbox" lay-filter="user-tpl-status" value="{{d.id}}" lay-skin="switch"
+           lay-text="正常|禁用" {{d.status==0?'checked':''}}/>
+</script>
+
+<style>
+    button.fright{
+        float: right;
+        margin: 5px;
+    }
+</style>
+<script>
+    resources = JSON.parse(sessionStorage.getItem('ur'))['jdc/jdc-xxgl.html'];
+    editR=false,delR=false,moreR=false,dictSolveR=false,meetingR=false,handleR=false,satisfactionR=false,praiseR=false,revisitR=false;
+    if(resources){
+        for(let i=0;i<resources.length;i++){
+            if(''+resources[i].name === '编辑' && ''+resources[i].uri === '/jdc/djxx/edit') editR = true;
+            if(''+resources[i].name === '删除' && ''+resources[i].uri === '/jdc/remove/{id}') delR = true;
+            if(''+resources[i].name === '化解' && ''+resources[i].uri === '/jdc/xxgl/solve') dictSolveR = true;
+            if(''+resources[i].name === '回访' && ''+resources[i].uri === '/jdc/xxgl/revisit') revisitR = true;
+            if(''+resources[i].name === '协调会' && ''+resources[i].uri === '/jdc/xxgl/meeting') meetingR = true;
+            if(''+resources[i].name === '满意度' && ''+resources[i].uri === '/jdc/xxgl/satisfaction') satisfactionR = true;
+            if(''+resources[i].name === '上级表扬' && ''+resources[i].uri === '/jdc/xxgl/praise') praiseR = true;
+            moreR = dictSolveR || revisitR || meetingR || satisfactionR || praiseR;
+            if(moreR){
+                let style = document.createElement('style'),
+                    div = document.getElementById('JdcxxglDiv');
+                style.innerHTML = '.layui-table-cell{height:48px;line-height:48px;}.layui-table-fixed .layui-table-cell{line-height:22px;}';
+                div.appendChild(style);
+            }
+        }
+    }
+    layui.use(['form', 'table', 'config', 'layer', 'crab','laydate','upload'], function () {
+        var form = layui.form;
+        var table = layui.table;
+        var config = layui.config;
+        var layer = layui.layer;
+        var crab = layui.crab;
+        var laydate = layui.laydate;
+        var upload = layui.upload;
+        laydate.render({
+            elem: '#visitDate'
+        });
+        var where = {status: -2};
+        //
+        //console.log('第一次显示',crab.getUser().username);
+        // 渲染表格
+        var userTable = table.render({
+            elem: '#user-table',
+            toolbar: '#user-toolbar',
+            defaultToolbar: ['filter', 'print'],
+            url: config.base_server + '/jdc/xxgl/page',
+            where: JSON.parse(JSON.stringify(where)),
+            parseData: config.parseData,
+            page: true,
+            limits:[10,20,30,40,50,60,70,80,90,120,240,360,720,1440],
+            cols: [[
+                {type: 'numbers'},
+                {field: 'eventNum', title: '事件编号', width: 130},
+                {field: 'visitDate', title: '来访日期', width: 110},
+                {field: 'petitionerName', title: '来访人', width: 75},
+                {field: 'name', title: '事件名称', width: 300},
+                {field: 'permanentAddress', title: '户籍地址', width: 150, hide: true},
+                {field: 'comeNum', title: '来访人数', width: 90},
+                {field: 'eventContent', title: '反映问题', width: 400},
+                {field: 'firstContentTypeName', title: '一级问题分类',width: 150},
+                {field: 'contentTypeName', title: '问题分类',width: 150, hide: true},
+                {field: 'eventPlace', title: '事发地', width: 90},
+                {field: 'isGroupVisitName', title: '是否集体访', width: 110, hide: true},
+                {field: 'isRepeatName', title: '是否重访', width: 90, hide: true},
+                {field: 'mobileNo', title: '联系电话', width: 120, hide: true},
+                {field: 'currentAddress', title: '居住地', width: 150, hide: true},
+                {field: 'idcard', title: '身份证号', width: 175, hide: true},
+                {field: 'statusName', title: '事件状态', width: 100},
+                {field: 'solveStateName', title: '是否办结', width: 90},
+                {field: 'djOrg', title: '登记地点', width: 120, hide: true},
+                {field: 'mainDemand', title: '主要诉求', width: 300, hide: true},
+                {field: 'isKeyAreaName', title: '是否重点领域',width: 150, hide: true},
+                {field: 'keyArea', title: '重点领域分类',width: 150, hide: true},
+                {field: 'visitPlaceStatusName', title: '上访地点是否正常',width: 150, hide: true},
+                {field: 'abnormalPlace', title: '上访异常地点',width: 150, hide: true},
+                {field: 'visitActionStatusName', title: '上访行为是否正常',width: 150, hide: true},
+                {field: 'abnormalAction', title: '上访异常行为',width: 150, hide: true},
+                {field: 'involveNum', title: '涉及人数', width: 90, hide: true},
+                {field: 'followPerson', title: '随访人信息', width: 110, hide: true},
+                {field: 'isHoldUpName', title: '是否滞留',width: 90, hide: true},
+                {field: 'isFollowName', title: '是否跟访',width: 90, hide: true},
+                {field: 'followContent', title: '跟访内容',width: 150, hide: true},
+                {field: 'dutyUnitName', title: '责任单位',width: 100},
+                {field: 'coUnit', title: '配合单位',width: 150, hide: true},
+                {field: 'wkdwName', title: '稳控单位',width: 100, hide: true},
+                {field: 'receptionName', title: '接待人', width: 75},
+                {field: 'workProposal', title: '工作建议', width: 200, hide: true},
+                {field: 'crux', title: '问题症结', width: 200, hide: true},
+                {field: 'isVerifiedName', title: '问题是否属实', width: 130, hide: true},
+                {field: 'verifyDetail', title: '核实情况', width: 200, hide: true},
+                {field: 'isReasonableName', title: '诉求合理性', width: 110, hide: true},
+                {field: 'unreasonableReason', title: '不合理理由', width: 200, hide: true},
+                {field: 'newestProgress', title: '最新工作进展', width: 200, hide: true},
+                {field: 'isLeaderHadName', title: '是否领导包案', width: 130, hide: true},
+                {field: 'leader', title: '领导姓名', width: 200, hide: true},
+                {field: 'isFinalOpinionName', title: '是否有最终处理意见', width: 165, hide: true},
+                {field: 'finalOpinion', title: '最终处理意见', width: 200, hide: true},
+                {field: 'createTime', title: '创建时间', sort: true, width:150},
+                {fixed: 'right', align: 'left', toolbar: '#user-table-bar', title: '操作', minWidth: 295}
+            ]]
+        });
+        // 表格顶部操作列
+        table.on('toolbar(user-table)', function (obj) {
+            if (obj.event === 'add') {
+                location.replace('./#jdc-djxx');
+            }
+        });
+        // 导出点击事件
+        $(document).on('click','#exportData',(function () {
+            var cols = [];
+            var colNames = [];
+            userTable.config.cols[0].forEach(item => {
+                if (item.type !== 'numbers' && !item.hide && item.toolbar !== '#user-table-bar'){
+                    cols.push(item.field);
+                    colNames.push(item.title);
+                }
+            });
+            var _where = JSON.parse(JSON.stringify(where));
+            _where.cols = cols;
+            _where.colNames = colNames;
+            if (!_where.name)_where.name = '';
+            if (!_where.petitionerName)_where.petitionerName = '';
+            if (!_where.eventNum)_where.eventNum = '';
+            if (!_where.highSearch)_where.highSearch = '';
+            window.open('/jdc/xxgl/export?'+$.param(_where));
+        }));
+
+        $('#statistic_export').click(function () {
+            showStatisticExportModel('统计导出EXCEL','/components/jdc/jdc-djxx-statistic_export.html','1150px');
+        });
+        // 搜索按钮点击事件
+        $('#export').click(function () {
+            showExportModel('处理中事项导出EXCEL','/components/jdc/jdc-djxx-export.html','1150px');
+        });
+        // 表格操作列事件
+        table.on('tool(user-table)', function (obj) {
+            var data = obj.data;
+            var layEvent = obj.event;
+
+            if (layEvent === 'progress') {
+                // 事件处理进度
+                showEditModel(data,'事项处理进度','/components/jdc/jdc-eventProgress.html');
+            } else if (obj.event === 'addProgress') {
+                // 添加事件处理进度
+                if(''+data.status !== '2' && ''+data.deleteCheckStatus !== '0'){
+                    showEditModel(data,'添加事项处理进度','/components/jdc/jdc-addEeventProgress.html','600px');
+                }else if(''+data.deleteCheckStatus === '0'){
+                    layer.msg('该事项已提交删除审核<br>无法添加反馈');
+                } else if(''+data.status === '2'){
+                    layer.msg('该事项已处理完成<br>无法添加反馈');
+                }
+            } else if (obj.event === 'view') {
+                crab.putTempData('p_eventInfo', data);
+                let height = $(window).height()-30;
+                let detail_layer_index = crab.popupCenter({
+                    closeBtn:0,
+                    path: '/components/jdc/jdc-djxx-table.html',
+                    title: false,
+                    offset: '15px',
+                    area: ['800px', height+'px']
+                });
+                crab.putTempData('detail_layer_index', detail_layer_index);
+            }else if (obj.event === 'reset') {
+                // 删除
+                layer.confirm('确定要重置该条记录的用户登录密码吗？', function () {
+                    crab.put('/sys/user/reset_password/' + obj.data.id, {}, function () {
+                        crab.msg('登录密码重置成功！')
+                    });
+                });
+            } else if (obj.event === 'del') {
+                // 删除
+                if(''+data.status !== '2' && ''+data.deleteCheckStatus !== '0'){
+                    layer.confirm('确定申请删除该条信息记录吗？', function () {
+                        crab.delete('/jdc/remove/' + obj.data.id,'', function(){
+                            layer.msg('删除申请已提交！');
+                            userTable.reload('user-table', {});
+                        });
+                    });
+                }else if(''+data.deleteCheckStatus === '0'){
+                    layer.msg('该事项已提交删除审核');
+                } else if(''+data.status === '2'){
+                    layer.msg('该事项已处理<br>无法删除');
+                }
+            } else if (obj.event === 'edit') {
+                crab.putTempData('editData',data);
+                location.replace('./#jdc-djxx');
+            } else if (obj.event === 'solve'){
+                if(''+data.status !== '2' && ''+data.deleteCheckStatus !== '0'){
+                    showEditModel(data,'办结事件','/components/jdc/jdc-solve.html',['600px','230px'],'auto');
+                } else if(''+data.deleteCheckStatus === '0'){
+                    layer.msg('该事项已提交删除审核');
+                } else if(''+data.status === '2'){
+                    layer.msg('该事项已办结');
+                }
+
+            } else if (obj.event === 'dictSolve') {
+                crab.putTempData('p_eventInfo', data);
+                crab.popupCenter({
+                    title: '选择化解方式',
+                    path: '/components/jdc/jdc-xxgl-dict-solve-from.html'
+                });
+            } else if (obj.event === 'satisfaction') {
+                crab.putTempData('p_eventInfo', data);
+                crab.popupCenter({
+                    title: '选择满意度',
+                    path: '/components/jdc/jdc-xxgl-dict-satisfaction-from.html'
+                });
+            } else if (obj.event === 'revisit') {
+                crab.putTempData('p_eventInfo', data);
+                crab.popupCenter({
+                    title: '添加回访情况记录',
+                    path: '/components/jdc/jdc-xxgl-extra-revisit-from.html'
+                });
+            } else if (obj.event === 'meeting') {
+                crab.putTempData('p_eventInfo', data);
+                crab.popupCenter({
+                    title: '添加协调会记录',
+                    path: '/components/jdc/jdc-xxgl-extra-meeting-from.html'
+                });
+            } else if (obj.event === 'praise') {
+                crab.putTempData('p_eventInfo', data);
+                crab.popupCenter({
+                    title: '添加上级表扬记录',
+                    path: '/components/jdc/jdc-xxgl-extra-praise-from.html'
+                });
+            }
+        });
+
+        //显示事件处理进度弹窗
+        var showEditModel = function (data,titleName,htmlUrl,area,offset) {
+            crab.putTempData('p_eventInfo', data);
+            crab.popupCenter({
+                title: data ? titleName : '暂无内容',
+                offset:offset ? offset:'15px',
+                path: htmlUrl,
+                area:area ? area:'600px',
+                maxHeight:'500px',
+                finish: function () {
+                    userTable.reload('user-table', {});
+                }
+            });
+        };
+        //显示导出excel弹框
+        var showExportModel = function (titleName,htmlUrl,area) {
+            // crab.putTempData('p_eventInfo', data);
+            crab.popupCenter({
+                title:  titleName,
+                offset:'15px',
+                path: htmlUrl,
+                area:area,
+                maxHeight:'500px',
+                finish: function () {
+
+                }
+            });
+        };
+        //显示导出统计Excel弹框
+        var showStatisticExportModel = function (titleName,htmlUrl,area) {
+            // crab.putTempData('p_eventInfo', data);
+            crab.popupCenter({
+                title:  titleName,
+                offset:'15px',
+                path: htmlUrl,
+                area:area,
+                maxHeight:'500px',
+                finish: function () {
+
+                }
+            });
+        };
+        //显示导入excel弹框
+        var showImportModel = function (data,titleName,htmlUrl,area) {
+            crab.putTempData('import_error', data);
+            crab.popupCenter({
+                title:  titleName,
+                offset:'15px',
+                path: htmlUrl,
+                area:area,
+                maxHeight:'500px',
+                finish: function () {
+
+                }
+            });
+        };
+        //导入excel
+        //执行实例
+        var importError=[]
+        var uploadInst = upload.render({
+            elem: '#uploadExcel' //绑定元素
+            ,url: '/jdc/uploadExcel' //上传接口
+            ,accept: 'file',
+            exts:'xlsx',
+            multiple:true
+            ,before: function(obj){ //obj参数包含的信息，跟 choose回调完全一致，可参见上文。
+                layer.load(); //上传loading
+            }
+            ,done: function(res,index){
+                console.log(res)
+                importError.push(res.data[0])
+                console.log(index)
+                //上传完毕回调
+            }
+            ,allDone: function(obj){ //当文件全部被提交后，才触发
+                console.log(obj.total); //得到总文件数
+                console.log(obj.successful); //请求成功的文件数
+                console.log(obj.aborted); //请求失败的文件数
+                console.log(obj)
+                // console.log(importError)
+                showImportModel(importError,'导入EXCEL','/components/jdc/jdc-djxx-import.html','1000px');
+                importError=[];
+                layer.closeAll('loading');
+
+            }
+            ,error: function(res){
+                console.log(res)
+                //请求异常回调
+            }
+        });
+
+        // 搜索按钮点击事件
+        $('#user-btn-search').click(function () {
+            where = crab.getSearchForm();
+            userTable.reload({where: JSON.parse(JSON.stringify(where))});
+        });
+
+        // 修改user状态
+        form.on('switch(user-tpl-status)', function (obj) {
+            crab.put('/sys/user/status_' + obj.elem.value, {
+                status: obj.elem.checked ? 0 : -1
+            }, function () {
+                layer.msg('用户状态修改成功', {icon: 1});
+            });
+        });
+
+        // 高级搜索
+        $('#high-search').click(function(){
+            crab.popupCenter({
+                title: '高级搜索',
+                offset:'auto',
+                path: '/components/jdc/jdc-high-search.html',
+                area: ['1400px',($(window).height()-30)+'px'],
+                finish: function () {
+                    let highSearchData = crab.getTempData('highSearchData') || '';
+                    crab.putTempData('highSearchData');
+                    where = {status: -2, highSearch: highSearchData};
+                    userTable.reload({where: JSON.parse(JSON.stringify(where))});
+                }
+            });
+        });
+
+
+    });
+</script>

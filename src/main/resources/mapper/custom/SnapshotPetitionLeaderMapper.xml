@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fangao.dev.sys.mapper.SnapshotPetitionLeaderMapper">
+    <select id="queryLeaderPage" resultType="com.fangao.dev.sys.entity.SnapshotPetitionLeader">
+        SELECT
+	`a`.`id` AS `id`,
+	`a`.`leader_level_id` AS `leader_level_id`,
+	`a`.`name` AS `name`,
+	`a`.`mobile_no` AS `mobile_no`,
+	`a`.`status` AS `status`,
+	`a`.`sort` AS `sort`,
+	`a`.`deleted` AS `deleted`,
+	`a`.`operator` AS `operator`,
+	`a`.`create_time` AS `create_time`,
+	`a`.`modified_time` AS `modified_time`,
+	`b`.`name` AS `leader_level_name`
+FROM
+	`snapshot_petition_leader` `a`
+LEFT JOIN `dict_petition_leader_level` `b` ON `a`.`leader_level_id` = `b`.`id`
+WHERE a.deleted=0
+ORDER BY a.sort
+    </select>
+</mapper>

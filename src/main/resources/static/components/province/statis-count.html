@@ -1,0 +1,80 @@
+<div class="layui-card">
+    <div class="layui-card-header">
+        <h2 class="header-title">信访数量统计</h2>
+    </div>
+    <div class="layui-card-body">
+        <!-- 搜索条件 -->
+        <div class="layui-form toolbar user-search">
+            <form id="searchForm" onsubmit="return false;">
+                登记时间：<input name="queryCheckDate" type="text" class="layui-input search-input" readonly id="queryCheckDate" style="width:200px">
+                <button id="user-btn-search" class="layui-btn icon-btn"><i class="layui-icon">&#xe615;</i>搜索</button>
+            </form>
+        </div>
+        <!-- 表格 -->
+        <table class="layui-table" id="data-table" lay-filter="data-table"></table>
+    </div>
+</div>
+
+<script>
+    layui.use(['table', 'config',  'crab', 'laydate'], function () {
+        const table = layui.table;
+        const config = layui.config;
+        const crab = layui.crab;
+        const laydate = layui.laydate;
+        laydate.render({
+            elem: '#queryCheckDate'
+            ,format: 'yyyy-MM-dd'
+            ,type: 'date'
+            ,range: '~'
+            ,max:new Date().getTime()
+            ,btns: ['confirm']
+        });
+
+        // 渲染表格
+        var dataTable = table.render({
+            elem: '#data-table',
+            toolbar: true,
+            url: config.base_server + '/province/data/statis/count',
+            where:{queryCheckDate:''},
+            page: false,
+            totalRow:true,
+            cols: [[
+                {field: 'name', title: '地区', fixed:'left', rowspan:2, totalRowText:'合计', minWidth: 150},
+                {title: '信访总量', colspan:2, align:'center'},
+                {title: '来信', colspan:2, align:'center'},
+                {title: '来访', colspan:2, align:'center'},
+                {title: '网上信访', colspan:2, align:'center'},
+                {title: '手机信访', colspan:2, align:'center'},
+                {title: '微信信访', colspan:2, align:'center'},
+                {title: '网上建议', colspan:2, align:'center'},
+                {title: '电话信访', colspan:2, align:'center'},
+                {title: '领导信箱', colspan:2, align:'center'}
+            ], [
+                {field: 'count', title: '批次', align:'center', totalRow:true, width: 80},
+                {field: 'people', title: '人次', align:'center', totalRow:true, width: 80},
+                {field: 'countLetter', title: '批次', align:'center', totalRow:true, width: 80},
+                {field: 'peopleLetter', title: '人次', align:'center', totalRow:true, width: 80},
+                {field: 'countVisit', title: '批次', align:'center', totalRow:true, width: 80},
+                {field: 'peopleVisit', title: '人次', align:'center', totalRow:true, width: 80},
+                {field: 'countInternet', title: '批次', align:'center', totalRow:true, width: 80},
+                {field: 'peopleInternet', title: '人次', align:'center', totalRow:true, width: 80},
+                {field: 'countMobile', title: '批次', align:'center', totalRow:true, width: 80},
+                {field: 'peopleMobile', title: '人次', align:'center', totalRow:true, width: 80},
+                {field: 'countWeChat', title: '批次', align:'center', totalRow:true, width: 80},
+                {field: 'peopleWeChat', title: '人次', align:'center', totalRow:true, width: 80},
+                {field: 'countAdvise', title: '批次', align:'center', totalRow:true, width: 80},
+                {field: 'peopleAdvise', title: '人次', align:'center', totalRow:true, width: 80},
+                {field: 'countPhone', title: '批次', align:'center', totalRow:true, width: 80},
+                {field: 'peoplePhone', title: '人次', align:'center', totalRow:true, width: 80},
+                {field: 'countEmail', title: '批次', align:'center', totalRow:true, width: 80},
+                {field: 'peopleEmail', title: '人次', align:'center', totalRow:true, width: 80},
+            ]]
+        });
+
+        // 搜索按钮点击事件
+        $('#user-btn-search').click(function () {
+            dataTable.reload({where: crab.getSearchForm()});
+        });
+
+    });
+</script>

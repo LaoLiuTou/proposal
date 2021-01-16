@@ -1,0 +1,32 @@
+<script id="contentTypeTable" type="text/html">
+    {{# let batchSum = 0,peopleSum = 0; }}
+    <table class="layui-table tpl-table content-type-table">
+        <thead>
+        <tr>
+            <th class="title">内容分类</th>
+            <th class="number">批次</th>
+            <th class="number">人次</th>
+        </tr>
+        </thead>
+        <tbody>
+        {{#
+        layui.each(d, function(index, item){
+        batchSum += item.batch;
+        peopleSum += item.people;
+        }}
+        <tr>
+            <td class="first-content-td" data-contenttype="{{item.id}}" data-contenttypename="{{item.item}}">{{item.item}}</td>
+            <td class="first-content-td" data-contenttype="{{item.id}}" data-contenttypename="{{item.item}}">{{item.batch}}</td>
+            <td class="first-content-td" data-contenttype="{{item.id}}" data-contenttypename="{{item.item}}">{{item.people}}</td>
+        </tr>
+        {{# }); }}
+        <tr class="sum-tr">
+            <td>合计</td>
+            <td>{{batchSum}}</td>
+            <td>{{peopleSum}}</td>
+        </tr>
+        {{# document.getElementById('contentTypeFirstBatchSum').innerHTML=batchSum;
+        document.getElementById('contentTypeFirstPeopleSum').innerHTML=peopleSum;}}
+        </tbody>
+    </table>
+</script>

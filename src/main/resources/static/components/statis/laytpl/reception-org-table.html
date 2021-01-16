@@ -1,0 +1,57 @@
+<script id="receptionOrgTable" type="text/html">
+    {{#
+        let index = 0,batchSum = 0,peopleSum = 0;
+        while(index < d.tableCount){
+        let curList = d.list.slice(index*d.count,(index+1)*d.count)
+    }}
+    <table class="layui-table tpl-table reception-table">
+        <thead>
+        <tr>
+            <th class="reception"></th>
+            {{# layui.each(curList, function(index, item){ }}
+            <th class="reception data-td data-{{= index+1}}" data-i="{{= index+1}}" data-org="{{item.id}}">{{item.item}}</th>
+            {{#  });
+                if((index+1) === d.tableCount){ }}
+            <th class="reception">合计</th>
+            {{#   }
+            }}
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td>批次</td>
+            {{#
+                layui.each(curList, function(index, item){
+                batchSum += item.batch
+            }}
+            <td class="data-td data-{{= index+1}}" data-i="{{= index+1}}" data-org="{{item.id}}">{{item.batch}}</td>
+            {{#  });
+                if((index+1) === d.tableCount){
+                document.getElementById('receptionOrgBatchSum').innerHTML=batchSum;
+            }}
+            <td>{{batchSum}}</td>
+            {{#   }
+            }}
+        </tr>
+        <tr>
+            <td>人次</td>
+            {{#
+                layui.each(curList, function(index, item){
+                peopleSum += item.people
+            }}
+            <td class="data-td data-{{= index+1}}" data-i="{{= index+1}}" data-org="{{item.id}}">{{item.people}}</td>
+            {{#  });
+                if((index+1) === d.tableCount){
+                document.getElementById('receptionOrgPeopleSum').innerHTML=peopleSum;
+            }}
+            <td>{{peopleSum}}</td>
+            {{#   }
+            }}
+        </tr>
+        </tbody>
+    </table>
+    {{#
+        index++;
+        }
+    }}
+</script>

@@ -1,0 +1,292 @@
+<div class="layui-row layui-col-space15">
+    <div class="layui-col-sm12">
+        <div class="layui-card">
+            <div class="layui-card-header">
+                <h2 class="header-title">接待数据统计</h2>
+            </div>
+            <div class="layui-card-body">
+                <div class="layui-row layui-col-space15">
+                    <div class="layui-col-xs12 layui-col-sm12 layui-col-md4">
+                        <div class="layui-card ">
+                            <div class="layui-card-header">
+                                <i class="layui-icon layui-icon-engine"></i>&nbsp;接待数量
+                            </div>
+                            <div class="layui-card-body" style="height: 350px">
+                                <div id="jdCountPie"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-col-xs12 layui-col-sm12 layui-col-md4">
+                        <div class="layui-card">
+                            <div class="layui-card-header">
+                                <i class="layui-icon layui-icon-engine"></i>&nbsp;事发地
+                            </div>
+                            <div class="layui-card-body" style="height: 350px">
+                                <div id="placeCountPie"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-col-xs12 layui-col-sm12 layui-col-md4">
+                        <div class="layui-card">
+                            <div class="layui-card-header">
+                                <i class="layui-icon layui-icon-engine"></i>&nbsp;责任单位
+                            </div>
+                            <div class="layui-card-body" style="height: 350px">
+                                <div id="unitCountPie"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-col-xs12 layui-col-sm12 layui-col-md12">
+                        <div class="layui-card">
+                            <div class="layui-card-header">
+                                <i class="layui-icon layui-icon-engine"></i>&nbsp;内容分类
+                            </div>
+                            <div class="layui-card-body" style="height: 350px">
+                                <div id="contentCountInterval"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <table class="layui-table" id="user-table" lay-filter="user-table"></table>
+        </div>
+    </div>
+</div>
+
+<script>
+    layui.use(['form', 'table', 'config', 'crab','laydate'], function () {
+        var form = layui.form;
+        var table = layui.table;
+        var config = layui.config;
+        var layer = layui.layer;
+        var crab = layui.crab;
+        var laydate = layui.laydate;
+        var $ = layui.jquery;
+
+        // 接待统计
+        function drawJDCountPie(data){
+
+            var chart = new G2.Chart({
+                container: 'jdCountPie',
+                forceFit: true,
+                height: 350,
+                padding:'auto'
+            });
+            var brefs = {
+                percent: {
+                    formatter: function formatter(val) {
+                        val = val + '%';
+                        return val;
+                    }
+                }
+            };
+            chart.source(data, brefs);
+            chart.legend({
+                position:'right'
+            });
+            chart.coord('theta', {
+                radius: 0.6
+            });
+            chart.tooltip({
+                showTitle: false,
+                itemTpl: '<li><span style="background-color:{color};" class="g2-tooltip-marker"></span>{name}<br>{count} {value}</li>'
+            });
+
+            var interval = chart.intervalStack()
+                .position('percent')
+                .color('item')
+                .label('count', {
+                    formatter: function formatter(val, item) {
+                        return item.point.item + ': ' + val+'件';
+                    }})
+                .tooltip('item*count*percent', function(item, count, percent) {
+                    count = count + '件';
+                    percent = percent + '%';
+                    return {
+                        name: item,
+                        count: count,
+                        value: percent
+                    };})
+                .style({
+                    lineWidth: 1,
+                    stroke: '#fff'});
+            chart.render();
+        }
+        function drawPlaceCountPie(data){
+
+            var chart = new G2.Chart({
+                container: 'placeCountPie',
+                forceFit: true,
+                height: 350,
+                padding:'auto'
+            });
+            var brefs = {
+                percent: {
+                    formatter: function formatter(val) {
+                        val = val + '%';
+                        return val;
+                    }
+                }
+            };
+            chart.source(data, brefs);
+            chart.legend({
+                position:'right'
+            });
+            chart.coord('theta', {
+                radius: 0.6
+            });
+            chart.tooltip({
+                showTitle: false,
+                itemTpl: '<li><span style="background-color:{color};" class="g2-tooltip-marker"></span>{name}<br>{count} {value}</li>'
+            });
+
+            var interval = chart.intervalStack()
+                .position('percent')
+                .color('item')
+                .label('count', {
+                    formatter: function formatter(val, item) {
+                        return item.point.item + ': ' + val+'件';
+                    }})
+                .tooltip('item*count*percent', function(item, count, percent) {
+                    count = count + '件';
+                    percent = percent + '%';
+                    return {
+                        name: item,
+                        count: count,
+                        value: percent
+                    };})
+                .style({
+                    lineWidth: 1,
+                    stroke: '#fff'});
+            chart.render();
+        }
+        function drawUnitCountPie(data){
+
+            var chart = new G2.Chart({
+                container: 'unitCountPie',
+                forceFit: true,
+                height: 350,
+                padding:'auto'
+            });
+            var brefs = {
+                percent: {
+                    formatter: function formatter(val) {
+                        val = val + '%';
+                        return val;
+                    }
+                }
+            };
+            chart.source(data, brefs);
+            chart.legend({
+                position:'right'
+            });
+            chart.coord('theta', {
+                radius: 0.6
+            });
+            chart.tooltip({
+                showTitle: false,
+                itemTpl: '<li><span style="background-color:{color};" class="g2-tooltip-marker"></span>{name}<br>{count} {value}</li>'
+            });
+
+            var interval = chart.intervalStack()
+                .position('percent')
+                .color('item')
+                .label('count', {
+                    formatter: function formatter(val, item) {
+                        return item.point.item + ': ' + val+'件';
+                    }})
+                .tooltip('item*count*percent', function(item, count, percent) {
+                    count = count + '件';
+                    percent = percent + '%';
+                    return {
+                        name: item,
+                        count: count,
+                        value: percent
+                    };})
+                .style({
+                    lineWidth: 1,
+                    stroke: '#fff'});
+            chart.render();
+        }
+        function drawContentCountInterval(data){
+
+            var chart = new G2.Chart({
+                container: 'contentCountInterval',
+                forceFit: true,
+                height: 350,
+                padding: 'auto'
+            });
+            chart.source(data);
+            chart.scale('value', {
+                alias: '数量（件）'
+            });
+            chart.axis('type', {
+                label: {
+                    textStyle: {
+                        fill: '#aaaaaa'
+                    }
+                },
+                tickLine: {
+                    alignWithLabel: false,
+                    length: 0
+                }
+            });
+
+            chart.axis('value', {
+                label: {
+                    textStyle: {
+                        fill: '#aaaaaa'
+                    },
+                    formatter: function formatter(text) {
+                        return text.replace(/(\d)(?=(?:\d{3})+$)/g, '$1,');
+                    }
+                },
+                title: {
+                    offset: 70
+                }
+            });
+            chart.interval().position('type*value').color('cat').opacity(1);
+            chart.render();
+        }
+
+        // 默认显示
+        (function defaultData(){
+
+            // 接待统计
+            crab.get('/jdc/statis/console/jdpie', {}, function (data) {
+                drawJDCountPie(data);
+            });
+            crab.get('/jdc/statis/console/placepie', {}, function (data) {
+                drawPlaceCountPie(data);
+            });
+            crab.get('/jdc/statis/console/unitpie', {}, function (data) {
+                drawUnitCountPie(data);
+            });
+            crab.get('/jdc/statis/console/contentinterval', {}, function (data) {
+                drawContentCountInterval(data);
+            });
+
+            var userTable = table.render({
+                elem: '#user-table',
+                url: config.base_server + '/jdc/xxgl/page',
+                parseData: config.parseData,
+                page: true,
+                cols: [[
+                    {type: 'numbers'},
+                    {field: 'eventNum', title: '事件编号', width: 130},
+                    {field: 'name', title: '事件名称', width: 90},
+                    {field: 'petitionerName', title: '信访人姓名', width: 90},
+                    {field: 'idcard', title: '身份证号', width: 180},
+                    {field: 'eventContent', title: '反映问题'},
+                    {field: 'mainDemand', title: '主要诉求',width: 100},
+                    {field: 'dutyUnitName', title: '责任单位',width: 100},
+                    {field: 'contentTypeName', title: '问题分类',width: 100},
+                    {field: 'status', title: '事件状态', width: 130},
+                    {field: 'receptionName', title: '接待人', width: 80},
+                    {field: 'createTime', title: '创建时间', sort: true, width: 150}
+                ]]
+            });
+        }());
+
+    });
+</script>

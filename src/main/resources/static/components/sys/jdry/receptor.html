@@ -1,0 +1,145 @@
+<div class="layui-card">
+    <div class="layui-card-header">
+        <h2 class="header-title">接待人员管理</h2>
+        <span class="layui-breadcrumb pull-right">
+          <a><cite>系统管理</cite></a>
+          <a><cite>接待人员管理</cite></a>
+        </span>
+    </div>
+    <div class="layui-card-body">
+        <!-- 搜索条件 -->
+        <div class="layui-form toolbar user-search">
+            <form id="searchForm" onsubmit="return false;">
+                姓名：<input name="name" class="layui-input search-input" type="text" placeholder="输入姓名"/>&emsp;
+                身份证：<input name="idcard" class="layui-input search-input" type="text" placeholder="输入身份证"/>&emsp;
+                状态：<select name="status" lay-verify="">
+                <option value="">请选择一个状态</option>
+                <option value="0">正常</option>
+                <option value="-1">禁用</option>
+            </select>&emsp;
+                组织：<select id="orgs" name="orgs"></select>
+                <button id="user-btn-search" class="layui-btn icon-btn"><i class="layui-icon">&#xe615;</i>搜索</button>
+            </form>
+        </div>
+        <!-- 表格顶部操作列 -->
+        <script type="text/html" id="user-toolbar">
+            <div class="layui-btn-container">
+                <button class="layui-btn layui-btn-sm" lay-event="add"><i
+                        class="layui-icon">&#xe654;</i>添加
+                </button>
+            </div>
+        </script>
+        <table class="layui-table" id="user-table" lay-filter="user-table"></table>
+    </div>
+</div>
+
+<!-- 表格操作列 -->
+<script type="text/html" id="user-table-bar">
+    <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="edit">修改</a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+</script>
+
+<!-- 表格状态列 -->
+<script type="text/html" id="user-tpl-status">
+    <input type="checkbox" lay-filter="user-tpl-status" value="{{d.id}}" lay-skin="switch"
+           lay-text="正常|禁用" {{d.status==0?'checked':''}} {{d.id==0?'disabled':''}}/>
+</script>
+
+<script>
+    layui.use(['form', 'table', 'config', 'crab', 'formSelects'], function () {
+        var form = layui.form;
+        var table = layui.table;
+        var config = layui.config;
+        var layer = layui.layer;
+        var crab = layui.crab;
+
+        // 加载单选下拉选择框
+        function loadSingleSelectBox(crab,form,url,selectIdName,selectedId){
+            crab.get(url, {}, function (data) {
+                var l = data.length;
+                if (l > 0) {
+                    var option = '<option value="">请选择一个组织</option>',_selectedId;
+                    if(selectedId){
+                        _selectedId = selectedId
+                    }
+                    for (var i = 0; i < l; i++) {
+                        var add = '';
+                        if(data[i].address) add = '&nbsp;，&nbsp;'+data[i].address;
+                        option += '<option value="' + data[i].id + '" '+((''+data[i].id===''+_selectedId)?"selected":"")+'>' + data[i].name + add +'</option>';
+                    }
+                    $('#'+selectIdName).empty().append(option);
+                    form.render('select');
+                }
+            });
+        }
+        loadSingleSelectBox(crab,form,'/djc/djxx/listReceptionOrg','orgs');
+        // 渲染表格
+        var userTable = table.render({
+            elem: '#user-table',
+            toolbar: '#user-toolbar',
+            url: config.base_server + '/jdry/page',
+            parseData: config.parseData,
+            page: true,
+            cols: [[
+                {type: 'numbers'},
+                {field: 'name', title: '姓名', width: 100},
+                {field: 'sex', title: '性别', width: 80},
+                {field: 'idcard', title: '身份证', width: 200},
+                {field: 'orgsName', title: '组织'},
+                {field: 'sort', title: '排序', sort: true, width: 75, align:'center'},
+                {field: 'status', templet: '#user-tpl-status', title: '状态', width: 100},
+                {field: 'createTime', title: '创建时间', sort: true, hide:true, width: 150},
+                {fixed: 'right', align: 'center', toolbar: '#user-table-bar', title: '操作', width: 120}
+            ]]
+        });
+        // 表格顶部操作列
+        table.on('toolbar(user-table)', function (obj) {
+            if (obj.event === 'add') {
+                showEditModel();
+            }
+        });
+        // 表格操作列事件
+        table.on('tool(user-table)', function (obj) {
+            var data = obj.data;
+            var layEvent = obj.event;
+
+            if (layEvent === 'edit') {
+                // 修改
+                data.orgIds = data.orgs;
+                delete data.orgs;
+                showEditModel(data);
+            }else if (obj.event === 'del') {
+                // 删除
+                layer.confirm('确定要删除该条用户记录吗？', function () {
+                    crab.deleteRow(obj, '/jdry/' + obj.data.id);
+                });
+            }
+        });
+
+        //显示表单弹窗
+        var showEditModel = function (data) {
+            crab.putFormData(data);
+            crab.popupCenter({
+                title: data ? '修改接待员' : '添加接待员',
+                path: '/components/sys/jdry/receptor-form.html',
+                finish: function () {
+                    userTable.reload('user-table', {});
+                }
+            });
+        };
+
+        // 搜索按钮点击事件
+        $('#user-btn-search').click(function () {
+            userTable.reload({where: crab.getSearchForm()});
+        });
+
+        // 修改user状态
+        form.on('switch(user-tpl-status)', function (obj) {
+            crab.put('/jdry/status_' + obj.elem.value, {
+                status: obj.elem.checked ? 0 : -1
+            }, function () {
+                layer.msg('接待员状态修改成功', {icon: 1});
+            });
+        });
+    });
+</script>

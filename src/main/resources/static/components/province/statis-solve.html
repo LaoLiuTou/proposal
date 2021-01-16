@@ -1,0 +1,71 @@
+<div class="layui-card">
+    <div class="layui-card-header">
+        <h2 class="header-title">办结率统计</h2>
+    </div>
+    <div class="layui-card-body">
+        <!-- 搜索条件 -->
+        <div class="layui-form toolbar user-search">
+            <form id="searchForm" onsubmit="return false;">
+                登记时间：<input name="queryCheckDate" type="text" class="layui-input search-input" readonly id="queryCheckDate" style="width:200px">
+                <button id="user-btn-search" class="layui-btn icon-btn"><i class="layui-icon">&#xe615;</i>搜索</button>
+            </form>
+        </div>
+        <!-- 表格 -->
+        <table class="layui-table" id="data-table" lay-filter="data-table"></table>
+    </div>
+</div>
+
+<script>
+    layui.use(['table', 'config',  'crab', 'laydate'], function () {
+        const table = layui.table;
+        const config = layui.config;
+        const crab = layui.crab;
+        const laydate = layui.laydate;
+        laydate.render({
+            elem: '#queryCheckDate'
+            ,format: 'yyyy-MM-dd'
+            ,type: 'date'
+            ,range: '~'
+            ,max:new Date().getTime()
+            ,btns: ['confirm']
+        });
+
+        function accMul(arg1, arg2) {
+            var m = 0, s1 = arg1.toString(), s2 = arg2.toString();
+            try { m += s1.split(".")[1].length; } catch (e) { }
+            try { m += s2.split(".")[1].length; } catch (e) { }
+            return Number(s1.replace(".", "")) * Number(s2.replace(".", "")) / Math.pow(10, m);
+        }
+
+        // 渲染表格
+        var dataTable = table.render({
+            elem: '#data-table',
+            toolbar: true,
+            url: config.base_server + '/province/data/statis/solve',
+            where:{queryCheckDate:''},
+            page: false,
+            totalRow:true,
+            cols: [[
+                {type: 'numbers'},
+                {field: 'name', title: '地区', totalRowText:'合计', minWidth: 150},
+                {field: 'count', title: '总数', totalRow:true, width: 115},
+                {field: 'inDateCount', title: '按期办结数', totalRow:true, width: 115},
+                {field: 'overDateCount', title: '超期未办结数', totalRow:true, width: 115},
+                {field: 'datePercent', title: '按期办结率', width: 115,templet: function(d){
+                        return d.datePercent!=null?accMul(d.datePercent,100).toFixed(2)+'%':'-';
+                    }},
+                {field: 'solveCount', title: '办结数', totalRow:true, width: 115},
+                {field: 'unSolveCount', title: '未办结数', totalRow:true, width: 115},
+                {field: 'solvePercent', title: '办结率', width: 115,templet: function(d){
+                        return d.solvePercent!=null?accMul(d.solvePercent,100).toFixed(2)+'%':'-';
+                    }}
+            ]]
+        });
+
+        // 搜索按钮点击事件
+        $('#user-btn-search').click(function () {
+            dataTable.reload({where: crab.getSearchForm()});
+        });
+
+    });
+</script>

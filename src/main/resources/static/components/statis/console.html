@@ -1,0 +1,1292 @@
+<div id="fourCountIndex" class="layui-row layui-col-space15">
+    <div class="layui-col-xs6 layui-col-md3">
+        <div class="layui-card">
+            <div class="layui-card-header">
+                登记室登记数（人次）
+                <div class="layui-btn-group pull-right date-btns has-day four-count" data-open="four-count">
+
+                </div>
+            </div>
+            <div class="layui-card-body">
+                <p class="lay-big-font"><span id="djNum"></span><span class="font-12">批次</span><span class="font-16">（<span id="djNum_p"></span><span class="font-12">人次</span>）</span></p>
+                <p>年初以来总计<span class="pull-right" id="djSum"><span id="djNum_sum"></span>批&nbsp;&nbsp;<span id="djNum_sum_p"></span>人&nbsp;<i class="layui-icon layui-icon-chart"></i></span></p>
+            </div>
+        </div>
+    </div>
+    <div class="layui-col-xs6 layui-col-md3">
+        <div class="layui-card">
+            <div class="layui-card-header">
+                接待数（人次）
+                <div class="layui-btn-group pull-right date-btns has-day four-count" data-open="four-count">
+                </div>
+            </div>
+            <div class="layui-card-body">
+                <p class="lay-big-font"><span id="jdNum"></span><span class="font-12">批次</span><span class="font-16">（<span id="jdNum_p"></span><span class="font-12">人次</span>）</span></p>
+                <p>年初以来总计<span class="pull-right" id="jdSum"><span id="jdNum_sum"></span>批&nbsp;&nbsp;<span id="jdNum_sum_p"></span>人&nbsp;<i class="layui-icon layui-icon-chart"></i></span></p>
+            </div>
+        </div>
+    </div>
+    <div class="layui-col-xs6 layui-col-md3">
+        <div class="layui-card">
+            <div class="layui-card-header">
+                纯件数（人次）
+                <div class="layui-btn-group pull-right date-btns has-day four-count" data-open="four-count">
+                </div>
+            </div>
+            <div class="layui-card-body">
+                <p class="lay-big-font"><span id="cjNum"></span><span class="font-12">批次</span><span class="font-16">（<span id="cjNum_p"></span><span class="font-12">人次</span>）</span></p>
+                <p>年初以来总计<span class="pull-right" id="cjSum"><span id="cjNum_sum"></span>批&nbsp;&nbsp;<span id="cjNum_sum_p"></span>人&nbsp;<i class="layui-icon layui-icon-chart"></i></span></p>
+            </div>
+        </div>
+    </div>
+    <div class="layui-col-xs6 layui-col-md3">
+        <div class="layui-card">
+            <div class="layui-card-header">
+                已处理数（人次）
+                <div class="layui-btn-group pull-right date-btns has-day four-count" data-open="four-count">
+                </div>
+            </div>
+            <div class="layui-card-body">
+                <p class="lay-big-font"><span id="yclNum"></span><span class="font-12">批次</span><span class="font-16">（<span id="yclNum_p"></span><span class="font-12">人次</span>）</span></p>
+                <p>年初以来总计<span class="pull-right" id="yclSum"><span id="yclNum_sum"></span>批&nbsp;&nbsp;<span id="yclNum_sum_p"></span>人&nbsp;<i class="layui-icon layui-icon-chart"></i></span></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="everyDayIndex" class="layui-row layui-col-space15">
+    <div class="layui-col-sm12">
+        <div class="layui-card">
+            <div class="layui-card-header">
+                <div class="layui-row">
+                    <h2 class="header-title">日登记情况</h2>
+                    &nbsp;&nbsp;&nbsp;<span class="font-14">总批数：<span id="everyDayBatchSum"></span>&nbsp;&nbsp;总人数：<span id="everyDayPeopleSum"></span></span>
+                    <div class="layui-btn-group pull-right date-btns not-has-day every-day" data-open="every-day">
+                    </div>
+                    <div class="layui-btn-group layuiadmin-btn-group pull-right export-div">
+                        <a id="everyDayExport" href="javascript:;" class="date-btn layui-btn layui-btn-primary layui-btn-xs">导出</a>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-card-body">
+                <div id="everyDayTableDiv" class="text-center mod-table-div"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="receptionOrgIndex" class="layui-row layui-col-space15">
+    <div class="layui-col-sm12">
+        <div class="layui-card">
+            <div class="layui-card-header">
+                <div class="layui-row">
+                    <h2 class="header-title">接待处统计</h2>
+                    &nbsp;&nbsp;&nbsp;<span class="font-14">总批数：<span id="receptionOrgBatchSum"></span>&nbsp;&nbsp;总人数：<span id="receptionOrgPeopleSum"></span></span>
+                    <div class="layui-btn-group pull-right date-btns has-day reception-org" data-open="reception-org">
+                    </div>
+                    <div class="layui-btn-group layuiadmin-btn-group pull-right export-div">
+                        <a id="receptionOrgExport" href="javascript:;" class="date-btn layui-btn layui-btn-primary layui-btn-xs">导出</a>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-card-body text-center">
+                <div class="layui-row">
+                    <div class="layui-col-md7">
+                        <div id="receptionOrgTableDiv" class="mod-table-div text-center" style="width:100%;"></div>
+                    </div>
+                    <div class="layui-col-md5">
+                        <div class="layui-card">
+                            <div class="layui-card-body" style="height: 350px">
+                                <div id="jdCountPie"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="eventPlaceIndex" class="layui-row layui-col-space15">
+    <div class="layui-col-sm12">
+        <div class="layui-card">
+            <div class="layui-card-header">
+                <div class="layui-row">
+                    <h2 class="header-title">事发地统计</h2>
+                    &nbsp;&nbsp;&nbsp;<span class="font-14">总批数：<span id="eventPlaceBatchSum"></span>&nbsp;&nbsp;总人数：<span id="eventPlacePeopleSum"></span></span>
+                    <div class="layui-btn-group pull-right date-btns has-day event-place" data-open="event-place">
+                    </div>
+                    <div class="layui-btn-group layuiadmin-btn-group pull-right export-div">
+                        <a id="eventPlaceExport" href="javascript:;" class="date-btn layui-btn layui-btn-primary layui-btn-xs">导出</a>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-card-body text-center">
+                <div class="layui-row">
+                    <div class="layui-col-md7">
+                        <div id="eventPlaceTableDiv" class="mod-table-div text-center"></div>
+                    </div>
+                    <div class="layui-col-md5">
+                        <div class="layui-card">
+                            <div class="layui-card-body" style="height: 350px">
+                                <div id="placeCountPie"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="dutyUnitIndex" class="layui-row layui-col-space15">
+    <div class="layui-col-sm12">
+        <div class="layui-card">
+            <div class="layui-card-header">
+                <div class="layui-row">
+                    <h2 class="header-title">责任单位统计</h2>
+                    &nbsp;&nbsp;&nbsp;<span class="font-14">总批数：<span id="dutyUnitBatchSum"></span>&nbsp;&nbsp;总人数：<span id="dutyUnitPeopleSum"></span></span>
+                    <div class="layui-btn-group pull-right date-btns has-day duty-unit" data-open="duty-unit">
+                    </div>
+                    <div class="layui-btn-group layuiadmin-btn-group pull-right export-div">
+                        <a id="dutyUnitExport" href="javascript:;" class="date-btn layui-btn layui-btn-primary layui-btn-xs">导出</a>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-card-body text-center">
+                <div class="layui-row">
+                    <div class="layui-col-md7">
+                        <div id="dutyUnitTableDiv" class="mod-table-div text-center"></div>
+                    </div>
+                    <div class="layui-col-md5">
+                        <div class="layui-card">
+                            <div class="layui-card-body" style="height: 350px">
+                                <div id="unitCountPie"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="contentTypeIndex" class="layui-row layui-col-space15">
+    <div class="layui-col-sm12">
+        <div class="layui-card">
+            <div class="layui-card-header">
+                <div class="layui-row">
+                    <h2 class="header-title">内容分类统计</h2>
+                    <div class="layui-btn-group pull-right date-btns has-day content-type" data-open="content-type">
+                    </div>
+                </div>
+            </div>
+            <div class="layui-card-body">
+                <div class="layui-row">
+                    <div class="layui-col-md6">
+                        <div class="layui-card-header">
+                            <i class="layui-icon layui-icon-engine"></i>&nbsp;一级内容分类Top10
+                        </div>
+                        <div class="layui-card-body">
+                            <div id="contentTypeFirstInterval"></div>
+                            <div class="layui-card-header">
+                                <i class="layui-icon layui-icon-engine"></i>&nbsp;一级内容分类
+                                &nbsp;&nbsp;&nbsp;<span class="font-14">总批数：<span id="contentTypeFirstBatchSum"></span>&nbsp;&nbsp;总人数：<span id="contentTypeFirstPeopleSum"></span></span>
+                                <div class="layui-btn-group layuiadmin-btn-group pull-right">
+                                    <a id="contentTypeFirstExport" href="javascript:;" class="date-btn layui-btn layui-btn-primary layui-btn-xs">导出</a>
+                                </div>
+                            </div>
+                            <div class="layui-card-body">
+                                <div id="contentTypeFirstTableDiv" class="max-width-div mod-table-div text-center"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-col-md6">
+                        <div class="layui-card-header">
+                            <i class="layui-icon layui-icon-engine"></i>&nbsp;二级内容分类Top10
+                        </div>
+                        <div class="layui-card-body">
+                            <div id="contentTypeSecondInterval"></div>
+                            <div class="layui-card-header">
+                                <i class="layui-icon layui-icon-engine"></i>&nbsp;二级内容分类
+                                &nbsp;&nbsp;&nbsp;<span class="font-14">总批数：<span id="contentTypeSecondBatchSum"></span>&nbsp;&nbsp;总人数：<span id="contentTypeSecondPeopleSum"></span></span>
+                                <div class="layui-btn-group layuiadmin-btn-group pull-right">
+                                    <a id="contentTypeSecondExport" href="javascript:;" class="date-btn layui-btn layui-btn-primary layui-btn-xs">导出</a>
+                                </div>
+                            </div>
+                            <div class="layui-card-body">
+                                <table class="layui-table second-content-type-table" id="second-content-type-table-own" lay-filter="second-content-type-table-own" style="margin: 0;"></table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="repeatQueryIndex" class="layui-row layui-col-space15">
+    <div class="layui-col-sm12">
+        <div class="layui-card">
+            <div class="layui-card-header">
+                <div class="layui-row">
+                    <h2 class="header-title">重访查询统计</h2>
+                    &nbsp;&nbsp;&nbsp;<span class="font-14">总批数：<span id="repeatQueryBatchSum">0</span></span>
+                    <div class="layui-btn-group layuiadmin-btn-group pull-right export-div">
+                        <a id="repeatQueryBtn" href="javascript:;" class="date-btn layui-btn layui-btn-primary layui-btn-xs">查询</a>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-card-body text-center">
+                <table class="layui-table" id="repeat-event-table" lay-filter="repeat-event-table"></table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="index-box">
+    <div class="index-div">
+        <div class="index-title">索引</div>
+        <ul class="index-content">
+            <li><a class="index-a" id="tofourCountIndex">数字板</a></li>
+            <li><a class="index-a" id="toeveryDayIndex">日登记情况</a></li>
+            <li><a class="index-a" id="toreceptionOrgIndex">接待处统计</a></li>
+            <li><a class="index-a" id="toeventPlaceIndex">事发地统计</a></li>
+            <li><a class="index-a" id="todutyUnitIndex">责任单位统计</a></li>
+            <li><a class="index-a" id="tocontentTypeIndex">内容分类统计</a></li>
+            <li><a class="index-a" id="torepeatQueryIndex">重访查询统计</a></li>
+        </ul>
+    </div>
+</div>
+
+<style type="text/css">
+    ::-webkit-scrollbar{display: none;}
+    .index-div{position: relative;}
+    .index-title{position: absolute;width:20px;left:-25px;border: 1px #ddd solid;border-right: 0;padding: 5px 2px;background-color: #fff;}
+    .index-content{padding: 5px 7px;border: 1px #ddd solid;background-color: #fff;}
+    .index-box{font-size:16px;position: fixed;top: 150px;right: -115px;width: 115px;z-index: 110;transition:right 0.5s;-webkit-transition:right 0.5s;}
+    .index-box:hover{right: 0px;}
+    .index-a:hover{color:#aaa;cursor:pointer}
+    .btn-gray{background-color: #ddd;}
+    .font-16{font-size: 16px;}
+    .font-14{font-size: 14px;}
+    .font-12{font-size: 12px;}
+    .own-date-input{margin-top: 7px;height:30px;}
+    .text-center{text-align: center}
+    .text-right{text-align: right}
+    .layui-table{width: inherit !important;}
+    .focus{background-color: #ffcc66}
+    .today{background-color: #99ccff}
+    .table-box-div{height:350px !important;}
+    .table-box{margin: 116px auto !important;white-space: nowrap}
+    .layui-table th{text-align: center !important;}
+    .max-width-div{width: 100%}
+    .mod-table-div{margin:auto}
+    .export-div{margin-right: 20px;}
+    .content-type-table tbody tr:hover{cursor:pointer}
+    .day-table tbody tr:hover,
+    .reception-table tbody tr:hover,
+    .place-table tbody tr:hover,
+    .unit-table tbody tr:hover,
+    .city-unit-table tbody tr:hover,
+    .content-type-table tbody tr.sum-tr:hover{background-color: inherit;cursor:default}
+    .layui-table tbody tr td.data-td.hover{background-color: #f2f2f2;cursor:pointer}
+    .layui-table tbody tr td.city-unit.hover{background-color: #f2f2f2;cursor:pointer}
+    .layui-table.tpl-table{margin:0}
+    .layui-table.tpl-table:first-child{margin-top: 5px;}
+    .layui-table.tpl-table:last-child{margin-bottom: 5px;}
+    .layui-table.day-table thead tr th{width:36px !important}
+    .layui-table.day-table thead tr th.title{width:94px !important}
+    .layui-table.place-table thead tr th{width:42px !important;min-width:42px !important}
+    .layui-table.unit-table thead tr th.title{width:42px !important;min-width:42px !important}
+    .layui-table.unit-table thead tr th.unit{width:70px !important;min-width:70px !important}
+    .layui-table.city-unit-table thead tr th.unit{width:84px !important;min-width:84px !important}
+    .layui-table.content-type-table thead tr th.number{width:42px !important;min-width:42px !important}
+    .second-content-type-table+.layui-form.layui-border-box.layui-table-view{margin-top: 0}
+    .second-content-type-table-div{padding-top: 0}
+</style>
+
+<script type="text/javascript" src="/assets/libs/countUp.min.js"></script>
+
+<!-- 事项列表 -->
+<script type="text/html" id="event-model">
+    <table class="layui-table" id="event-table" lay-filter="event-table"></table>
+</script>
+<!-- 事项表格操作列 -->
+<script type="text/html" id="event-table-bar">
+    <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="view">查看</a>
+</script>
+
+<!-- 市直部门列表 -->
+<script type="text/html" id="unit-city-model">
+    <div id="unitCityTableDiv"  lay-filter="unitCityTableDiv" class="text-center"></div>
+</script>
+
+<!-- 二级内容分类列表 -->
+<script type="text/html" id="second-content-type-model">
+    <div class="layui-card">
+        <div class="layui-card-header">
+            <span class="font-14">总批数：<span id="contentTypeFirstSecondBatchSum"></span>&nbsp;&nbsp;总人数：<span id="contentTypeFirstSecondPeopleSum"></span></span>
+            <div class="layui-btn-group layuiadmin-btn-group pull-right">
+                <a id="contentTypeSecondListExport" href="javascript:;" class="date-btn layui-btn layui-btn-primary layui-btn-xs">导出</a>
+            </div>
+        </div>
+        <div class="layui-card-body second-content-type-table-div">
+            <table class="layui-table second-content-type-table" id="second-content-type-table" lay-filter="second-content-type-table"></table>
+        </div>
+    </div>
+</script>
+<!-- 二级内容分类表格操作列 -->
+<script type="text/html" id="second-content-type-table-bar">
+    <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="view">查看事项</a>
+</script>
+
+<script>
+    layui.use(['crab','table','layer','laytpl','element'], function () {
+        const $ = layui.jquery;
+        const table = layui.table;
+        const layer = layui.layer;
+        const laytpl = layui.laytpl;
+        const element = layui.element;
+        const crab = layui.crab;
+        const clientWidth = $('.layui-body')[0].clientWidth;
+        const dateBtnsHtml =
+            '{{# if(!d.notHasDay){ }}' +
+            '    <a href="javascript:;" class="date-btn layui-btn layui-btn-primary layui-btn-xs {{= \'\'+d.type===\'0\'?\'btn-gray\':\'\'}}" data-type="0">日</a>' +
+            '    {{# } }}' +
+            '    <a href="javascript:;" class="date-btn layui-btn layui-btn-primary layui-btn-xs {{= \'\'+d.type===\'1\'?\'btn-gray\':\'\'}}" data-type="1">周</a>' +
+            '    <a href="javascript:;" class="date-btn layui-btn layui-btn-primary layui-btn-xs {{= \'\'+d.type===\'2\'?\'btn-gray\':\'\'}}" data-type="2">月</a>' +
+            '    <a href="javascript:;" class="date-btn layui-btn layui-btn-primary layui-btn-xs {{= \'\'+d.type===\'3\'?\'btn-gray\':\'\'}}" data-type="3">年</a>' +
+            '    <a href="javascript:;" class="date-btn layui-btn layui-btn-primary layui-btn-xs {{= \'\'+d.type===\'4\'?\'btn-gray\':\'\'}}" data-type="4">自</a>';
+        const dateType = {0:{name:'day',text:'日'},1:{name:'week',text:'周'},2:{name:'month',text:'月'},3:{name:'year',text:'年'},4:{name:'custom',text:'时间段'}};
+        let layerIndex = null,
+            now = new Date(),
+            curYearFirstDayStr=now.getFullYear()+'年01月01日',//当年第一天
+            curMonthFirstDayStr = now.getFullYear()+'年'+prev(now.getMonth()+1)+'月01日',//当月第一天
+            curDayStr = now.getFullYear()+'年'+prev(now.getMonth()+1)+'月'+prev(now.getDate())+'日';//当前日期
+
+        //质朴长存法
+        function prev(num){
+            return num>9?num:'0'+num;
+        }
+
+        $('#tofourCountIndex').click(function(){$("#fourCountIndex")[0].scrollIntoView({behavior:'smooth'});});
+        $('#toeveryDayIndex').click(function(){$("#everyDayIndex")[0].scrollIntoView({behavior:'smooth'});});
+        $('#toreceptionOrgIndex').click(function(){$("#receptionOrgIndex")[0].scrollIntoView({behavior:'smooth'});});
+        $('#toeventPlaceIndex').click(function(){$("#eventPlaceIndex")[0].scrollIntoView({behavior:'smooth'});});
+        $('#todutyUnitIndex').click(function(){$("#dutyUnitIndex")[0].scrollIntoView({behavior:'smooth'});});
+        $('#tocontentTypeIndex').click(function(){$("#contentTypeIndex")[0].scrollIntoView({behavior:'smooth'});});
+        $('#torepeatQueryIndex').click(function(){$("#repeatQueryIndex")[0].scrollIntoView({behavior:'smooth'});});
+
+        let receptionOrgChart=null,
+            eventPlaceChart=null,
+            dutyUnitChart=null,
+            contentTypeFirstTopTenChart=null,
+            contentTypeSecondTopTenChart=null;
+        // 图表
+        function drawReceptionOrgPie(data){
+            if(data.length === 0) return false;
+            receptionOrgChart= new G2.Chart({
+                container: 'jdCountPie',
+                forceFit: true,
+                height: 350,
+                padding:['auto',120]
+            });
+            let brefs = {
+                percent: {
+                    formatter: function formatter(val) {
+                        val = val + '%';
+                        return val;
+                    }
+                }
+            };
+            receptionOrgChart.coord('theta', {
+                radius: 0.6
+            });
+            receptionOrgChart.tooltip({
+                showTitle: false,
+                itemTpl: '<li><span style="background-color:{color};" class="g2-tooltip-marker"></span>{name}<br>{value}<br>{batch} {people}</li>'
+            });
+
+            receptionOrgChart.intervalStack()
+                .position('percent')
+                .color('item')
+                .label('batch', {
+                    formatter: function formatter(val, item) {
+                        return item.point.item + '\n批数：' + val+'，人数：'+item.point.people;
+                    }})
+                .tooltip('item*batch*percent*people', function(item, batch, percent,people) {
+                    people = people + '人数';
+                    batch = batch + '批数';
+                    percent = percent + '%';
+                    return {
+                        name: item,
+                        batch: batch,
+                        people: people,
+                        value: percent
+                    };})
+                .style({
+                    lineWidth: 1,
+                    stroke: '#fff'});
+            receptionOrgChart.source(data, brefs);
+            receptionOrgChart.render();
+        }
+        function drawPlaceCountPie(data){
+            if(data.length === 0) return false;
+            eventPlaceChart = new G2.Chart({
+                container: 'placeCountPie',
+                forceFit: true,
+                height: 350,
+                padding:['auto',150]
+            });
+            let brefs = {
+                percent: {
+                    formatter: function formatter(val) {
+                        val = val + '%';
+                        return val;
+                    }
+                }
+            };
+            eventPlaceChart.source(data, brefs);
+            eventPlaceChart.coord('theta', {
+                radius: 0.6
+            });
+            eventPlaceChart.tooltip({
+                showTitle: false,
+                itemTpl: '<li><span style="background-color:{color};" class="g2-tooltip-marker"></span>{name}<br>{value}<br>{batch} {people}</li>'
+            });
+
+            eventPlaceChart.intervalStack()
+                .position('percent')
+                .color('item')
+                .label('batch', {
+                    formatter: function formatter(val, item) {
+                        return item.point.item + '  批数：' + val+'，人数：'+item.point.people;
+                    }})
+                .tooltip('item*batch*percent*people', function(item, batch, percent,people) {
+                    people = people + '人数';
+                    batch = batch + '批数';
+                    percent = percent + '%';
+                    return {
+                        name: item,
+                        batch: batch,
+                        people: people,
+                        value: percent
+                    };})
+                .style({
+                    lineWidth: 1,
+                    stroke: '#fff'});
+            eventPlaceChart.render();
+        }
+        function drawUnitCountPie(data){
+            if(data.length === 0) return false;
+            dutyUnitChart = new G2.Chart({
+                container: 'unitCountPie',
+                forceFit: true,
+                height: 350,
+                padding:['auto',150,'auto',200]
+            });
+            let brefs = {
+                percent: {
+                    formatter: function formatter(val) {
+                        val = val + '%';
+                        return val;
+                    }
+                }
+            };
+            dutyUnitChart.source(data, brefs);
+            dutyUnitChart.coord('theta', {
+                radius: 0.6
+            });
+            dutyUnitChart.tooltip({
+                showTitle: false,
+                itemTpl: '<li><span style="background-color:{color};" class="g2-tooltip-marker"></span>{name}<br>{value}<br>{batch} {people}</li>'
+            });
+
+            dutyUnitChart.intervalStack()
+                .position('percent')
+                .color('item')
+                .label('batch', {
+                    formatter: function formatter(val, item) {
+                        return item.point.item + '  批数：' + val+'，人数：'+item.point.people;
+                    }})
+                .tooltip('item*batch*percent*people', function(item, batch, percent,people) {
+                    people = people + '人数';
+                    batch = batch + '批数';
+                    percent = percent + '%';
+                    return {
+                        name: item,
+                        batch: batch,
+                        people: people,
+                        value: percent
+                    };})
+                .style({
+                    lineWidth: 1,
+                    stroke: '#fff'});
+            dutyUnitChart.render();
+        }
+        function drawFirstLevelContentTypeTopTen(data){
+            if(data.length === 0) return false;
+            contentTypeFirstTopTenChart = new G2.Chart({
+                container: 'contentTypeFirstInterval',
+                forceFit: true,
+                height: 350,
+                padding: ['auto',100,'auto',120]
+            });
+            contentTypeFirstTopTenChart.source(data);
+            contentTypeFirstTopTenChart.axis('item', {
+                label: {
+                    textStyle: {
+                        fill: '#aaaaaa'
+                    },
+                    formatter: function formatter(text){
+                        return text.length>8?(text.substring(0,8)+'\n'+text.substring(8,text.length)):text;
+                    }
+                },
+                tickLine: {
+                    alignWithLabel: false,
+                    length: 0
+                },
+                line: {
+                    lineWidth: 0
+                }});
+            contentTypeFirstTopTenChart.axis('batch', {label: null});
+            contentTypeFirstTopTenChart.legend(false);
+            contentTypeFirstTopTenChart.coord().transpose();
+            contentTypeFirstTopTenChart.tooltip({
+                showTitle: false,
+                itemTpl: '<li>{name}<br>{batch} {people}</li>'
+            });
+            contentTypeFirstTopTenChart.interval().position('item*batch').size(20).opacity(1)
+                .label('batch', {
+                    offset: 5,
+                    formatter: function formatter(val, item) {
+                        return val + '批 '+item.point.people+'人';
+                    }
+                })
+                .tooltip('item*batch*people', function(item, batch, people) {
+                    people = people + '人数';
+                    batch = batch + '批数';
+                    return {
+                        name: item,
+                        batch: batch,
+                        people: people
+                    };
+                });
+            contentTypeFirstTopTenChart.render();
+        }
+        function drawSecondLevelContentTypeTopTen(data){
+            if(data.length === 0) return false;
+            contentTypeSecondTopTenChart = new G2.Chart({
+                container: 'contentTypeSecondInterval',
+                forceFit: true,
+                height: 350,
+                padding: ['auto',100,'auto',120]
+            });
+            contentTypeSecondTopTenChart.source(data);
+            contentTypeSecondTopTenChart.axis('item', {
+                label: {
+                    textStyle: {
+                        fill: '#aaaaaa'
+                    },
+                    formatter: function formatter(text){
+                        return text.length>8?(text.substring(0,8)+'\n'+text.substring(8,text.length)):text;
+                    }
+                },
+                tickLine: {
+                    alignWithLabel: false,
+                    length: 0
+                },
+                line: {
+                    lineWidth: 0
+                }});
+            contentTypeSecondTopTenChart.axis('batch', {label: null});
+            contentTypeSecondTopTenChart.legend(false);
+            contentTypeSecondTopTenChart.coord().transpose();
+            contentTypeSecondTopTenChart.tooltip({
+                showTitle: false,
+                itemTpl: '<li>{name}<br>{batch} {people}</li>'
+            });
+            contentTypeSecondTopTenChart.interval().color('#2fc25b').position('item*batch').size(20).opacity(1)
+                .label('batch', {
+                    offset: 5,
+                    formatter: function formatter(val, item) {
+                        return val + '批 '+item.point.people+'人';
+                    }
+                })
+                .tooltip('item*batch*people', function(item, batch, people) {
+                    people = people + '人数';
+                    batch = batch + '批数';
+                    return {
+                        name: item,
+                        batch: batch,
+                        people: people
+                    };
+                });
+            contentTypeSecondTopTenChart.render();
+        }
+
+        // 事项表格
+        function showEventList(list){
+            layer.open({
+                type: 1,
+                title: '事项列表',
+                area: '1200px',
+                offset: '50px',
+                content: $('#event-model').html(),
+                success: function () {
+                    // 渲染表格
+                    table.render({
+                        elem: '#event-table',
+                        data: list,
+                        height: '472',
+                        page:true,
+                        cols: [[
+                            {field: 'eventNum', title: '事件编号', width: 130},
+                            {field: 'visitDate', title: '来访日期', width: 110},
+                            {field: 'petitioner', title: '来访人', width: 75},
+                            {field: 'receptionOrg', title: '接待处', width: 100},
+                            {field: 'receptor', title: '接待人员', width: 100},
+                            {field: 'name', title: '事件名称', width: 150},
+                            {field: 'statusName', title: '事件状态', width: 100},
+                            {field: 'firstContentType', title: '一级问题分类', width: 130},
+                            {field: 'eventContent', title: '反映问题'},
+                            {fixed: 'right', align: 'center', toolbar: '#event-table-bar', title: '操作', width: 90}
+                        ]]
+                    });
+                }
+            });
+        }
+        table.on('tool(event-table)', function (obj) {
+            var data = obj.data;
+            var layEvent = obj.event;
+            if(layEvent === 'view'){
+                // 查看事项详情
+                crab.putTempData('p_eventInfo', data);
+                let height = $(window).height()-30;
+                let detail_layer_index = crab.popupCenter({
+                    closeBtn:0,
+                    path: '/components/jdc/jdc-djxx-table.html',
+                    title: false,
+                    offset: '15px',
+                    area: ['800px', height+'px']
+                });
+                crab.putTempData('detail_layer_index', detail_layer_index);
+            }
+        });
+
+        //悬停样式
+        $(document).on('mouseenter','.data-td,.city-unit',function(){
+            let index=$(this).data('i'),$table=$(this).closest('table');
+            $($table).find('.data-'+index).addClass('hover');
+        }).on('mouseleave','.data-td,.city-unit',function(){
+            let index=$(this).data('i'),$table=$(this).closest('table');
+            $($table).find('.data-'+index).removeClass('hover');
+        });
+
+        //日期按钮组点击事件
+        $('.date-btns').on('click','.date-btn',function(e){
+            let type = $(this).data('type'),openDiv = $(this).parent().data('open');
+            layui.sessionData('dateLayer', {key: 'openDiv', value: openDiv});
+            openLayer({
+                path: '/components/statis/layer/'+dateType[''+type].name+'-layer.html'
+                ,title:dateType[''+type].text+'选择'
+                ,event:e
+            },function(){
+                if(openDiv === 'four-count') initFourCount();
+                if(openDiv === 'every-day') initEveryDay();
+                if(openDiv === 'reception-org') initReceptionOrg();
+                if(openDiv === 'event-place') initEventPlace();
+                if(openDiv === 'duty-unit') initDutyUnit();
+                if(openDiv === 'content-type') initContentType();
+            });
+        });
+        //将2019年05月25日转换为2019-05-25格式
+        function changeDateFormat(str){
+            return str.replace(/年/g,'-').replace(/月/g,'-').replace(/日/g,'');
+        }
+        //计算日期弹框位置
+        function getOffsetLeft(clientX,w){
+            let one = clientX+(w/2),
+                two = clientX-(w/2);
+            if(one<=clientWidth && two >= 0){
+                return two;
+            }else if(one > clientWidth){
+                return clientWidth-w;
+            }else if(two < 0){
+                return 0;
+            }else{
+                return (clientWidth-w)/2;
+            }
+        }
+        //打开日期弹框
+        function openLayer(opts,endCallback){
+            let width=opts.width?opts.width:314,
+                height=opts.height?opts.height:121;
+            layerIndex = layer.open({
+                type:1
+                ,offset: [opts.event.clientY+'px', getOffsetLeft(opts.event.clientX,width)+'px']
+                ,area: [width+'px', height+'px']
+                ,title: opts.title
+                ,shadeClose:true
+                ,resize: true
+                ,success:function(layero, index){$(layero).children('.layui-layer-content').load(opts.path);}
+                ,end:function(){if(endCallback){endCallback();}}
+            });
+            layui.sessionData('dateLayer', {key: 'index', value: layerIndex});
+        }
+
+        //4块数字显示，年初以来
+        function initFourCountSum(){
+            let data = {start:changeDateFormat(curYearFirstDayStr),end:changeDateFormat(curDayStr)};
+            crab.get('/djc/statis/new_console',data,function(d){
+                showCount('djNum_sum',d.batch);
+                showCount('djNum_sum_p',d.people);
+            });
+            crab.get('/jdc/statis/new_console',data,function(d){
+                showCount('jdNum_sum',d.batch);
+                showCount('jdNum_sum_p',d.people);
+            });
+            crab.get('/jdc/statis/new_console_cj',data,function(d){
+                showCount('cjNum_sum',d.batch);
+                showCount('cjNum_sum_p',d.people);
+            });
+            crab.get('/jdc/statis/new_console_ycl',data,function(d){
+                showCount('yclNum_sum',d.batch);
+                showCount('yclNum_sum_p',d.people);
+            });
+        }
+        //4块数字显示(不包含年初以来)
+        function initFourCount(){
+            let type=changeDateFormat(layui.sessionData('dateLayer')['four-count_type']),
+                start = changeDateFormat(layui.sessionData('dateLayer')['four-count_start']),
+                end = changeDateFormat(layui.sessionData('dateLayer')['four-count_end']);
+            laytpl(dateBtnsHtml).render({type:type}, function(string){$('.date-btns.has-day.four-count').empty().append(string);});
+            crab.get('/djc/statis/new_console',{start:start,end:end},function(d){
+                showCount('djNum',d.batch);
+                showCount('djNum_p',d.people);
+            });
+            crab.get('/jdc/statis/new_console',{start:start,end:end},function(d){
+                showCount('jdNum',d.batch);
+                showCount('jdNum_p',d.people);
+            });
+            crab.get('/jdc/statis/new_console_cj',{start:start,end:end},function(d){
+                showCount('cjNum',d.batch);
+                showCount('cjNum_p',d.people);
+            });
+            crab.get('/jdc/statis/new_console_ycl',{start:start,end:end},function(d){
+                showCount('yclNum',d.batch);
+                showCount('yclNum_p',d.people);
+            });
+        }
+        // 四块数字显示方法
+        function showCount(ele,num){
+            new CountUp(ele, 0, num, 0, 3, {
+                useEasing: true,
+                useGrouping: true,
+                separator: ',',
+                decimal: '.'
+            }).start();
+        }
+
+        //日登记情况
+        function initEveryDay(){
+            let type=changeDateFormat(layui.sessionData('dateLayer')['every-day_type']),
+                start = changeDateFormat(layui.sessionData('dateLayer')['every-day_start']),
+                end = changeDateFormat(layui.sessionData('dateLayer')['every-day_end']);
+            laytpl(dateBtnsHtml).render({type:type, notHasDay:true}, function(string){$('.date-btns.not-has-day.every-day').empty().append(string);});
+            crab.get('/djc/statis/new_console_every_day',{start:start,end:end},function(list){
+                let count = parseInt((+clientWidth-30-126)/67),
+                    mod = list.length%count,
+                    tableCount = Math.ceil(list.length/count)+(mod===0?1:0),
+                    data={
+                        count:count,
+                        tableCount:tableCount,
+                        list:list
+                    };
+                crab.putTempData('everyday',list);
+                $('#everyDayTableDiv').load('/components/statis/laytpl/every-day-table.html', function () {
+                    laytpl(everyDayTable.innerHTML).render(data, function (html) {
+                        $('#everyDayTableDiv').append(html);
+                    });
+                });
+            });
+        }
+        $('#everyDayExport').click(function(){
+            let data = crab.getTempData('everyday');
+            let batchSum=0,peopleSum=0,fiveOverSum=0,fiftyOverSum=0,oneHundredOverSum=0,twoHundredOverSum=0,
+                titles=['','批次','人次','5人以上批次','50人以上批次','100人以上批次','200人以上批次'],list=[];
+            for(let i=0;i<data.length;i++){
+                let batch = data[i].batch,
+                    people = data[i].people,
+                    fiveOver = data[i].fiveOver,
+                    fiftyOver = data[i].fiftyOver,
+                    oneHundredOver = data[i].oneHundredOver,
+                    twoHundredOver = data[i].twoHundredOver;
+                batchSum += batch;
+                peopleSum += people;
+                fiveOverSum += fiveOver;
+                fiftyOverSum += fiftyOver;
+                oneHundredOverSum += oneHundredOver;
+                twoHundredOverSum += twoHundredOver;
+                list.push([data[i].year+'-'+data[i].day,batch,people,fiveOver,fiftyOver,oneHundredOver,twoHundredOver]);
+            }
+            list.push(['合计',batchSum,peopleSum,fiveOverSum,fiftyOverSum,oneHundredOverSum,twoHundredOverSum]);
+            table.exportFile(titles, list, 'xls');
+        });
+        $('#everyDayTableDiv').on('click','.data-td',function(){
+            let day = $(this).data('date');
+            crab.get('/jdc/statis/new_console_event',{start:day,end:day},function(list){
+                showEventList(list);
+            });
+        });
+
+        //接待处统计
+        function initReceptionOrg(){
+            let type=changeDateFormat(layui.sessionData('dateLayer')['reception-org_type']),
+                start = changeDateFormat(layui.sessionData('dateLayer')['reception-org_start']),
+                end = changeDateFormat(layui.sessionData('dateLayer')['reception-org_end']);
+            laytpl(dateBtnsHtml).render({type:type}, function(string){$('.date-btns.has-day.reception-org').empty().append(string);});
+            crab.get('/jdc/statis/new_console_reception_org',{start:start,end:end},function(list){
+                let count = 4,
+                    tableCount = 1,
+                    data={
+                        count:count,
+                        tableCount:tableCount,
+                        list:list
+                    };
+                crab.putTempData('receptionorg',list);
+                $('#receptionOrgTableDiv').load('/components/statis/laytpl/reception-org-table.html', function () {
+                    laytpl(receptionOrgTable.innerHTML).render(data, function (html) {
+                        $('#receptionOrgTableDiv').append(html);
+                    });
+                });
+                if(receptionOrgChart){
+                    if(receptionOrgChart.destroyed){}else{
+                        receptionOrgChart.destroy();
+                    }
+                }
+                drawReceptionOrgPie(list);
+            });
+        }
+        $('#receptionOrgExport').click(function(){
+            let data = crab.getTempData('receptionorg');
+            let batchSum=0,peopleSum=0,
+                titles=['','批次','人次'],list=[];
+            for(let i=0;i<data.length;i++){
+                let batch = data[i].batch,
+                    people = data[i].people;
+                batchSum += batch;
+                peopleSum += people;
+                list.push([data[i].item,batch,people]);
+            }
+            list.push(['合计',batchSum,peopleSum]);
+            table.exportFile(titles, list, 'xls');
+        });
+        $('#receptionOrgTableDiv').on('click','.data-td',function(){
+            let receptionOrgId = $(this).data('org'),
+                start = changeDateFormat(layui.sessionData('dateLayer')['reception-org_start']),
+                end = changeDateFormat(layui.sessionData('dateLayer')['reception-org_end']);
+            crab.get('/jdc/statis/new_console_event',{receptionOrgId:receptionOrgId,start:start,end:end},function(list){
+                showEventList(list);
+            });
+        });
+
+        //事发地
+        function initEventPlace(){
+            let type=changeDateFormat(layui.sessionData('dateLayer')['event-place_type']),
+                start = changeDateFormat(layui.sessionData('dateLayer')['event-place_start']),
+                end = changeDateFormat(layui.sessionData('dateLayer')['event-place_end']);
+            laytpl(dateBtnsHtml).render({type:type}, function(string){$('.date-btns.has-day.event-place').empty().append(string);});
+            crab.get('/jdc/statis/new_console_event_place',{start:start,end:end},function(list){
+                let count = parseInt(((+clientWidth-30)/12*7-74)/73),
+                    mod = list.length%count,
+                    tableCount = Math.ceil(list.length/count)+(mod===0?1:0),
+                    data={
+                        count:count,
+                        tableCount:tableCount,
+                        list:list
+                    };
+                crab.putTempData('eventplace',list);
+                $('#eventPlaceTableDiv').load('/components/statis/laytpl/event-place-table.html', function () {
+                    laytpl(eventPlaceTable.innerHTML).render(data, function (html) {
+                        $('#eventPlaceTableDiv').append(html);
+                    });
+                });
+                if(eventPlaceChart){
+                    if(eventPlaceChart.destroyed){}else{
+                        eventPlaceChart.destroy();
+                    }
+                }
+                drawPlaceCountPie(list);
+            });
+        }
+        $('#eventPlaceExport').click(function(){
+            let data = crab.getTempData('eventplace');
+            let batchSum=0,peopleSum=0,titles=['','批次','人次'],list=[];
+            for(let i=0;i<data.length;i++){
+                let batch = data[i].batch,
+                    people = data[i].people;
+                batchSum += batch;
+                peopleSum += people;
+                list.push([data[i].item,batch,people]);
+            }
+            list.push(['合计',batchSum,peopleSum]);
+            table.exportFile(titles, list, 'xls');
+        });
+        $('#eventPlaceTableDiv').on('click','.data-td',function(){
+            let eventPlaceId = $(this).data('place'),
+                start = changeDateFormat(layui.sessionData('dateLayer')['event-place_start']),
+                end = changeDateFormat(layui.sessionData('dateLayer')['event-place_end']);
+            crab.get('/jdc/statis/new_console_event',{eventPlaceId:eventPlaceId,start:start,end:end},function(list){
+                showEventList(list);
+            });
+        });
+
+        //责任单位
+        function initDutyUnit(){
+            let type=changeDateFormat(layui.sessionData('dateLayer')['duty-unit_type']),
+                start = changeDateFormat(layui.sessionData('dateLayer')['duty-unit_start']),
+                end = changeDateFormat(layui.sessionData('dateLayer')['duty-unit_end']);
+            laytpl(dateBtnsHtml).render({type:type}, function(string){$('.date-btns.has-day.duty-unit').empty().append(string);});
+            crab.get('/jdc/statis/new_console_duty_unit',{start:start,end:end},function(list){
+                for(let i=0;i<list.length;i++){
+                    if(''+list[i].id === '-1' && ''+list[i].batch === '0'){
+                        list.slice(i,1);
+                        break;
+                    }
+                }
+                let count = parseInt(((+clientWidth-30)/12*7-74)/101),
+                    mod = list.length%count,
+                    tableCount = Math.ceil(list.length/count)+(mod===0?1:0),
+                    data={
+                        count:count,
+                        tableCount:tableCount,
+                        list:list
+                    };
+                crab.putTempData('dutyunit',list);
+                $('#dutyUnitTableDiv').load('/components/statis/laytpl/unit-table.html', function () {
+                    laytpl(unitTable.innerHTML).render(data, function (html) {
+                        $('#dutyUnitTableDiv').append(html);
+                    });
+                });
+                if(dutyUnitChart){
+                    if(dutyUnitChart.destroyed){}else{
+                        dutyUnitChart.destroy();
+                    }
+                }
+                drawUnitCountPie(list);
+            });
+        }
+        $('#dutyUnitExport').click(function(){
+            let data = crab.getTempData('dutyunit');
+            let batchSum=0,peopleSum=0,titles=['','批次','人次'],list=[];
+            for(let i=0;i<data.length;i++){
+                let batch = data[i].batch,
+                    people = data[i].people;
+                batchSum += batch;
+                peopleSum += people;
+                list.push([data[i].item,batch,people]);
+            }
+            list.push(['合计',batchSum,peopleSum]);
+            table.exportFile(titles, list, 'xls');
+        });
+        $('#dutyUnitTableDiv').on('click','.data-td',function(){
+            let dutyUnitIds = $(this).data('unit'),
+                start = changeDateFormat(layui.sessionData('dateLayer')['duty-unit_start']),
+                end = changeDateFormat(layui.sessionData('dateLayer')['duty-unit_end']);
+                crab.get('/jdc/statis/new_console_event',{dutyUnitIds:dutyUnitIds,start:start,end:end},function(list){
+                    showEventList(list);
+                });
+        }).on('click','.city-unit',function(){
+            let start = changeDateFormat(layui.sessionData('dateLayer')['duty-unit_start']),
+                end = changeDateFormat(layui.sessionData('dateLayer')['duty-unit_end']);
+            crab.get('/jdc/statis/new_console_duty_city_unit',{start:start,end:end},function(list){
+                let count = 11,
+                    mod = list.length%count,
+                    tableCount = Math.ceil(list.length/count)+(mod===0?1:0),
+                    data={
+                        count:count,
+                        tableCount:tableCount,
+                        list:list
+                    };
+                layer.open({
+                    type: 1,
+                    title: '市直部门',
+                    area: '1325px',
+                    offset: '30px',
+                    content: $('#unit-city-model').html(),
+                    success: function () {
+                        $('#unitCityTableDiv').load('/components/statis/laytpl/unit-city-table.html', function () {
+                            laytpl(unitCityTable.innerHTML).render(data, function (html) {
+                                $('#unitCityTableDiv').append(html);
+                            });
+                        });
+                    }
+                });
+            });
+        });
+        $(document).on('click','#unitCityTableDiv .data-td',function(){
+            let cityUnitId = $(this).data('cityunit'),
+                start = changeDateFormat(layui.sessionData('dateLayer')['duty-unit_start']),
+                end = changeDateFormat(layui.sessionData('dateLayer')['duty-unit_end']);
+            crab.get('/jdc/statis/new_console_event',{cityUnitId:cityUnitId,start:start,end:end},function(list){
+                showEventList(list);
+            });
+        });
+
+        //内容分类
+        function initContentType(){
+            let type=changeDateFormat(layui.sessionData('dateLayer')['content-type_type']);
+            laytpl(dateBtnsHtml).render({type:type}, function(string){$('.date-btns.has-day.content-type').empty().append(string);});
+            initContentTypeFirst();
+            initContentTypeSecond();
+        }
+        //一级内容分类
+        function initContentTypeFirst(){
+            let start = changeDateFormat(layui.sessionData('dateLayer')['content-type_start']),
+                end = changeDateFormat(layui.sessionData('dateLayer')['content-type_end']);
+            crab.get('/jdc/statis/new_console_content_type_first',{start:start,end:end},function(list){
+                $('#contentTypeFirstTableDiv').load('/components/statis/laytpl/content-type-first-table.html', function () {
+                    laytpl(contentTypeTable.innerHTML).render(list, function (html) {
+                        $('#contentTypeFirstTableDiv').append(html);
+                    });
+                });
+                crab.putTempData('contenttypefirst',list);
+                if(contentTypeFirstTopTenChart){
+                    if(contentTypeFirstTopTenChart.destroyed){}else{
+                        contentTypeFirstTopTenChart.destroy();
+                    }
+                }
+                if(list && list.length>0)drawFirstLevelContentTypeTopTen((list.length>10?list.slice(0,10):list).reverse());
+            });
+        }
+        $('#contentTypeFirstExport').click(function(){
+            let data = crab.getTempData('contenttypefirst');
+            let batchSum=0,peopleSum=0,titles=['','批次','人次'],list=[];
+            for(let i=0;i<data.length;i++){
+                let batch = data[i].batch,
+                    people = data[i].people;
+                batchSum += batch;
+                peopleSum += people;
+                list.push([data[i].item,batch,people]);
+            }
+            list.push(['合计',batchSum,peopleSum]);
+            table.exportFile(titles, list, 'xls');
+        });
+        $(document).on('click','.first-content-td',function(){
+            let start = changeDateFormat(layui.sessionData('dateLayer')['content-type_start']),
+                end = changeDateFormat(layui.sessionData('dateLayer')['content-type_end']),
+                contentTypeFirstId = $(this).data('contenttype'),
+                contentTypeFirstName = $(this).data('contenttypename');
+            if(''+contentTypeFirstId !== '192' && ''+contentTypeFirstId !== '193'){
+                crab.get('/jdc/statis/new_console_content_type_second_'+contentTypeFirstId,{start:start,end:end},function(list){
+                    crab.putTempData('contenttypefirstsecond',list);
+                    let batchSum=0,peopleSum=0;
+                    for(let i=0;i<list.length;i++){
+                        batchSum += list[i].batch;
+                        peopleSum += list[i].people;
+                    }
+                    layer.open({
+                        type: 1,
+                        title: contentTypeFirstName+'子项',
+                        area: '600px',
+                        offset: '40px',
+                        content: $('#second-content-type-model').html(),
+                        success: function () {
+                            $('#contentTypeFirstSecondBatchSum').html(batchSum);
+                            $('#contentTypeFirstSecondPeopleSum').html(peopleSum);
+                            // 渲染表格
+                            table.render({
+                                elem: '#second-content-type-table',
+                                data: list,
+                                page:true,
+                                cols: [[
+                                    {field: 'item', title: '内容分类'},
+                                    {field: 'batch', align: 'center', title: '批次', width: 90},
+                                    {field: 'people', align: 'center', title: '人次', width: 90},
+                                    {fixed: 'right', align: 'center', toolbar: '#second-content-type-table-bar', title: '操作', width: 110}
+                                ]]
+                            });
+                        }
+                    });
+                });
+            }else{
+                crab.get('/jdc/statis/new_console_event',{contentTypeId:contentTypeFirstId,start:start,end:end},function(list){
+                    showEventList(list);
+                });
+            }
+        });
+        table.on('tool(second-content-type-table)', function (obj) {
+            let start = changeDateFormat(layui.sessionData('dateLayer')['content-type_start']),
+                end = changeDateFormat(layui.sessionData('dateLayer')['content-type_end']);
+            crab.get('/jdc/statis/new_console_event',{contentTypeId:obj.data.id,start:start,end:end},function(list){
+                showEventList(list);
+            });
+        });
+        $(document).on('click','#contentTypeSecondListExport',function(){
+            let data = crab.getTempData('contenttypefirstsecond');
+            let batchSum=0,peopleSum=0,titles=['','批次','人次'],list=[];
+            for(let i=0;i<data.length;i++){
+                let batch = data[i].batch,
+                    people = data[i].people;
+                batchSum += batch;
+                peopleSum += people;
+                list.push([data[i].item,batch,people]);
+            }
+            list.push(['合计',batchSum,peopleSum]);
+            table.exportFile(titles, list, 'xls');
+        });
+
+        //二级内容分类
+        function initContentTypeSecond(){
+            let start = changeDateFormat(layui.sessionData('dateLayer')['content-type_start']),
+                end = changeDateFormat(layui.sessionData('dateLayer')['content-type_end']);
+            crab.get('/jdc/statis/new_console_content_type_second_0',{start:start,end:end},function(list){
+                let batchSum=0,peopleSum=0;
+                for(let i=0;i<list.length;i++){
+                    batchSum += list[i].batch;
+                    peopleSum += list[i].people;
+                }
+                $('#contentTypeSecondBatchSum').html(batchSum);
+                $('#contentTypeSecondPeopleSum').html(peopleSum);
+                // 渲染表格
+                table.render({
+                    elem: '#second-content-type-table-own',
+                    data: list,
+                    limit: 20,
+                    page: true,
+                    cols: [[
+                        {field: 'item', title: '二级内容分类'},
+                        {field: 'batch', align: 'center', title: '批次', width: 80},
+                        {field: 'people', align: 'center', title: '人次', width: 80},
+                        {fixed: 'right', align: 'center', toolbar: '#second-content-type-table-bar', title: '操作', width: 110}
+                    ]]
+                });
+                crab.putTempData('contenttypesecond',list);
+                if(contentTypeSecondTopTenChart){
+                    if(contentTypeSecondTopTenChart.destroyed){}else{
+                        contentTypeSecondTopTenChart.destroy();
+                    }
+                }
+                if(list && list.length>0)drawSecondLevelContentTypeTopTen((list.length>10?list.slice(0,10):list).reverse());
+            });
+        }
+        $('#contentTypeSecondExport').click(function(){
+            let data = crab.getTempData('contenttypesecond');
+            let batchSum=0,peopleSum=0,titles=['','批次','人次'],list=[];
+            for(let i=0;i<data.length;i++){
+                let batch = data[i].batch,
+                    people = data[i].people;
+                batchSum += batch;
+                peopleSum += people;
+                list.push([data[i].item,batch,people]);
+            }
+            list.push(['合计',batchSum,peopleSum]);
+            table.exportFile(titles, list, 'xls');
+        });
+        table.on('tool(second-content-type-table-own)', function (obj) {
+            let start = changeDateFormat(layui.sessionData('dateLayer')['content-type_start']),
+                end = changeDateFormat(layui.sessionData('dateLayer')['content-type_end']);
+            crab.get('/jdc/statis/new_console_event',{contentTypeId:obj.data.id,start:start,end:end},function(list){
+                showEventList(list);
+            });
+        });
+
+        //重访查询统计
+        function initRepeatEventTable(list){
+            table.render({
+                elem: '#repeat-event-table',
+                data: list,
+                page:true,
+                cols: [[
+                    {field: 'eventNum', title: '事件编号', width: 130},
+                    {field: 'visitDate', title: '来访日期', width: 110},
+                    {field: 'petitioner', title: '来访人', width: 75},
+                    {field: 'receptionOrg', title: '接待处', width: 100},
+                    {field: 'receptor', title: '接待人员', width: 100},
+                    {field: 'name', title: '事件名称', width: 150},
+                    {field: 'statusName', title: '事件状态', width: 100},
+                    {field: 'firstContentType', title: '一级问题分类', width: 130},
+                    {field: 'eventContent', title: '反映问题'},
+                    {fixed: 'right', align: 'center', toolbar: '#event-table-bar', title: '操作', width: 90}
+                ]]
+            });
+        }
+        table.on('tool(repeat-event-table)', function (obj) {
+            var data = obj.data;
+            var layEvent = obj.event;
+            if(layEvent === 'view'){
+                // 查看事项详情
+                crab.putTempData('p_eventInfo', data);
+                let height = $(window).height()-30;
+                let detail_layer_index = crab.popupCenter({
+                    closeBtn:0,
+                    path: '/components/jdc/jdc-djxx-table.html',
+                    title: false,
+                    offset: '15px',
+                    area: ['800px', height+'px']
+                });
+                crab.putTempData('detail_layer_index', detail_layer_index);
+            }
+        });
+        $('#repeatQueryBtn').click(function(){
+            crab.popupCenter({
+                title: '重访事项查询',
+                path: '/components/statis/repeat-query-form.html',
+                area:'400px',
+                finish: function () {
+                    let repeatQueryData = crab.getTempData('repeatQueryData');
+                    crab.putTempData('repeatQueryData');
+                    crab.get('/jdc/statis/new_console_repeat_event',repeatQueryData,function(list){
+                        initRepeatEventTable(list);
+                        $('#repeatQueryBatchSum').html(list.length);
+                    });
+                }
+            });
+        });
+
+
+        function initDefaultDate(name,type,start,end){
+            layui.sessionData('dateLayer', {key: name+'_type', value: ''+type});
+            layui.sessionData('dateLayer', {key: name+'_start', value: start});
+            layui.sessionData('dateLayer', {key: name+'_end', value: end});
+        }
+        // 默认显示
+        (function defaultData(){
+
+            //加载日期按钮组模板
+            //日登记情况以外的按钮组
+            laytpl(dateBtnsHtml).render({type:0}, function(string){$('.date-btns.has-day').empty().append(string);});
+            //日登记情况按钮组，默认选中月
+            laytpl(dateBtnsHtml).render({type:2, notHasDay:true}, function(string){$('.date-btns.not-has-day').empty().append(string);});
+
+            //四块数字
+            initDefaultDate('four-count',0,curDayStr,curDayStr);
+            initFourCount();
+            initFourCountSum();
+
+            //日登记情况
+            initDefaultDate('every-day',2,curMonthFirstDayStr,curDayStr);
+            initEveryDay();
+
+            //接待处统计
+            initDefaultDate('reception-org',0,curDayStr,curDayStr);
+            initReceptionOrg();
+
+            //事发地统计
+            initDefaultDate('event-place',0,curDayStr,curDayStr);
+            initEventPlace();
+
+            //责任单位统计
+            initDefaultDate('duty-unit',0,curDayStr,curDayStr);
+            initDutyUnit();
+
+            //内容分类统计
+            initDefaultDate('content-type',0,curDayStr,curDayStr);
+            initContentType();
+        }());
+
+    });
+</script>

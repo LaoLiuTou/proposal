@@ -1,0 +1,173 @@
+<link rel="stylesheet" href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css">
+<!-- 打印类项选择弹窗 -->
+<div class="layui-card">
+    <div class="layui-card-body">
+        <form id="choose-form" lay-filter="choose-form" class="layui-form choose-form model-form">
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">填表人</label>
+                <div class="layui-input-block">
+                    <input id="filler_name" name= "filler_name"  class="layui-input" >
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">备注</label>
+                <div class="layui-input-block">
+                    <textarea id="remark" name="remark" placeholder="请输入备注" class="layui-textarea"></textarea>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <table class="print-choose-table" data-table="3">
+                        <tbody>
+                        <tr>
+                            <td class="time">&nbsp;开始日期：<input type="text" class="layui-input" placeholder="选择开始日期" id="beginDate" name="beginDate" autocomplete="off" readonly="readonly"  style="display: inline-block;width: auto"></td>
+                            <td class="time">&nbsp;结束日期：<input type="text" class="layui-input" placeholder="选择结束日期" id="endDate" name="endDate"  autocomplete="off" readonly="readonly"  style="display: inline-block;width: auto"></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">限定单位</label>
+                <input type="checkbox" name="enabled"  lay-filter="enabled" lay-skin="switch" lay-text="启用|关闭" checked>
+                <i class="fa fa-question-circle " aria-hidden="true"></i>
+                <div class="demo" style="display:none">
+                    <div>
+                        <p>
+                            <span style="font-size:12px">
+                            是否限定事涉单位（仅针对接待一处、接待二处）</br>
+                            接待一处，限定为：市直、新区、经开、净月、莲花山、汽开</br>
+                            接待二处，限定为：朝阳、南关、宽城、二道、绿园、双阳、九台、榆树、德惠、农安</br>
+                            驻厅单位：不作考虑
+                            </span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-form-item model-form-footer">
+                <button class="layui-btn layui-btn-primary close" ew-event="closeDialog" type="button">取消</button>
+                <button class="layui-btn cate-print" lay-filter="export-form-submit" lay-submit>导出</button>
+            </div>
+        </form>
+    </div>
+</div>
+<style>
+
+    .fa-question-circle {
+        cursor: pointer;//实现鼠标活动“？”变成小手
+
+    }
+    .demo {
+        width: 500px;
+        height: 130px;
+        position: absolute;
+        top: 26%;
+        left: 3%;
+        border: 2px solid #ffffff;
+        border-radius: 8px;
+        background-color: #ffffff;
+        box-shadow: 2px 4px 5px #eeeaea;
+    }
+
+    .demo:after {
+        content: '';
+        position: absolute;
+        border: 10px solid transparent;
+        border-top-color: #ffffff;
+        top: 100%;
+        /*left: 37px;*/
+        left: 30%;
+    }
+</style>
+<script type="text/javascript">
+    layui.use(['laydate','form', 'crab', 'layer', 'element'], function(){
+        var crab = layui.crab;
+        var form = layui.form,
+            $ = layui.jquery,
+            layer = layui.layer,
+            element = layui.element;
+        let choosePrintLayerIndex = null;
+        var laydate = layui.laydate;
+        var nowTime = new Date().valueOf();
+        form.render();
+        //执行一个laydate实例
+        //console.log('第二次显示',crab.getUser().username);
+        //日期
+        var start = laydate.render({ //开始
+            elem: '#beginDate',
+            max:nowTime,
+            done:function(value,date){
+                endMax = end.config.max;
+                end.config.min = date;
+                end.config.min.month = date.month -1;
+            }
+        });
+        var end = laydate.render({ //结束
+            elem: '#endDate',
+            max : nowTime,
+            done:function(value,date){
+                if($.trim(value) == ''){
+                    var curDate = new Date();
+                    date = {'date': curDate.getDate(), 'month': curDate.getMonth()+1, 'year': curDate.getFullYear()};
+                }
+                start.config.max = date;
+                start.config.max.month = date.month -1;
+            }
+        });
+        //弹出备注
+        $(function () {
+            $(".fa-question-circle").hover(
+                function () {
+                    $(".demo").show();
+
+                });
+            $(".fa-question-circle").mouseout(
+                function () {
+                    $(".demo").hide(); //$(this).hide();
+                });
+        });
+
+        //监听checkbox的选中情况
+        var Check = true;
+        form.on('switch(enabled)', function(data){
+            if(data.elem.checked){
+                Check = true;
+            }else{
+                Check = false;
+            }
+
+        });
+        //let extraContent = $.trim($('#extraContent').val());
+        // 表单提交事件
+        form.on('submit(export-form-submit)', function (data) {
+            //console.log("data",data);
+            console.log("checkbox",Check);
+            //console.log('djcid',crab.getUser());
+            if(data.field.beginDate==""){layer.msg("请选择开始时间"); return false;}
+            if(data.field.endDate==""){layer.msg("请选择结束时间"); return false;}
+            // djcid在请求头里存在 这里随意数字1
+            var Jdc_id ="?Jdc_id=" + 1;
+            var beginDate="&beginDate="+data.field.beginDate;
+            var endDate="&endDate="+data.field.endDate;
+            var filler_name = "&filler_name="+data.field.filler_name;
+            var remark = "&remark=" + data.field.remark;
+            var check = "&check=" + Check;
+            // crab.get('/jdc/export_excel'+isUseDateLimit+beginDate+endDate+teplist, ({}), function () {
+            //     layer.msg('导出成功', {icon: 1});
+            //     crab.finishPopupCenter();
+            // });
+            window.open('/jdc/export_week_report_excel'+Jdc_id+beginDate+endDate+filler_name+remark+check);
+            layer.msg('导出成功', {icon: 1});
+        });
+    });
+</script>
+
+<!--JSON.stringify({-->
+<!--checkedUnitIdList:checkedUnitId,-->
+<!--isUseDateLimit:data.field.isUseDateLimit,-->
+<!--beginDate:data.field.beginDate,-->
+<!--endDate:data.field.endDate-->
+<!--})-->

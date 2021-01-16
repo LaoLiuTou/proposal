@@ -1,0 +1,3 @@
+[ 群众来访登记系统 1.0 ]
+
+ :: Power by Spring Boot ::   (v${spring-boot.version})

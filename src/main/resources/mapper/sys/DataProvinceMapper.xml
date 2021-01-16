@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fangao.dev.sys.mapper.DataProvinceMapper">
+    <select id="queryData" resultType="com.fangao.dev.sys.entity.DataProvince">
+        SELECT
+        `a`.`code` AS `code`,
+        `a`.`name` AS `name`,
+        `a`.`number` AS `number`,
+        `a`.`address` AS `address`,
+        `a`.`mobile` AS `mobile`,
+        `a`.`event_place_id` AS `event_place_id`,
+        `b`.`show_name` AS `event_place`,
+        `a`.`purpose_id` AS `purpose_id`,
+        `c`.`name` AS `purpose`,
+        `a`.`content_type_id` AS `content_type_id`,
+        `d`.`show_name` AS `content_type`,
+        `a`.`visit_date` AS `visit_date`,
+        `a`.`check_date` AS `check_date`,
+        `a`.`deadline_date` AS `deadline_date`,
+        `a`.`format_id` AS `format_id`,
+        `e`.`name` AS `format`,
+        `a`.`description` AS `description`,
+        `a`.`solve` AS `solve`,
+        `a`.`first_time` AS `first_time`,
+        `a`.`is_group` AS `is_group`,
+        `a`.`status_id` AS `status_id`,
+        `f`.`name` AS `status`,
+        `a`.`org_id` AS `org_id`,
+        `g`.`show_name` AS `org`,
+        `a`.`operator_id` AS `operator_id`,
+        `h`.`name` AS `operator`
+        FROM
+        `data_province` `a`
+        JOIN `data_province_event_place` `b` ON `a`.`event_place_id` = `b`.`id`
+        JOIN `data_province_purpose` `c` ON `a`.`purpose_id` = `c`.`id`
+        JOIN `data_province_content_type` `d` ON `a`.`content_type_id` = `d`.`id`
+        JOIN `data_province_format` `e` ON `a`.`format_id` = `e`.`id`
+        LEFT JOIN `data_province_status` `f` ON `a`.`status_id` = `f`.`id`
+        JOIN `data_province_org` `g` ON `a`.`org_id` = `g`.`id`
+        LEFT JOIN `data_province_operator` `h` ON `a`.`operator_id` = `h`.`id`
+        ORDER BY `a`.`check_date` DESC, `a`.`code` DESC
+    </select>
+
+    <select id="querySolve" resultType="com.fangao.dev.sys.dto.DataProvinceQueryDTO">
+        SELECT b.pid AS id,b.`name`,a.solve,count(0) AS count
+        FROM data_province a
+        JOIN v_data_province_event_place_order b ON a.event_place_id=b.id
+        <if test="start != null and start != '' and end != null and end != ''">
+            WHERE a.check_date >= #{start} AND a.check_date &lt;= #{start}
+        </if>
+        GROUP BY b.pid,a.solve
+    </select>
+
+    <select id="queryCount" resultType="com.fangao.dev.sys.dto.DataProvinceQueryDTO">
+        SELECT b.pid AS id,b.`name`,a.format_id,count(0) AS count, SUM(a.number) AS people
+        FROM data_province a
+        JOIN v_data_province_event_place_order b ON a.event_place_id=b.id
+        <if test="start != null and start != '' and end != null and end != ''">
+            WHERE a.check_date >= #{start} AND a.check_date &lt;= #{start}
+        </if>
+        GROUP BY b.pid,a.format_id
+    </select>
+
+    <select id="queryContentType" resultType="com.fangao.dev.sys.dto.DataProvinceQueryDTO">
+        SELECT b.pid AS id,b.`name`,c.rid AS content_type_id,count(0) AS count
+        FROM data_province a
+        JOIN v_data_province_event_place_order b ON a.event_place_id=b.id
+        JOIN data_province_content_type `c` ON a.content_type_id=`c`.id
+        <if test="start != null and start != '' and end != null and end != ''">
+            WHERE a.check_date >= #{start} AND a.check_date &lt;= #{start}
+        </if>
+        GROUP BY b.pid,`c`.rid
+    </select>
+</mapper>

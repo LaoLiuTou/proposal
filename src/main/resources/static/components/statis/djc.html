@@ -1,0 +1,261 @@
+<div class="layui-row layui-col-space15">
+    <div class="layui-col-sm12">
+        <div class="layui-card">
+            <div class="layui-card-header">
+                <h2 class="header-title">登记数据统计</h2>
+            </div>
+            <div class="layui-card-body">
+                <div class="layui-row layui-col-space15">
+                    <div class="layui-col-xs12 layui-col-sm12 layui-col-md8">
+                        <div class="layui-card">
+                            <div class="layui-card-header">
+                                <i class="layui-icon layui-icon-engine"></i>&nbsp;日登记人数
+                            </div>
+                            <div class="layui-card-body">
+                                <div id="countUserOfDay"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-col-xs12 layui-col-sm12 layui-col-md4">
+                        <div class="layui-card">
+                            <div class="layui-card-header">
+                                <i class="layui-icon layui-icon-engine"></i>&nbsp;男女比例
+                            </div>
+                            <div class="layui-card-body">
+                                <div id="countSex" class="layui-main"></div>
+                            </div>
+                        </div>
+
+                        <div class="layui-card">
+                            <div class="layui-card-header">
+                                <i class="layui-icon layui-icon-engine"></i>&nbsp;年龄段
+                            </div>
+                            <div class="layui-card-body">
+                                <div id="countAge" class="layui-main"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <table class="layui-table" id="user-table" lay-filter="user-table"></table>
+        </div>
+    </div>
+</div>
+<script>
+    layui.use(['form', 'table', 'config', 'crab','laydate'], function () {
+        var form = layui.form;
+        var table = layui.table;
+        var config = layui.config;
+        var layer = layui.layer;
+        var crab = layui.crab;
+        var laydate = layui.laydate;
+        var $ = layui.jquery;
+
+        // 登记统计
+        function drawColumnChart(data){
+            const chart = new G2.Chart({
+                container: 'countUserOfDay',
+                height: 535,
+                forceFit: true,
+                padding:['auto',25]
+            });
+            chart.scale('number', {
+                alias: '人数'
+            });
+            chart.axis('visitDate', {
+                label: {
+                    textStyle: {
+                        fill: '#aaaaaa'
+                    }
+                },
+                tickLine: {
+                    alignWithLabel: false,
+                    length: 0
+                }
+            });
+            chart.source(data,{
+                visitDate:{
+                    range: [ 0.1, 0.9 ]
+                }
+            });
+            chart.legend(false);
+            chart.interval().position('visitDate*number').color('number',['#00FFFF']).size(30);
+            chart.render();
+        }
+        function drawSexBasicCircleChart(data){
+            var _G = G2,
+                Shape = _G.Shape;
+
+            Shape.registerShape('interval', 'radiusPie', {
+                draw: function draw(cfg, container) {
+                    // 将归一化后的数据转换为画布上的坐标
+                    var points = cfg.origin.points;
+                    var path = [];
+                    for (var i = 0; i < cfg.origin.points.length; i += 4) {
+                        path.push(['M', points[i].x, points[i].y]);
+                        path.push(['L', points[i + 1].x, points[i + 1].y]);
+                        path.push(['L', points[i + 2].x, points[i + 2].y]);
+                        path.push(['L', points[i + 3].x, points[i + 3].y]);
+                        path.push(['L', points[i].x, points[i].y]);
+                        path.push(['z']);
+                    }
+                    path = this.parsePath(path, true);
+                    var rect = container.addShape('path', {
+                        attrs: {
+                            fill: cfg.color || '#00D9DF',
+                            path: path
+                        }
+                    });
+                    var minH = Math.min(path[1][7], path[2][2]);
+                    var minW = Math.min(path[1][6], path[2][1]);
+                    var diffH = Math.abs(path[1][7] - path[2][2]);
+                    var diffW = Math.abs(path[1][6] - path[2][1]);
+                    container.addShape('circle', {
+                        attrs: {
+                            x: minW + diffW / 2,
+                            y: minH + diffH / 2,
+                            fill: cfg.color,
+                            radius: diffH / 2
+                        }
+                    });
+
+                    var minHH = Math.min(path[3][7], path[4][2]);
+                    var minWW = Math.min(path[3][6], path[4][1]);
+                    var diffHH = Math.abs(path[3][7] - path[4][2]);
+                    var diffWW = Math.abs(path[3][6] - path[4][1]);
+                    container.addShape('circle', {
+                        attrs: {
+                            x: minWW + diffWW / 2,
+                            y: minHH + diffHH / 2,
+                            fill: cfg.color,
+                            radius: diffH / 2
+                        }
+                    });
+                    return rect;
+                }
+            });
+
+            var chart = new G2.Chart({
+                container: 'countSex',
+                forceFit: true,
+                height: 225,
+                padding:['auto',20]
+            });
+
+            var COLORS = ['#1890ff', '#f04864'];
+
+            chart.coord('theta', {
+                radius: 0.6
+            });
+            chart.source(data);
+            chart.legend(false);
+            chart.tooltip({
+                showTitle: false
+            });
+            chart.intervalStack().position('sold').shape('radiusPie').color('sex', COLORS).label('sold', {
+                useHtml: true,
+                htmlTemplate: function htmlTemplate(text, item) {
+                    var isFemale = item._origin.sex === '女';
+                    var src = isFemale ? 'https://gw.alipayobjects.com/zos/rmsportal/mweUsJpBWucJRixSfWVP.png' : 'https://gw.alipayobjects.com/zos/rmsportal/oeCxrAewtedMBYOETCln.png';
+                    var color = isFemale ? COLORS[1] : COLORS[0];
+                    var IMG = '<img style="width:40px" src="' + src + '" /><br/>';
+                    return '<div style="text-align:center;color:' + color + '">' + IMG + (text * 100).toFixed(0) + '%</div>';
+                }
+            });
+
+            chart.render();
+
+        }
+        function drawAgeCircleChart(data,total){
+            var chart = new G2.Chart({
+                container: 'countAge',
+                forceFit: true,
+                height: 225,
+                padding:['auto',20]
+            });
+            chart.source(data, {
+                percent: {
+                    formatter: function formatter(val) {
+                        val = val + '%';
+                        return val;
+                    }
+                }
+            });
+            chart.legend(false);
+            chart.coord('theta', {
+                radius: 0.6,
+                innerRadius: 0.8
+            });
+            chart.tooltip({
+                showTitle: false,
+                itemTpl: '<li><span style="background-color:{color};" class="g2-tooltip-marker"></span>{name}<br>{count} {value}</li>'
+            });
+
+            // 辅助文本
+            chart.guide().html({
+                position: ['50%', '50%'],
+                html: '<div style="color:#8c8c8c;font-size: 14px;text-align: center;width: 6em;">人数<br><span style="color:#8c8c8c;font-size:18px">'+total+'</span>人</div>',
+                alignX: 'middle',
+                alignY: 'middle'
+            });
+            var interval = chart.intervalStack()
+                .position('percent')
+                .color('item')
+                .label('count', {
+                    formatter: function formatter(val, item) {
+                        return item.point.item + ': ' + val+'人';
+                    }})
+                .tooltip('item*count*percent', function(item, count, percent) {
+                    count = count + '人';
+                    percent = percent + '%';
+                    return {
+                        name: item,
+                        count: count,
+                        value: percent
+                    };})
+                .style({
+                    lineWidth: 1,
+                    stroke: '#fff'});
+            chart.render();
+            interval.setSelected(data[0]);
+        }
+
+        // 默认显示
+        (function defaultData(){
+
+            // 登记统计
+            crab.get('/djc/statistics/countUserOfDate', {}, function (data) {
+                drawColumnChart(data);
+            });
+            crab.get('/djc/statistics/countPetitonerSex', {}, function (data) {
+                drawSexBasicCircleChart(data);
+            });
+            crab.get('/djc/statistics/countPetitonerAge', {}, function (data) {
+                drawAgeCircleChart(data.listData,data.total);
+            });
+
+            // 渲染表格
+            var userTable = table.render({
+                elem: '#user-table',
+                url: config.base_server + '/djc/djgl/page',
+                parseData: config.parseData,
+                page: true,
+                cols: [[
+                    {type: 'numbers'},
+                    {field: 'name', title: '姓名', width: 90},
+                    {field: 'idcard', title: '身份证号', width: 180},
+                    {field: 'mobileNo', title: '联系电话', width: 120},
+                    {field: 'eventNum', title: '信访事件编号', width: 130},
+                    {field: 'status', title: '信访事件状态', width: 130},
+                    {field: 'showOrgs', title: '接待地点'},
+                    {field: 'visitDate', title: '来访日期',width: 110},
+                    {field: 'operator', title: '录入人', width: 80},
+                    {field: 'createTime', title: '创建时间', sort: true, width: 150}
+                ]]
+            });
+
+        }());
+
+    });
+</script>

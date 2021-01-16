@@ -1,0 +1,1339 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fangao.dev.sys.mapper.PetitionEventInfoMapper">
+    <select id="statisticsQueryContentTypeIdsById" resultType="java.lang.String">
+        SELECT queryDictPetitionContentTypeChildrenIds(#{id}) AS contentTypeIds
+    </select>
+
+    <select id="statisticsQueryEventList" resultType="com.fangao.dev.sys.dto.PetitionEventStatisticDTO">
+        SELECT
+        `a`.`id` AS `id`,
+        `a`.`event_num` AS `eventNum`,
+        `a`.`visit_date` AS `visitDate`,
+        `b`.`name` AS `petitioner`,
+        `c`.`name` AS `receptionOrg`,
+        `d`.`name` AS `receptor`,
+        `a`.`name` AS `name`,
+        `f`.`name` AS `firstContentType`,
+        `a`.`event_content` AS `eventContent`,
+        IF(`g`.`status` = 0,'删除审核中',IF(`a`.`status` = 0,'待接待',IF(`a`.`status` = 1,'处理中',IF(`a`.`status` = 2,'已处理',IF(`a`.`status` = -1,'已放弃',''))))) AS `statusName`
+        FROM `petition_event_info` `a`
+        LEFT JOIN `petitioner_info` `b` ON `a`.`idcard`=`b`.`idcard`
+        LEFT JOIN `sys_org` `c` ON `a`.`reception_org_id`=`c`.`id`
+        LEFT JOIN `petition_receptor` `d` ON `a`.`reception_id`=`d`.`id`
+        LEFT JOIN `dict_petition_content_type` `e` ON `a`.`content_type_id`=`e`.`id`
+        LEFT JOIN `dict_petition_content_type` `f` ON `e`.`rid`=`f`.`id`
+        LEFT JOIN (
+        SELECT `x`.`petition_event_info_id`,`x`.`status`
+        FROM `delete_check` `x` RIGHT JOIN
+        (SELECT MAX(`z`.`id`) AS `id`,`z`.`petition_event_info_id` AS `eventId` FROM `delete_check` `z` GROUP BY `z`.`petition_event_info_id`) `y`
+        ON `x`.`id`=`y`.`id` AND `x`.`petition_event_info_id`=`y`.`eventId`
+        ) `g` ON `g`.`petition_event_info_id` = `a`.`id`
+        WHERE `a`.`deleted`=0 AND `a`.`reception_org_id` IN (12,13,14,15) AND `a`.`status`>=1
+        <if test="statisQueryEventDTO.receptionOrgId != null">
+            AND `a`.`reception_org_id` = #{statisQueryEventDTO.receptionOrgId}
+        </if>
+        <if test="statisQueryEventDTO.eventPlaceId != null">
+            AND `a`.`event_place_id` = #{statisQueryEventDTO.eventPlaceId}
+        </if>
+        <if test="statisQueryEventDTO.dutyUnitIds != null">
+            AND `a`.`duty_unit_id` IN
+            <foreach collection="statisQueryEventDTO.dutyUnitIds" index="index" item="item" open="(" separator="," close=")">
+              #{item}
+            </foreach>
+        </if>
+        <if test="statisQueryEventDTO.dutyUnitId != null and statisQueryEventDTO.dutyUnitId == -1">
+            AND `a`.`duty_unit_id` IS  NULL
+        </if>
+        <if test="statisQueryEventDTO.cityUnitId != null">
+            AND `a`.`duty_unit_id` = #{statisQueryEventDTO.cityUnitId}
+        </if>
+        <if test="statisQueryEventDTO.contentTypeIds != null">
+            AND `a`.`content_type_id` IN
+            <foreach collection="statisQueryEventDTO.contentTypeIds" index="i" item="contentType" open="(" separator="," close=")">
+                #{contentType}
+            </foreach>
+        </if>
+        <if test="statisQueryEventDTO.start != null and statisQueryEventDTO.start != ''">
+            AND `a`.`visit_date` >= #{statisQueryEventDTO.start}
+        </if>
+        <if test="statisQueryEventDTO.end != null and statisQueryEventDTO.end != ''">
+            AND `a`.`visit_date` &lt;= #{statisQueryEventDTO.end}
+        </if>
+        ORDER BY `a`.`visit_date` DESC , `a`.`create_time` DESC
+    </select>
+
+    <select id="statisticsQueryRepeatEventList" resultType="com.fangao.dev.sys.dto.PetitionEventStatisticDTO">
+        SELECT
+        `a`.`id` AS `id`,
+        `a`.`event_num` AS `eventNum`,
+        `a`.`visit_date` AS `visitDate`,
+        `b`.`name` AS `petitioner`,
+        `c`.`name` AS `receptionOrg`,
+        `d`.`name` AS `receptor`,
+        `a`.`name` AS `name`,
+        `f`.`name` AS `firstContentType`,
+        `a`.`event_content` AS `eventContent`,
+        IF(`g`.`status` = 0,'删除审核中',IF(`a`.`status` = 0,'待接待',IF(`a`.`status` = 1,'处理中',IF(`a`.`status` = 2,'已处理',IF(`a`.`status` = -1,'已放弃',''))))) AS `statusName`
+        FROM `petition_event_info` `a`
+        LEFT JOIN `petitioner_info` `b` ON `a`.`idcard`=`b`.`idcard`
+        LEFT JOIN `sys_org` `c` ON `a`.`reception_org_id`=`c`.`id`
+        LEFT JOIN `petition_receptor` `d` ON `a`.`reception_id`=`d`.`id`
+        LEFT JOIN `dict_petition_content_type` `e` ON `a`.`content_type_id`=`e`.`id`
+        LEFT JOIN `dict_petition_content_type` `f` ON `e`.`rid`=`f`.`id`
+        LEFT JOIN (
+        SELECT `x`.`petition_event_info_id`,`x`.`status`
+        FROM `delete_check` `x` RIGHT JOIN
+        (SELECT MAX(`z`.`id`) AS `id`,`z`.`petition_event_info_id` AS `eventId` FROM `delete_check` `z` GROUP BY `z`.`petition_event_info_id`) `y`
+        ON `x`.`id`=`y`.`id` AND `x`.`petition_event_info_id`=`y`.`eventId`
+        ) `g` ON `g`.`petition_event_info_id` = `a`.`id`
+        WHERE `a`.`deleted`=0 AND `a`.`reception_org_id` IN (12,13,14,15) AND `a`.`status`>=1 AND `a`.`is_repeat`=1
+        <if test="statisQueryEventDTO.name != null and statisQueryEventDTO.name != ''">
+            <bind name="likeName" value="'%' + statisQueryEventDTO.name + '%'" />
+            AND `a`.`name` LIKE #{likeName}
+        </if>
+        <if test="statisQueryEventDTO.petitionerName != null and statisQueryEventDTO.petitionerName != ''">
+            <bind name="likePetitionerName" value="'%' + statisQueryEventDTO.petitionerName + '%'" />
+            AND `b`.`name` LIKE #{likePetitionerName}
+        </if>
+        <if test="statisQueryEventDTO.start != null and statisQueryEventDTO.start != ''">
+            AND `a`.`visit_date` >= #{statisQueryEventDTO.start}
+        </if>
+        <if test="statisQueryEventDTO.end != null and statisQueryEventDTO.end != ''">
+            AND `a`.`visit_date` &lt;= #{statisQueryEventDTO.end}
+        </if>
+        ORDER BY `a`.`visit_date` DESC , `a`.`create_time` DESC
+    </select>
+
+    <select id="statisticsQueryEveryDay" resultType="com.fangao.dev.sys.dto.StatisDTO">
+        SELECT
+        h.visit_date AS `date`,
+        h.batch,
+        h.people,
+        IFNULL(i.fiveOver,0) AS fiveOver,
+        IFNULL(j.fiftyOver,0) AS fiftyOver,
+        IFNULL(k.oneHundredOver,0) AS oneHundredOver,
+        IFNULL(l.twoHundredOver,0) AS twoHundredOver
+        FROM
+
+        (SELECT a.visit_date,COUNT(0) AS batch,SUM(a.come_num) AS people
+        FROM petition_event_info a
+        WHERE `a`.`deleted`=0 AND a.reception_org_id IN (12,13,14,15) AND a.status >= 1
+        GROUP BY a.visit_date) h
+
+        LEFT JOIN
+        (SELECT a.visit_date,COUNT(0) AS fiveOver
+        FROM petition_event_info a
+        WHERE `a`.`deleted`=0 AND a.come_num >= 5 AND a.come_num &lt; 50 AND a.reception_org_id IN (12,13,14,15) AND a.status >= 1
+        GROUP BY a.visit_date
+        ) i ON h.visit_date = i.visit_date
+
+        LEFT JOIN
+        (SELECT a.visit_date,COUNT(0) AS fiftyOver
+        FROM petition_event_info a
+        WHERE `a`.`deleted`=0 AND a.come_num >= 50 AND a.come_num &lt; 100 AND a.reception_org_id IN (12,13,14,15) AND a.status >= 1
+        GROUP BY a.visit_date
+        ) j ON h.visit_date = j.visit_date
+
+        LEFT JOIN
+        (SELECT a.visit_date,COUNT(0) AS oneHundredOver
+        FROM petition_event_info a
+        WHERE `a`.`deleted`=0 AND a.come_num >= 100 AND a.come_num &lt; 200 AND a.reception_org_id IN (12,13,14,15) AND a.status >= 1
+        GROUP BY a.visit_date
+        ) k ON h.visit_date = k.visit_date
+
+        LEFT JOIN
+        (SELECT a.visit_date,COUNT(0) AS twoHundredOver
+        FROM petition_event_info a
+        WHERE `a`.`deleted`=0 AND a.come_num >= 200 AND a.reception_org_id IN (12,13,14,15) AND a.status >= 1
+        GROUP BY a.visit_date
+        ) l ON h.visit_date = l.visit_date
+
+        WHERE 1=1
+        <if test="start != null and start != ''">
+            AND h.visit_date >= #{start}
+        </if>
+        <if test="end != null and end != ''">
+            AND h.visit_date &lt;= #{end}
+        </if>
+    </select>
+
+    <select id="statisticsQueryReceptionOrg" resultType="com.fangao.dev.sys.dto.StatisDTO">
+        SELECT
+        a.reception_org_id AS id,
+        b.`name` AS item,
+        COUNT(0) AS batch,
+        SUM(a.come_num) AS people,
+        ROUND(COUNT(0)/(SELECT COUNT(*) from petition_event_info where deleted=0 AND reception_org_id IN (12,13,14,15) AND `status`>=1
+        <if test="start != null and start != ''">
+            AND visit_date >= #{start}
+        </if>
+        <if test="end != null and end != ''">
+            AND visit_date &lt;= #{end}
+        </if>
+        )*100,2) as percent
+        FROM petition_event_info a
+        LEFT JOIN sys_org b ON a.reception_org_id=b.id
+        WHERE a.deleted=0 AND a.reception_org_id IN (12,13,14,15) AND a.`status`>=1
+        <if test="start != null and start != ''">
+            AND a.visit_date >= #{start}
+        </if>
+        <if test="end != null and end != ''">
+            AND a.visit_date &lt;= #{end}
+        </if>
+        GROUP BY a.reception_org_id
+        ORDER BY a.reception_org_id
+    </select>
+
+    <select id="statisticsQueryEventPlace" resultType="com.fangao.dev.sys.dto.StatisDTO">
+        SELECT
+        a.event_place_id AS id,
+        b.`name` AS item,
+        COUNT(0) AS batch,
+        SUM(a.come_num) AS people,
+        ROUND(COUNT(0)/(SELECT COUNT(*) from petition_event_info where deleted=0 AND reception_org_id IN (12,13,14,15) AND `status`>=1
+        <if test="start != null and start != ''">
+            AND visit_date >= #{start}
+        </if>
+        <if test="end != null and end != ''">
+            AND visit_date &lt;= #{end}
+        </if>
+        )*100,2) as percent
+        FROM petition_event_info a
+        LEFT JOIN dict_petition_event_place b ON a.event_place_id=b.id
+        WHERE a.deleted=0 AND a.reception_org_id IN (12,13,14,15) AND a.`status`>=1
+        <if test="start != null and start != ''">
+            AND a.visit_date >= #{start}
+        </if>
+        <if test="end != null and end != ''">
+            AND a.visit_date &lt;= #{end}
+        </if>
+        GROUP BY a.event_place_id
+        ORDER BY a.event_place_id
+    </select>
+
+    <select id="statisticsQueryDutyUnit" resultType="com.fangao.dev.sys.dto.StatisDTO">
+        (SELECT
+        IFNULL(b.id,0) AS id,
+        IFNULL(b.ids,(SELECT GROUP_CONCAT(id) FROM v_dict_petition_unit_city GROUP BY group_index)) AS ids,
+        IFNULL(b.`name`,'市直部门') AS item,
+        COUNT(0) AS batch,
+        SUM(a.come_num) AS people,
+        ROUND(COUNT(0) / ( SELECT COUNT(*) FROM petition_event_info WHERE deleted = 0 AND reception_org_id IN (12, 13, 14) AND `status` >= 1
+        <if test="start != null and start != ''">
+            AND visit_date >= #{start}
+        </if>
+        <if test="end != null and end != ''">
+            AND visit_date &lt;= #{end}
+        </if>
+        ) * 100,2) AS percent
+        FROM
+        petition_event_info a
+        LEFT JOIN v_dict_petition_unit_area b ON FIND_IN_SET(a.duty_unit_id,b.ids)
+        WHERE a.deleted = 0 AND a.reception_org_id IN (12, 13, 14) AND a.`status` >= 1 AND a.duty_unit_id IS NOT NULL
+        <if test="start != null and start != ''">
+            AND a.visit_date >= #{start}
+        </if>
+        <if test="end != null and end != ''">
+            AND a.visit_date &lt;= #{end}
+        </if>
+        GROUP BY b.ids
+        ORDER BY b.`name`
+        )
+        UNION
+        (
+        SELECT
+        -1 AS id,
+        -1 AS ids,
+        '未填单位' AS item,
+        COUNT(0) AS batch,
+        SUM(a.come_num) AS people,
+        ROUND(COUNT(0) / ( SELECT COUNT(*) FROM petition_event_info WHERE deleted = 0 AND reception_org_id IN (12, 13, 14) AND `status` >= 1
+        <if test="start != null and start != ''">
+            AND visit_date >= #{start}
+        </if>
+        <if test="end != null and end != ''">
+            AND visit_date &lt;= #{end}
+        </if>
+        ) * 100,2) AS percent
+        FROM
+        petition_event_info a
+        WHERE a.deleted = 0 AND a.reception_org_id IN (12, 13, 14) AND a.`status` >= 1 AND a.duty_unit_id IS NULL
+        <if test="start != null and start != ''">
+            AND a.visit_date >= #{start}
+        </if>
+        <if test="end != null and end != ''">
+            AND a.visit_date &lt;= #{end}
+        </if>
+        GROUP BY a.duty_unit_id
+        )
+    </select>
+
+    <select id="statisticsQueryDutyCityUnit" resultType="com.fangao.dev.sys.dto.StatisDTO">
+        SELECT
+        b.id AS id,
+        b.`name` AS item,
+        COUNT(0) AS batch,
+        SUM(a.come_num) AS people,
+        ROUND(COUNT(0) / ( SELECT COUNT(*) FROM petition_event_info WHERE deleted = 0 AND reception_org_id IN (12, 13, 14) AND `status` >= 1 AND duty_unit_id IN (SELECT id FROM v_dict_petition_unit_city)
+        <if test="start != null and start != ''">
+            AND visit_date >= #{start}
+        </if>
+        <if test="end != null and end != ''">
+            AND visit_date &lt;= #{end}
+        </if>
+        ) * 100,2) AS percent
+        FROM
+        petition_event_info a
+        JOIN v_dict_petition_unit_city b ON a.duty_unit_id=b.id
+        WHERE a.deleted = 0 AND a.reception_org_id IN (12, 13, 14) AND a.`status` >= 1
+        <if test="start != null and start != ''">
+            AND a.visit_date >= #{start}
+        </if>
+        <if test="end != null and end != ''">
+            AND a.visit_date &lt;= #{end}
+        </if>
+        GROUP BY b.id
+        ORDER BY b.`name`
+    </select>
+
+    <select id="statisticsQueryContentTypeFirst" resultType="com.fangao.dev.sys.dto.StatisDTO">
+        SELECT
+        t.id AS id,
+        t.item AS item,
+        t.batch AS batch,
+        t.people AS people
+        FROM
+        (SELECT
+        c.id AS id,
+        c.`name` AS item,
+        COUNT(0) AS batch,
+        SUM(a.come_num) AS people
+        FROM petition_event_info a
+        JOIN dict_petition_content_type b ON a.content_type_id=b.id
+        JOIN dict_petition_content_type c ON b.rid=c.id
+        WHERE a.deleted=0 AND a.reception_org_id IN (12,13,14,15) AND a.`status`>=1
+        <if test="start != null and start != ''">
+            AND a.visit_date >= #{start}
+        </if>
+        <if test="end != null and end != ''">
+            AND a.visit_date &lt;= #{end}
+        </if>
+        GROUP BY c.id) t
+        ORDER BY t.batch DESC,t.id ASC
+    </select>
+
+    <select id="statisticsQueryContentTypeSecond" resultType="com.fangao.dev.sys.dto.StatisDTO">
+        SELECT
+        t.id AS id,
+        t.item AS item,
+        t.batch AS batch,
+        t.people AS people
+        FROM
+        ((SELECT
+        b.id AS id,
+        b.`name` AS item,
+        count(0) AS batch,
+        SUM(a.come_num) AS people
+        FROM petition_event_info a
+        JOIN dict_petition_content_type b ON a.content_type_id = b.id AND b.pid = b.rid
+        <if test="firstId != null">
+            AND b.rid = #{firstId}
+        </if>
+        WHERE a.deleted = 0 AND a.reception_org_id IN (12, 13, 14) AND a.`status` >= 1
+        <if test="start != null and start != ''">
+            AND a.visit_date >= #{start}
+        </if>
+        <if test="end != null and end != ''">
+            AND a.visit_date &lt;= #{end}
+        </if>
+        GROUP BY b.id)
+        UNION
+        (SELECT
+        b.pid AS id,
+        c.`name` AS item,
+        COUNT(0) AS batch,
+        SUM(a.come_num) AS people
+        FROM petition_event_info a
+        JOIN dict_petition_content_type b ON a.content_type_id=b.id AND b.pid&lt;>b.rid AND b.pid&lt;>0
+        <if test="firstId != null">
+            AND b.rid = #{firstId}
+        </if>
+        LEFT JOIN dict_petition_content_type c ON b.pid=c.id
+        WHERE a.deleted=0 AND a.reception_org_id IN (12,13,14,15) AND a.`status`>=1
+        <if test="start != null and start != ''">
+            AND a.visit_date >= #{start}
+        </if>
+        <if test="end != null and end != ''">
+            AND a.visit_date &lt;= #{end}
+        </if>
+        GROUP BY b.pid)) t
+        ORDER BY t.batch DESC,t.id ASC
+    </select>
+
+    <select id="selectWaiterByReceptionOrgId" resultType="com.fangao.dev.sys.dto.JdcDTO">
+        SELECT
+        b.id as id,
+        a.idcard as idcard,
+        a.`name` as petitionerName,
+        a.sex as sex,
+        a.nation as nation,
+        a.birth_date as birthDate,
+        a.permanent_address as permanentAddress,
+        a.current_address as currentAddress,
+        a.mobile_no as mobileNo,
+        a.operator as operator,
+        a.create_time as createTime,
+        b.event_num as eventNum,
+        b.reception_id as receptionId,
+        b.visit_date as visitDate,
+        b.status as status,
+        b.solve_state as solveState
+        from petitioner_info a RIGHT JOIN petition_event_info b on a.idcard=b.idcard
+        where a.deleted=0
+        <if test="jdcDTO.petitionerName != null and jdcDTO.petitionerName != ''">
+            <bind name="likeName" value="'%' + jdcDTO.petitionerName + '%'" />
+            AND a.`name` LIKE #{likeName}
+        </if>
+        <if test="jdcDTO.idcard != null and jdcDTO.idcard != ''">
+            <bind name="likeIdcard" value="'%' + jdcDTO.idcard + '%'" />
+            AND a.idcard LIKE #{likeIdcard}
+        </if>
+        <if test="jdcDTO.visitDate != null">
+            AND b.visit_date = #{jdcDTO.visitDate}
+        </if>
+        AND b.reception_org_id = #{jdcDTO.receptionOrgId}
+        AND b.status = 0
+        AND b.deleted = 0
+        ORDER by b.visit_date DESC
+    </select>
+
+    <select id="selectAllEventTotal" resultType="java.lang.Long">
+        SELECT count(0) AS total
+        FROM `petition_event_info` `a`
+        LEFT JOIN `petitioner_info` `b` ON `a`.`idcard` = `b`.`idcard`
+        LEFT JOIN (
+        SELECT `x`.`petition_event_info_id`,`x`.`status`
+        FROM `delete_check` `x` RIGHT JOIN
+        (SELECT MAX(`z`.`id`) AS `id`,`z`.`petition_event_info_id` AS `eventId` FROM `delete_check` `z` GROUP BY `z`.`petition_event_info_id`) `y`
+        ON `x`.`id`=`y`.`id` AND `x`.`petition_event_info_id`=`y`.`eventId`
+        ) `o` ON `o`.`petition_event_info_id` = `a`.`id`
+        <if test="jdcDTO.receptionOrgId != null">
+            AND `a`.`reception_org_id` = #{jdcDTO.receptionOrgId}
+        </if>
+        <if test="jdcDTO.name != null and jdcDTO.name != ''">
+            <bind name="likeName" value="'%' + jdcDTO.name + '%'" />
+            AND `a`.`name` LIKE #{likeName}
+        </if>
+        <if test="jdcDTO.petitionerName != null and jdcDTO.petitionerName != ''">
+            <bind name="likePetitionerName" value="'%' + jdcDTO.petitionerName + '%'" />
+            AND `b`.`petitioner_name` LIKE #{likePetitionerName}
+        </if>
+        <if test="jdcDTO.eventNum != null and jdcDTO.eventNum != ''">
+            <bind name="likeEventNum" value="'%' + jdcDTO.eventNum + '%'" />
+            AND `a`.`event_num` LIKE #{likeEventNum}
+        </if>
+        <choose>
+            <when test="jdcDTO.status != null and jdcDTO.status != -2 and jdcDTO.status != -3 ">
+                AND `a`.`status` = #{jdcDTO.status}
+            </when>
+            <otherwise>
+                AND `a`.`status` not in (0,-1)
+            </otherwise>
+        </choose>
+        <if test="jdcDTO.status != null and jdcDTO.status == -3">
+            AND IFNULL(`o`.`status`,-1) = 0
+        </if>
+    </select>
+
+    <select id="selectAllEvent" resultType="com.fangao.dev.sys.dto.JdcDTO">
+        SELECT
+        `z`.`id` AS `id`,
+        `z`.`name` AS `name`,
+        `z`.`eventNum` AS `eventNum`,
+        `z`.`idcard` AS `idcard`,
+        `z`.`receptionOrgId` AS `receptionOrgId`,
+        `z`.`receptionOrg` AS `receptionOrg`,
+        `z`.`eventContent` AS `eventContent`,
+        `z`.`mainDemand` AS `mainDemand`,
+        `z`.`comeNum` AS `comeNum`,
+        `z`.`involveNum` AS `involveNum`,
+        `z`.`isKeyArea` AS `isKeyArea`,
+        `z`.`isKeyAreaName` AS `isKeyAreaName`,
+        `z`.`visitPlaceStatusName` AS `visitPlaceStatusName`,
+        `z`.`visitActionStatusName` AS `visitActionStatusName`,
+        `z`.`isGroupVisitName` AS `isGroupVisitName`,
+        `z`.`isRepeatName` AS `isRepeatName`,
+        `z`.`isHoldUpName` AS `isHoldUpName`,
+        `z`.`isFollowName` AS `isFollowName`,
+        `z`.`followContent` AS `followContent`,
+        `z`.`crux` AS `crux`,
+        `z`.`newestProgress` AS `newestProgress`,
+        `z`.`verifyDetail` AS `verifyDetail`,
+        `z`.`unreasonableReason` AS `unreasonableReason`,
+        `z`.`isVerifiedName` AS `isVerifiedName`,
+        `z`.`isReasonableName` AS `isReasonableName`,
+        `z`.`isLeaderHadName` AS `isLeaderHadName`,
+        `z`.`isFinalOpinionName` AS `isFinalOpinionName`,
+        `z`.`eventPlaceId` AS `eventPlaceId`,
+        `z`.`keyAreaId` AS `keyAreaId`,
+        `z`.`keyArea` AS `keyArea`,
+        `z`.`isRepeat` AS `isRepeat`,
+        `z`.`contentTypeId` AS `contentTypeId`,
+        `z`.`visitActionStatus` AS `visitActionStatus`,
+        `z`.`abnormalAction` AS `abnormalAction`,
+        `z`.`visitPlaceStatus` AS `visitPlaceStatus`,
+        `z`.`abnormalPlace` AS `abnormalPlace`,
+        `z`.`dutyUnitId` AS `dutyUnitId`,
+        `z`.`workProposal` AS `workProposal`,
+        `z`.`isLeaderHad` AS `isLeaderHad`,
+        `z`.`leaderId` AS `leaderId`,
+        `z`.`operator` AS `operator`,
+        `z`.`createTime` AS `createTime`,
+        `z`.`receptionId` AS `receptionId`,
+        `z`.`visitDate` AS `visitDate`,
+        `z`.`status` AS `status`,
+        `z`.`statusName` AS `statusName`,
+        `z`.`petitionerName` AS `petitionerName`,
+        `z`.`sex` AS `sex`,
+        `z`.`nation` AS `nation`,
+        `z`.`birthDate` AS `birthDate`,
+        `z`.`permanentAddress` AS `permanentAddress`,
+        `z`.`currentAddress` AS `currentAddress`,
+        `z`.`mobileNo` AS `mobileNo`,
+        `z`.`receptionName` AS `receptionName`,
+        `z`.`contentTypeName` AS `contentTypeName`,
+        `z`.`firstContentTypeName` AS `firstContentTypeName`,
+        `z`.`dutyUnitName` AS `dutyUnitName`,
+        `z`.`wkdwName` AS `wkdwName`,
+        `z`.`djOrg` AS `djOrg`,
+        `z`.`eventPlace` AS `eventPlace`,
+        `z`.`followPerson` AS `followPerson`,
+        `z`.`coUnit` AS `coUnit`,
+        `z`.`leaderLevelId` AS `leaderLevelId`,
+        `z`.`leaderLevel` AS `leaderLevel`,
+        `z`.`leader` AS `leader`,
+        `z`.`solveState` AS `solveState`,
+        `z`.`solveStateName` AS `solveStateName`,
+        `z`.`isVerified` AS `isVerified`,
+        `z`.`finalOpinion` AS `finalOpinion`,
+        `z`.`isReasonable` AS `isReasonable`,
+        `z`.`isFinalOpinion` AS `isFinalOpinion`,
+        `z`.`deleteCheckStatus` AS `deleteCheckStatus`
+        FROM
+        (
+        SELECT
+        `a`.`id` AS `id`,
+        `a`.`name` AS `name`,
+        `a`.`event_num` AS `eventNum`,
+        `a`.`idcard` AS `idcard`,
+        `a`.`reception_org_id` AS `receptionOrgId`,
+        `r`.`name` AS `receptionOrg`,
+        REPLACE(REPLACE(REPLACE(REPLACE(`a`.`event_content`,CHAR(13),''),CHAR(10),''),CHAR(9),''),' ','') AS `eventContent`,
+        REPLACE(REPLACE(REPLACE(REPLACE(`a`.`main_demand`,CHAR(13),''),CHAR(10),''),CHAR(9),''),' ','') AS `mainDemand`,
+        `a`.`come_num` AS `comeNum`,
+        `a`.`involve_num` AS `involveNum`,
+        `a`.`is_key_area` AS `isKeyArea`,
+        `a`.`solve_state` AS `solveState`,
+        IF(`a`.`is_key_area` = 1,'是','否') AS `isKeyAreaName`,
+        IF(`a`.`solve_state` = 1,'是','否') AS `solveStateName`,
+        IF(`a`.`visit_place_status` = 1,'正常','异常') AS `visitPlaceStatusName`,
+        IF(`a`.`visit_action_status` = 1,'正常','异常') AS `visitActionStatusName`,
+        IF(`a`.`is_group_visit` = 1,'是','否') AS `isGroupVisitName`,
+        `a`.`is_group_visit` AS `isGroupVisit`,
+        IF(`a`.`is_repeat` = 1,'是','否') AS `isRepeatName`,
+        IF(`a`.`is_hold_up` = 1,'是','否') AS `isHoldUpName`,
+        IF(`a`.`is_follow` = 1,'是','否') AS `isFollowName`,
+        REPLACE(REPLACE(REPLACE(REPLACE(`a`.`follow_content`,CHAR(13),''),CHAR(10),''),CHAR(9),''),' ','') AS `followContent`,
+        REPLACE(REPLACE(REPLACE(REPLACE(`a`.`crux`,CHAR(13),''),CHAR(10),''),CHAR(9),''),' ','') AS `crux`,
+        REPLACE(REPLACE(REPLACE(REPLACE(`a`.`newest_progress`,CHAR(13),''),CHAR(10),''),CHAR(9),''),' ','') AS `newestProgress`,
+        REPLACE(REPLACE(REPLACE(REPLACE(`a`.`verify_detail`,CHAR(13),''),CHAR(10),''),CHAR(9),''),' ','') AS `verifyDetail`,
+        REPLACE(REPLACE(REPLACE(REPLACE(`a`.`unreasonable_reason`,CHAR(13),''),CHAR(10),''),CHAR(9),''),' ','') AS `unreasonableReason`,
+        `a`.`is_verified` AS `isVerified`,
+        IF(`a`.`is_verified` IS NULL ,'',IF(`a`.`is_verified` = 1,'是','否')) AS `isVerifiedName`,
+        `a`.`is_reasonable` AS `isReasonable`,
+        IF(`a`.`is_reasonable` IS NULL ,'',IF(`a`.`is_reasonable` = 2,'是',IF(`a`.`is_reasonable` = 1,'部分','否'))) AS `isReasonableName`,
+        IF(`a`.`is_leader_had` IS NULL ,'',IF(`a`.`is_leader_had` = 1,'是','否')) AS `isLeaderHadName`,
+        `a`.`is_final_opinion` AS `isFinalOpinion`,
+        IF(`a`.`is_final_opinion` IS NULL ,'',IF(`a`.`is_final_opinion` = 1,'是','否')) AS `isFinalOpinionName`,
+        `a`.`event_place_id` AS `eventPlaceId`,
+        `a`.`key_area_id` AS `keyAreaId`,
+        `i`.`name` AS `keyArea`,
+        `a`.`is_repeat` AS `isRepeat`,
+        `a`.`content_type_id` AS `contentTypeId`,
+        `a`.`visit_action_status` AS `visitActionStatus`,
+        `k`.`names` AS `abnormalAction`,
+        `a`.`visit_place_status` AS `visitPlaceStatus`,
+        `j`.`names` AS `abnormalPlace`,
+        `a`.`duty_unit_id` AS `dutyUnitId`,
+        REPLACE(REPLACE(REPLACE(REPLACE(`a`.`work_proposal`,CHAR(13),''),CHAR(10),''),CHAR(9),''),' ','') AS `workProposal`,
+        `a`.`is_leader_had` AS `isLeaderHad`,
+        `a`.`leader_id` AS `leaderId`,
+        `a`.`operator` AS `operator`,
+        `a`.`create_time` AS `createTime`,
+        `a`.`reception_id` AS `receptionId`,
+        `a`.`visit_date` AS `visitDate`,
+        `a`.`status` AS `status`,
+        REPLACE(REPLACE(REPLACE(REPLACE(`a`.`final_opinion`,CHAR(13),''),CHAR(10),''),CHAR(9),''),' ','') AS `finalOpinion`,
+        IF(`o`.`status` = 0,'删除审核中',IF(`a`.`status` = 0,'待接待',IF(`a`.`status` = 1,'处理中',IF(`a`.`status` = 2,'已处理',IF(`a`.`status` = -1,'已放弃',''))))) AS `statusName`,
+        `a`.`deleted` AS `deleted`,
+        `a`.`wkdw_name` AS `wkdwName`,
+        `b`.`name` AS `petitionerName`,
+        `b`.`sex` AS `sex`,
+        `b`.`nation` AS `nation`,
+        `b`.`birth_date` AS `birthDate`,
+        `b`.`permanent_address` AS `permanentAddress`,
+        `b`.`current_address` AS `currentAddress`,
+        `b`.`mobile_no` AS `mobileNo`,
+        `c`.`name` AS `receptionName`,
+        `d`.`name` AS `contentTypeName`,
+        `q`.`name` AS `firstContentTypeName`,
+        `e`.`name` AS `dutyUnitName`,
+        `f`.`name` AS `djOrg`,
+        `g`.`name` AS `eventPlace`,
+        IF(`p`.`names` IS NULL,IFNULL(`h`.`names`,''),IF(`h`.`names` IS NULL,`p`.`names`,CONCAT(`h`.`names`,',',`p`.`names`))) AS `followPerson`,
+        `l`.`names` AS `coUnit`,
+        `n`.`id` AS `leaderLevelId`,
+        `n`.`name` AS `leaderLevel`,
+        `m`.`name` AS `leader`,
+        IFNULL(`o`.`status`,-1) AS `deleteCheckStatus`
+        FROM
+        `petition_event_info` `a`
+        LEFT JOIN `sys_org` `r` ON `a`.`reception_org_id` = `r`.`id`
+        LEFT JOIN `petitioner_info` `b` ON `a`.`idcard` = `b`.`idcard`
+        LEFT JOIN `petition_receptor` `c` ON `a`.`reception_id` = `c`.`id`
+        LEFT JOIN `dict_petition_content_type` `d` ON `a`.`content_type_id` = `d`.`id`
+        LEFT JOIN `dict_petition_content_type` `q` ON `q`.`id` = `d`.`rid`
+        LEFT JOIN `dict_petition_unit` `e` ON `a`.`duty_unit_id` = `e`.`id`
+        LEFT JOIN `sys_org` `f` ON `a`.`djc_org_id` = `f`.`id`
+        LEFT JOIN `dict_petition_event_place` `g` ON `a`.`event_place_id` = `g`.`id`
+        LEFT JOIN (
+        SELECT
+        `z`.`id` AS `id`,
+        GROUP_CONCAT(`y`.`name` SEPARATOR ',') AS `names`
+        FROM
+        `follow_person` `z`
+        LEFT JOIN `petitioner_info` `y` ON `z`.`idcard` = `y`.`idcard`
+        WHERE `z`.`deleted`=0
+        GROUP BY `z`.`id`
+        ) `h` ON `h`.`id` = `a`.`id`
+        LEFT JOIN `dict_petition_key_area` `i` ON `a`.`key_area_id` = `i`.`id`
+        LEFT JOIN (
+        SELECT
+        `z`.`event_id` AS `event_id`,
+        GROUP_CONCAT(`y`.`name` SEPARATOR ',') AS `names`
+        FROM
+        `link_abnormal_place` `z`
+        LEFT JOIN `dict_abnormal_place` `y` ON `z`.`place_id` = `y`.`id`
+        GROUP BY
+        `z`.`event_id`
+        ) `j` ON `j`.`event_id` = `a`.`id`
+        LEFT JOIN (
+        SELECT
+        `z`.`event_id` AS `event_id`,
+        GROUP_CONCAT(`y`.`name` SEPARATOR ',') AS `names`
+        FROM
+        `link_abnormal_action` `z`
+        LEFT JOIN `dict_abnormal_action` `y` ON `z`.`action_id` = `y`.`id`
+        GROUP BY
+        `z`.`event_id`
+        ) `k` ON `k`.`event_id` = `a`.`id`
+        LEFT JOIN (
+        SELECT
+        `z`.`event_id` AS `event_id`,
+        GROUP_CONCAT(`y`.`name` SEPARATOR ',') AS `names`
+        FROM
+        `link_coordination_unit` `z`
+        LEFT JOIN `dict_petition_unit` `y` ON `z`.`unit_id` = `y`.`id`
+        GROUP BY
+        `z`.`event_id`
+        ) `l` ON `l`.`event_id` = `a`.`id`
+        LEFT JOIN `snapshot_petition_leader` `m` ON `a`.`leader_id` = `m`.`id`
+        AND `a`.`reception_org_id` = `m`.`org_id`
+        LEFT JOIN `dict_petition_leader_level` `n` ON `m`.`leader_level_id` = `n`.`id`
+        LEFT JOIN (
+        SELECT `x`.`petition_event_info_id`,`x`.`status`
+        FROM `delete_check` `x` RIGHT JOIN
+        (SELECT MAX(`z`.`id`) AS `id`,`z`.`petition_event_info_id` AS `eventId` FROM `delete_check` `z` GROUP BY `z`.`petition_event_info_id`) `y`
+        ON `x`.`id`=`y`.`id` AND `x`.`petition_event_info_id`=`y`.`eventId`
+        ) `o` ON `o`.`petition_event_info_id` = `a`.`id`
+        LEFT JOIN (
+        SELECT `x`.`event_id`,GROUP_CONCAT(`x`.`name` SEPARATOR ',') AS `names`
+        FROM `follow_person_extra` `x`
+        WHERE `x`.`deleted`=0
+        GROUP BY `x`.`event_id`
+        ) `p` ON `p`.`event_id` = `a`.`id`
+        ) `z`
+        WHERE
+        `deleted` = 0
+        <if test="jdcDTO.receptionOrgId != null">
+            AND `receptionOrgId` = #{jdcDTO.receptionOrgId}
+        </if>
+        <if test="jdcDTO.name != null and jdcDTO.name != ''">
+            <bind name="likeName" value="'%' + jdcDTO.name + '%'" />
+            AND `name` LIKE #{likeName}
+        </if>
+        <if test="jdcDTO.petitionerName != null and jdcDTO.petitionerName != ''">
+            <bind name="likePetitionerName" value="'%' + jdcDTO.petitionerName + '%'" />
+            AND `petitionerName` LIKE #{likePetitionerName}
+        </if>
+        <if test="jdcDTO.eventNum != null and jdcDTO.eventNum != ''">
+            <bind name="likeEventNum" value="'%' + jdcDTO.eventNum + '%'" />
+            AND `eventNum` LIKE #{likeEventNum}
+        </if>
+        <choose>
+            <when test="jdcDTO.status != null and jdcDTO.status != -2 and jdcDTO.status != -3 ">
+                AND `status` = #{jdcDTO.status}
+            </when>
+            <otherwise>
+                AND `status` not in (0,-1)
+            </otherwise>
+        </choose>
+        <if test="jdcDTO.status != null and jdcDTO.status == -3">
+            AND `deleteCheckStatus` = 0
+        </if>
+        <if test="jdcDTO.highSearch != null and jdcDTO.highSearch != ''">
+            AND ${jdcDTO.highSearch}
+        </if>
+        ORDER BY `visitDate` DESC , `createTime` DESC
+    </select>
+
+    <select id="selectAllEventExport" resultType="java.util.Map">
+        SELECT
+        `z`.`id` AS `id`,
+        `z`.`name` AS `name`,
+        `z`.`eventNum` AS `eventNum`,
+        `z`.`idcard` AS `idcard`,
+        `z`.`receptionOrgId` AS `receptionOrgId`,
+        `z`.`receptionOrg` AS `receptionOrg`,
+        `z`.`eventContent` AS `eventContent`,
+        `z`.`mainDemand` AS `mainDemand`,
+        `z`.`comeNum` AS `comeNum`,
+        `z`.`involveNum` AS `involveNum`,
+        `z`.`isKeyArea` AS `isKeyArea`,
+        `z`.`isKeyAreaName` AS `isKeyAreaName`,
+        `z`.`visitPlaceStatusName` AS `visitPlaceStatusName`,
+        `z`.`visitActionStatusName` AS `visitActionStatusName`,
+        `z`.`isGroupVisitName` AS `isGroupVisitName`,
+        `z`.`isRepeatName` AS `isRepeatName`,
+        `z`.`isHoldUpName` AS `isHoldUpName`,
+        `z`.`isFollowName` AS `isFollowName`,
+        `z`.`followContent` AS `followContent`,
+        `z`.`crux` AS `crux`,
+        `z`.`newestProgress` AS `newestProgress`,
+        `z`.`verifyDetail` AS `verifyDetail`,
+        `z`.`unreasonableReason` AS `unreasonableReason`,
+        `z`.`isVerifiedName` AS `isVerifiedName`,
+        `z`.`isReasonableName` AS `isReasonableName`,
+        `z`.`isLeaderHadName` AS `isLeaderHadName`,
+        `z`.`isFinalOpinionName` AS `isFinalOpinionName`,
+        `z`.`eventPlaceId` AS `eventPlaceId`,
+        `z`.`keyAreaId` AS `keyAreaId`,
+        `z`.`keyArea` AS `keyArea`,
+        `z`.`isRepeat` AS `isRepeat`,
+        `z`.`contentTypeId` AS `contentTypeId`,
+        `z`.`visitActionStatus` AS `visitActionStatus`,
+        `z`.`abnormalAction` AS `abnormalAction`,
+        `z`.`visitPlaceStatus` AS `visitPlaceStatus`,
+        `z`.`abnormalPlace` AS `abnormalPlace`,
+        `z`.`dutyUnitId` AS `dutyUnitId`,
+        `z`.`workProposal` AS `workProposal`,
+        `z`.`isLeaderHad` AS `isLeaderHad`,
+        `z`.`leaderId` AS `leaderId`,
+        `z`.`operator` AS `operator`,
+        `z`.`createTime` AS `createTime`,
+        `z`.`receptionId` AS `receptionId`,
+        `z`.`visitDate` AS `visitDate`,
+        `z`.`status` AS `status`,
+        `z`.`statusName` AS `statusName`,
+        `z`.`petitionerName` AS `petitionerName`,
+        `z`.`sex` AS `sex`,
+        `z`.`nation` AS `nation`,
+        `z`.`birthDate` AS `birthDate`,
+        `z`.`permanentAddress` AS `permanentAddress`,
+        `z`.`currentAddress` AS `currentAddress`,
+        `z`.`mobileNo` AS `mobileNo`,
+        `z`.`receptionName` AS `receptionName`,
+        `z`.`contentTypeName` AS `contentTypeName`,
+        `z`.`firstContentTypeName` AS `firstContentTypeName`,
+        `z`.`dutyUnitName` AS `dutyUnitName`,
+        `z`.`wkdwName` AS `wkdwName`,
+        `z`.`djOrg` AS `djOrg`,
+        `z`.`eventPlace` AS `eventPlace`,
+        `z`.`followPerson` AS `followPerson`,
+        `z`.`coUnit` AS `coUnit`,
+        `z`.`leaderLevelId` AS `leaderLevelId`,
+        `z`.`leaderLevel` AS `leaderLevel`,
+        `z`.`leader` AS `leader`,
+        `z`.`solveState` AS `solveState`,
+        `z`.`solveStateName` AS `solveStateName`,
+        `z`.`isVerified` AS `isVerified`,
+        `z`.`finalOpinion` AS `finalOpinion`,
+        `z`.`isReasonable` AS `isReasonable`,
+        `z`.`isFinalOpinion` AS `isFinalOpinion`,
+        `z`.`deleteCheckStatus` AS `deleteCheckStatus`
+        FROM
+        (
+        SELECT
+        `a`.`id` AS `id`,
+        `a`.`name` AS `name`,
+        `a`.`event_num` AS `eventNum`,
+        `a`.`idcard` AS `idcard`,
+        `a`.`reception_org_id` AS `receptionOrgId`,
+        `r`.`name` AS `receptionOrg`,
+        REPLACE(REPLACE(REPLACE(REPLACE(`a`.`event_content`,CHAR(13),''),CHAR(10),''),CHAR(9),''),' ','') AS `eventContent`,
+        REPLACE(REPLACE(REPLACE(REPLACE(`a`.`main_demand`,CHAR(13),''),CHAR(10),''),CHAR(9),''),' ','') AS `mainDemand`,
+        `a`.`come_num` AS `comeNum`,
+        `a`.`involve_num` AS `involveNum`,
+        `a`.`is_key_area` AS `isKeyArea`,
+        `a`.`solve_state` AS `solveState`,
+        IF(`a`.`is_key_area` = 1,'是','否') AS `isKeyAreaName`,
+        IF(`a`.`solve_state` = 1,'是','否') AS `solveStateName`,
+        IF(`a`.`visit_place_status` = 1,'正常','异常') AS `visitPlaceStatusName`,
+        IF(`a`.`visit_action_status` = 1,'正常','异常') AS `visitActionStatusName`,
+        IF(`a`.`is_group_visit` = 1,'是','否') AS `isGroupVisitName`,
+        IF(`a`.`is_repeat` = 1,'是','否') AS `isRepeatName`,
+        IF(`a`.`is_hold_up` = 1,'是','否') AS `isHoldUpName`,
+        IF(`a`.`is_follow` = 1,'是','否') AS `isFollowName`,
+        REPLACE(REPLACE(REPLACE(REPLACE(`a`.`follow_content`,CHAR(13),''),CHAR(10),''),CHAR(9),''),' ','') AS `followContent`,
+        REPLACE(REPLACE(REPLACE(REPLACE(`a`.`crux`,CHAR(13),''),CHAR(10),''),CHAR(9),''),' ','') AS `crux`,
+        REPLACE(REPLACE(REPLACE(REPLACE(`a`.`newest_progress`,CHAR(13),''),CHAR(10),''),CHAR(9),''),' ','') AS `newestProgress`,
+        REPLACE(REPLACE(REPLACE(REPLACE(`a`.`verify_detail`,CHAR(13),''),CHAR(10),''),CHAR(9),''),' ','') AS `verifyDetail`,
+        REPLACE(REPLACE(REPLACE(REPLACE(`a`.`unreasonable_reason`,CHAR(13),''),CHAR(10),''),CHAR(9),''),' ','') AS `unreasonableReason`,
+        `a`.`is_verified` AS `isVerified`,
+        IF(`a`.`is_verified` IS NULL ,'',IF(`a`.`is_verified` = 1,'是','否')) AS `isVerifiedName`,
+        `a`.`is_reasonable` AS `isReasonable`,
+        IF(`a`.`is_reasonable` IS NULL ,'',IF(`a`.`is_reasonable` = 2,'是',IF(`a`.`is_reasonable` = 1,'部分','否'))) AS `isReasonableName`,
+        IF(`a`.`is_leader_had` IS NULL ,'',IF(`a`.`is_leader_had` = 1,'是','否')) AS `isLeaderHadName`,
+        `a`.`is_final_opinion` AS `isFinalOpinion`,
+        IF(`a`.`is_final_opinion` IS NULL ,'',IF(`a`.`is_final_opinion` = 1,'是','否')) AS `isFinalOpinionName`,
+        `a`.`event_place_id` AS `eventPlaceId`,
+        `a`.`key_area_id` AS `keyAreaId`,
+        `i`.`name` AS `keyArea`,
+        `a`.`is_repeat` AS `isRepeat`,
+        `a`.`content_type_id` AS `contentTypeId`,
+        `a`.`visit_action_status` AS `visitActionStatus`,
+        `k`.`names` AS `abnormalAction`,
+        `a`.`visit_place_status` AS `visitPlaceStatus`,
+        `j`.`names` AS `abnormalPlace`,
+        `a`.`duty_unit_id` AS `dutyUnitId`,
+        REPLACE(REPLACE(REPLACE(REPLACE(`a`.`work_proposal`,CHAR(13),''),CHAR(10),''),CHAR(9),''),' ','') AS `workProposal`,
+        `a`.`is_leader_had` AS `isLeaderHad`,
+        `a`.`leader_id` AS `leaderId`,
+        `a`.`operator` AS `operator`,
+        `a`.`create_time` AS `createTime`,
+        `a`.`reception_id` AS `receptionId`,
+        `a`.`visit_date` AS `visitDate`,
+        `a`.`status` AS `status`,
+        REPLACE(REPLACE(REPLACE(REPLACE(`a`.`final_opinion`,CHAR(13),''),CHAR(10),''),CHAR(9),''),' ','') AS `finalOpinion`,
+        IF(`o`.`status` = 0,'删除审核中',IF(`a`.`status` = 0,'待接待',IF(`a`.`status` = 1,'处理中',IF(`a`.`status` = 2,'已处理',IF(`a`.`status` = -1,'已放弃',''))))) AS `statusName`,
+        `a`.`deleted` AS `deleted`,
+        `a`.`wkdw_name` AS `wkdwName`,
+        `b`.`name` AS `petitionerName`,
+        `b`.`sex` AS `sex`,
+        `b`.`nation` AS `nation`,
+        `b`.`birth_date` AS `birthDate`,
+        `b`.`permanent_address` AS `permanentAddress`,
+        `b`.`current_address` AS `currentAddress`,
+        `b`.`mobile_no` AS `mobileNo`,
+        `c`.`name` AS `receptionName`,
+        `d`.`name` AS `contentTypeName`,
+        `q`.`name` AS `firstContentTypeName`,
+        `e`.`name` AS `dutyUnitName`,
+        `f`.`name` AS `djOrg`,
+        `g`.`name` AS `eventPlace`,
+        IF(`p`.`names` IS NULL,IFNULL(`h`.`names`,''),IF(`h`.`names` IS NULL,`p`.`names`,CONCAT(`h`.`names`,',',`p`.`names`))) AS `followPerson`,
+        `l`.`names` AS `coUnit`,
+        `n`.`id` AS `leaderLevelId`,
+        `n`.`name` AS `leaderLevel`,
+        `m`.`name` AS `leader`,
+        IFNULL(`o`.`status`,-1) AS `deleteCheckStatus`
+        FROM
+        `petition_event_info` `a`
+        LEFT JOIN `sys_org` `r` ON `a`.`reception_org_id` = `r`.`id`
+        LEFT JOIN `petitioner_info` `b` ON `a`.`idcard` = `b`.`idcard`
+        LEFT JOIN `petition_receptor` `c` ON `a`.`reception_id` = `c`.`id`
+        LEFT JOIN `dict_petition_content_type` `d` ON `a`.`content_type_id` = `d`.`id`
+        LEFT JOIN `dict_petition_content_type` `q` ON `q`.`id` = `d`.`rid`
+        LEFT JOIN `dict_petition_unit` `e` ON `a`.`duty_unit_id` = `e`.`id`
+        LEFT JOIN `sys_org` `f` ON `a`.`djc_org_id` = `f`.`id`
+        LEFT JOIN `dict_petition_event_place` `g` ON `a`.`event_place_id` = `g`.`id`
+        LEFT JOIN (
+        SELECT
+        `z`.`id` AS `id`,
+        GROUP_CONCAT(`y`.`name` SEPARATOR ',') AS `names`
+        FROM
+        `follow_person` `z`
+        LEFT JOIN `petitioner_info` `y` ON `z`.`idcard` = `y`.`idcard`
+        WHERE `z`.`deleted`=0
+        GROUP BY `z`.`id`
+        ) `h` ON `h`.`id` = `a`.`id`
+        LEFT JOIN `dict_petition_key_area` `i` ON `a`.`key_area_id` = `i`.`id`
+        LEFT JOIN (
+        SELECT
+        `z`.`event_id` AS `event_id`,
+        GROUP_CONCAT(`y`.`name` SEPARATOR ',') AS `names`
+        FROM
+        `link_abnormal_place` `z`
+        LEFT JOIN `dict_abnormal_place` `y` ON `z`.`place_id` = `y`.`id`
+        GROUP BY
+        `z`.`event_id`
+        ) `j` ON `j`.`event_id` = `a`.`id`
+        LEFT JOIN (
+        SELECT
+        `z`.`event_id` AS `event_id`,
+        GROUP_CONCAT(`y`.`name` SEPARATOR ',') AS `names`
+        FROM
+        `link_abnormal_action` `z`
+        LEFT JOIN `dict_abnormal_action` `y` ON `z`.`action_id` = `y`.`id`
+        GROUP BY
+        `z`.`event_id`
+        ) `k` ON `k`.`event_id` = `a`.`id`
+        LEFT JOIN (
+        SELECT
+        `z`.`event_id` AS `event_id`,
+        GROUP_CONCAT(`y`.`name` SEPARATOR ',') AS `names`
+        FROM
+        `link_coordination_unit` `z`
+        LEFT JOIN `dict_petition_unit` `y` ON `z`.`unit_id` = `y`.`id`
+        GROUP BY
+        `z`.`event_id`
+        ) `l` ON `l`.`event_id` = `a`.`id`
+        LEFT JOIN `snapshot_petition_leader` `m` ON `a`.`leader_id` = `m`.`id`
+        AND `a`.`reception_org_id` = `m`.`org_id`
+        LEFT JOIN `dict_petition_leader_level` `n` ON `m`.`leader_level_id` = `n`.`id`
+        LEFT JOIN (
+        SELECT `x`.`petition_event_info_id`,`x`.`status`
+        FROM `delete_check` `x` RIGHT JOIN
+        (SELECT MAX(`z`.`id`) AS `id`,`z`.`petition_event_info_id` AS `eventId` FROM `delete_check` `z` GROUP BY `z`.`petition_event_info_id`) `y`
+        ON `x`.`id`=`y`.`id` AND `x`.`petition_event_info_id`=`y`.`eventId`
+        ) `o` ON `o`.`petition_event_info_id` = `a`.`id`
+        LEFT JOIN (
+        SELECT `x`.`event_id`,GROUP_CONCAT(`x`.`name` SEPARATOR ',') AS `names`
+        FROM `follow_person_extra` `x`
+        WHERE `x`.`deleted`=0
+        GROUP BY `x`.`event_id`
+        ) `p` ON `p`.`event_id` = `a`.`id`
+        ) `z`
+        WHERE
+        `deleted` = 0
+        <if test="jdcDTO.receptionOrgId != null">
+            AND `receptionOrgId` = #{jdcDTO.receptionOrgId}
+        </if>
+        <if test="jdcDTO.name != null and jdcDTO.name != ''">
+            <bind name="likeName" value="'%' + jdcDTO.name + '%'" />
+            AND `name` LIKE #{likeName}
+        </if>
+        <if test="jdcDTO.petitionerName != null and jdcDTO.petitionerName != ''">
+            <bind name="likePetitionerName" value="'%' + jdcDTO.petitionerName + '%'" />
+            AND `petitionerName` LIKE #{likePetitionerName}
+        </if>
+        <if test="jdcDTO.eventNum != null and jdcDTO.eventNum != ''">
+            <bind name="likeEventNum" value="'%' + jdcDTO.eventNum + '%'" />
+            AND `eventNum` LIKE #{likeEventNum}
+        </if>
+        <choose>
+            <when test="jdcDTO.status != null and jdcDTO.status != -2 and jdcDTO.status != -3 ">
+                AND `status` = #{jdcDTO.status}
+            </when>
+            <otherwise>
+                AND `status` not in (0,-1)
+            </otherwise>
+        </choose>
+        <if test="jdcDTO.status != null and jdcDTO.status == -3">
+            AND `deleteCheckStatus` = 0
+        </if>
+        <if test="jdcDTO.highSearch != null and jdcDTO.highSearch != ''">
+            AND ${jdcDTO.highSearch}
+        </if>
+        ORDER BY `visitDate` DESC , `createTime` DESC
+    </select>
+
+    <select id="queryEventInfoShow" resultType="com.fangao.dev.sys.dto.PetitionEventShowPrintDTO">
+        SELECT DISTINCT
+        `a`.`id` AS `id`
+        , ifnull(`a`.`name`, '')AS `name`
+        , ifnull(`b`.`name`, '')AS `petitioner`
+        , ifnull(`a`.`idcard`, '')AS `idcard`
+        , ifnull(`b`.`permanent_address`, '')AS `permanent_address`
+        , ifnull(`b`.`current_address`, '')AS `current_address`
+        , ifnull(`b`.`mobile_no`, '')AS `mobile_no`
+        , ifnull(`a`.`visit_date`, '')AS `visit_date`
+        , ifnull(`a`.`event_num`, '')AS `event_num`
+        , ifnull(`c`.`name`, '')AS `djOrg`
+        , ifnull(`a`.`event_content`, '')AS `event_content`
+        , ifnull(`a`.`main_demand`, '') AS `main_demand`
+        , IF(`a`.`is_key_area` = 1, '是', '否') AS `is_key_area`
+        , ifnull(`d`.`name`, '') AS `key_area`
+        , ifnull(`e`.`name`, '') AS `event_place`
+        , ifnull(`a`.`come_num`, '') AS `come_num`
+        , ifnull(`a`.`involve_num`, '') AS `involve_num`
+        , IF(`a`.`is_group_visit` = 1, '是', '否') AS `is_group_visit`
+        , IF(`m`.`names` IS NULL,IFNULL(`f`.`names`,''),IF(`f`.`names` IS NULL,`m`.`names`,CONCAT(`f`.`names`,',',`m`.`names`))) AS `follow_person`
+        , IF(`a`.`is_repeat` = 1, '是', '否') AS `is_repeat`
+        , ifnull(`g`.`name`, '') AS `content_type`
+        , IF(`a`.`visit_place_status` = 1, '正常', '异常') AS `visit_place_status`
+        , ifnull(h.`names`, '') AS `abnormal_place`
+        , IF(`a`.`visit_action_status` = 1, '正常', '异常') AS `visit_action_status`
+        , ifnull(`i`.`names`, '') AS `abnormal_action`
+        , ifnull(`j`.`name`, '') AS `duty_unit`
+        , ifnull(`k`.`names`, '') AS `co_unit`
+        , ifnull(`a`.`wkdw_name`, '') AS `wkdw_name`
+        , IF(`a`.`solve_state` = 1, '是', '否') AS `solveState`
+        , IF(`a`.`is_hold_up` = 1, '是', '否') AS `is_hold_up`
+        , IF(`a`.`is_follow` = 1, '是', '否') AS `is_follow`
+        , ifnull(`a`.`follow_content`, '') AS `follow_content`
+        , ifnull(`a`.`work_proposal`, '') AS `work_proposal`
+        , ifnull(`a`.`crux`, '') AS `crux`
+        , IF(`a`.`is_verified` is null,'',IF(`a`.`is_verified` = 1, '属实', '不属实')) AS `is_verified`
+        , IF(`a`.`is_reasonable` is null,'',IF(`a`.`is_reasonable` = 0, '有理',IF(`a`.`is_reasonable` = 1,'部分有理','无理'))) AS `is_reasonable`
+        , ifnull(`a`.`verify_detail`, '') AS `verify_detail`
+        , ifnull(`a`.`unreasonable_reason`, '') AS `unreasonable_reason`
+        , ifnull(`a`.`newest_progress`, '') AS `newest_progress`
+        , IF(`a`.`is_leader_had` is null,'',IF(`a`.`is_leader_had` = 1, '是', '否')) AS `is_leader_had`
+        , ifnull(`l`.`name`, '') AS `leader`
+        , IF(`a`.`is_final_opinion` is null,'',IF(`a`.`is_final_opinion` = 1, '是', '否')) AS `is_final_opinion`
+        , ifnull(`a`.`final_opinion`, '') AS `final_opinion`
+        , ifnull(`n`.`name`, '') AS `dict_solve`
+        , ifnull(`o`.`name`, '') AS `dict_satisfaction`
+
+        FROM `petition_event_info` `a`
+        LEFT JOIN `petitioner_info` `b` ON `a`.`idcard` = `b`.`idcard`
+        LEFT JOIN `sys_org` `c` ON `a`.`djc_org_id` = `c`.`id`
+        LEFT JOIN `dict_petition_key_area` `d` ON `a`.`key_area_id` = `d`.`id`
+        LEFT JOIN `dict_petition_event_place` `e` ON `a`.`event_place_id` = `e`.`id`
+        LEFT JOIN (
+        SELECT `z`.`id` AS `id`, GROUP_CONCAT(`y`.`name` SEPARATOR ',') AS `names`
+        FROM `follow_person` `z`
+        LEFT JOIN `petitioner_info` `y` ON `z`.`idcard` = `y`.`idcard`
+        WHERE `z`.`deleted`=0
+        GROUP BY `z`.`id`
+        ) `f` ON `f`.`id` = `a`.`id`
+        LEFT JOIN `dict_petition_content_type` `g` ON `a`.`content_type_id` = `g`.`id`
+        LEFT JOIN (
+        SELECT z.event_id,GROUP_CONCAT(y.`name`) AS `names`
+        FROM link_abnormal_place z
+        LEFT JOIN dict_abnormal_place y ON z.place_id=y.id
+        GROUP BY z.event_id
+        ) h ON h.event_id=a.id
+        LEFT JOIN (
+        SELECT z.event_id,GROUP_CONCAT(y.`name`) AS `names`
+        FROM link_abnormal_action z
+        LEFT JOIN dict_abnormal_action y ON z.action_id=y.id
+        GROUP BY z.event_id
+        ) i ON i.event_id=a.id
+        LEFT JOIN dict_petition_unit j ON a.duty_unit_id=j.id
+        LEFT JOIN (
+        SELECT z.event_id,GROUP_CONCAT(y.`name`) AS `names`
+        FROM link_coordination_unit z
+        LEFT JOIN dict_petition_unit y ON z.unit_id=y.id
+        GROUP BY z.event_id
+        ) k ON k.event_id=a.id
+        LEFT JOIN (
+        SELECT CONCAT(z.`name`,'（',y.`name`,'）') AS `name`,z.id,z.org_id
+        FROM snapshot_petition_leader z LEFT JOIN dict_petition_leader_level y ON z.leader_level_id=y.id
+        ) l ON l.id=a.leader_id AND l.org_id=a.reception_org_id
+        LEFT JOIN (
+        SELECT `x`.`event_id`,GROUP_CONCAT(`x`.`name` SEPARATOR ',') AS `names`
+        FROM `follow_person_extra` `x`
+        WHERE `x`.`deleted`=0
+        GROUP BY `x`.`event_id`
+        ) `m` ON `m`.`event_id` = `a`.`id`
+        LEFT JOIN `dict_petition_solve` `n` ON `n`.`id`=`a`.`dict_solve_id`
+        LEFT JOIN `dict_petition_satisfaction` `o` ON `o`.`id`=`a`.`dict_satisfaction_id`
+        WHERE `a`.`deleted` = 0 AND `a`.`id`= #{id}
+    </select>
+
+    <select id="getRepeatList" resultType="com.fangao.dev.sys.dto.JdcDTO">
+        SELECT
+        a.id as id,
+        a.`name` as name,
+        a.event_num as eventNum,
+        a.idcard as idcard,
+        a.event_content as eventContent,
+        a.main_demand as mainDemand,
+        a.involve_num as involveNum,
+        a.is_key_area as isKeyArea,
+        a.event_place_id as eventPlaceId,
+        a.key_area_id as keyAreaId,
+        a.is_repeat as isRepeat,
+        a.content_type_id as contentTypeId,
+        queryContentTypeParentIdsByIdNew(a.content_type_id) AS contentTypeIds,
+        a.visit_action_status as visitActionStatus,
+        a.visit_place_status as visitPlaceStatus,
+        a.duty_unit_id as dutyUnitId,
+        a.work_proposal as workProposal,
+        a.is_leader_had as isLeaderHad,
+        a.leader_id as leaderId,
+        a.operator as operator,
+        a.create_time as createTime,
+        a.reception_id as receptionId,
+        a.visit_date as visitDate,
+        a.status as status,
+        b.`name` as petitionerName,
+        b.sex as sex,
+        b.nation as nation,
+        b.birth_date as birthDate,
+        b.permanent_address as permanentAddress,
+        b.current_address as currentAddress,
+        b.mobile_no as mobileNo,
+        c.name as receptionName,
+        d.`name` as contentTypeName,
+        e.`name` as dutyUnitName,
+        f.name AS eventPlaceName,
+        x.ids AS coUnitIds,
+        y.ids AS abnormalActionIds,
+        z.ids AS abnormalPlaceIds
+        from petition_event_info a LEFT JOIN  petitioner_info b on a.idcard=b.idcard
+        LEFT JOIN petition_receptor c on a.reception_id = c.id
+        LEFT JOIN dict_petition_content_type d on a.content_type_id = d.id
+        LEFT JOIN dict_petition_unit e on a.duty_unit_id = e.id
+        LEFT JOIN dict_petition_event_place f on a.event_place_id = f.id
+        LEFT JOIN (SELECT g.event_id,group_concat(`g`.`unit_id` SEPARATOR ',') AS ids FROM link_coordination_unit g GROUP BY g.event_id) x
+        ON x.event_id = a.id
+        LEFT JOIN (SELECT h.event_id,group_concat(`h`.`action_id` SEPARATOR ',') AS ids FROM link_abnormal_action h GROUP BY h.event_id) y
+        ON y.event_id = a.id
+        LEFT JOIN (SELECT i.event_id,group_concat(`i`.`place_id` SEPARATOR ',') AS ids FROM link_abnormal_place i GROUP BY i.event_id) z
+        ON z.event_id = a.id
+        where a.deleted=0 AND a.is_repeat=0 AND a.`status` in(1,2)
+        <if test="jdcDTO.name != null and jdcDTO.name != ''">
+            <bind name="likeName" value="'%' + jdcDTO.name + '%'" />
+            AND a.`name` LIKE #{likeName}
+        </if>
+        <if test="jdcDTO.idcard != null and jdcDTO.idcard != ''">
+            <bind name="likeIdcard" value="'%' + jdcDTO.idcard + '%'" />
+            AND a.idcard LIKE #{likeIdcard}
+        </if>
+        <if test="jdcDTO.eventPlaceId != null and jdcDTO.eventPlaceId != ''">
+            AND a.event_place_id = #{jdcDTO.eventPlaceId}
+        </if>
+        ORDER BY a.create_time desc
+    </select>
+
+    <select id="getRepeatListNew" resultType="com.fangao.dev.sys.dto.JdcDTO">
+        SELECT
+        a.id as id,
+        a.`name` as name,
+        a.event_num as eventNum,
+        a.idcard as idcard,
+        a.event_content as eventContent,
+        a.main_demand as mainDemand,
+        a.come_num as comeNum,
+        a.involve_num as involveNum,
+        a.is_follow as isFollow,
+        a.follow_content as followContent,
+        a.is_hold_up as isHoldUp,
+        a.is_key_area as isKeyArea,
+        a.event_place_id as eventPlaceId,
+        a.key_area_id as keyAreaId,
+        a.is_repeat as isRepeat,
+        a.content_type_id as contentTypeId,
+        queryContentTypeParentIdsByIdNew(a.content_type_id) AS contentTypeIds,
+        a.visit_action_status as visitActionStatus,
+        a.visit_place_status as visitPlaceStatus,
+        a.duty_unit_id as dutyUnitId,
+        a.work_proposal as workProposal,
+        a.is_leader_had as isLeaderHad,
+        a.leader_id as leaderId,
+        a.operator as operator,
+        a.create_time as createTime,
+        a.reception_id as receptionId,
+        a.visit_date as visitDate,
+        a.status as status,
+        b.`name` as petitionerName,
+        b.sex as sex,
+        b.nation as nation,
+        b.birth_date as birthDate,
+        b.permanent_address as permanentAddress,
+        b.current_address as currentAddress,
+        b.mobile_no as mobileNo,
+        c.name as receptionName,
+        d.`name` as contentTypeName,
+        e.`name` as dutyUnitName,
+        a.wkdw_name AS wkdwName,
+        f.name AS eventPlaceName,
+        x.ids AS coUnitIds,
+        y.ids AS abnormalActionIds,
+        z.ids AS abnormalPlaceIds
+        from petition_event_info a LEFT JOIN  petitioner_info b on a.idcard=b.idcard
+        LEFT JOIN petition_receptor c on a.reception_id = c.id
+        LEFT JOIN dict_petition_content_type d on a.content_type_id = d.id
+        LEFT JOIN dict_petition_unit e on a.duty_unit_id = e.id
+        LEFT JOIN dict_petition_event_place f on a.event_place_id = f.id
+        LEFT JOIN (SELECT g.event_id,group_concat(`g`.`unit_id` SEPARATOR ',') AS ids FROM link_coordination_unit g GROUP BY g.event_id) x
+        ON x.event_id = a.id
+        LEFT JOIN (SELECT h.event_id,group_concat(`h`.`action_id` SEPARATOR ',') AS ids FROM link_abnormal_action h GROUP BY h.event_id) y
+        ON y.event_id = a.id
+        LEFT JOIN (SELECT i.event_id,group_concat(`i`.`place_id` SEPARATOR ',') AS ids FROM link_abnormal_place i GROUP BY i.event_id) z
+        ON z.event_id = a.id
+        where a.deleted=0 AND a.`status` in(1,2) AND a.id IN
+        <foreach item="item" index="index" collection="ids"
+                 open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+
+    <select id="getEventEditData" resultType="com.fangao.dev.sys.dto.JdcDTO">
+        SELECT
+        a.id as id,
+        a.`name` as name,
+        a.event_num as eventNum,
+        a.idcard as idcard,
+        a.event_content as eventContent,
+        a.main_demand as mainDemand,
+        a.come_num as comeNum,
+        a.involve_num as involveNum,
+        a.is_follow as isFollow,
+        a.follow_content as followContent,
+        a.is_hold_up as isHoldUp,
+        a.is_key_area as isKeyArea,
+        a.event_place_id as eventPlaceId,
+        a.key_area_id as keyAreaId,
+        a.is_repeat as isRepeat,
+        a.content_type_id as contentTypeId,
+        queryContentTypeParentIdsByIdNew(a.content_type_id) AS contentTypeIds,
+        a.visit_action_status as visitActionStatus,
+        a.visit_place_status as visitPlaceStatus,
+        a.duty_unit_id as dutyUnitId,
+        a.work_proposal as workProposal,
+        a.is_leader_had as isLeaderHad,
+        a.leader_id as leaderId,
+        a.operator as operator,
+        a.create_time as createTime,
+        a.reception_id as receptionId,
+        a.visit_date as visitDate,
+        a.status as status,
+        b.`name` as petitionerName,
+        b.sex as sex,
+        b.nation as nation,
+        b.birth_date as birthDate,
+        b.permanent_address as permanentAddress,
+        b.current_address as currentAddress,
+        b.mobile_no as mobileNo,
+        c.name as receptionName,
+        d.`name` as contentTypeName,
+        e.`name` as dutyUnitName,
+        a.wkdw_name AS wkdwName,
+        f.name AS eventPlaceName,
+        x.ids AS coUnitIds,
+        y.ids AS abnormalActionIds,
+        z.ids AS abnormalPlaceIds
+        FROM petition_event_info a LEFT JOIN  petitioner_info b on a.idcard=b.idcard
+        LEFT JOIN petition_receptor c on a.reception_id = c.id
+        LEFT JOIN dict_petition_content_type d on a.content_type_id = d.id
+        LEFT JOIN dict_petition_unit e on a.duty_unit_id = e.id
+        LEFT JOIN dict_petition_event_place f on a.event_place_id = f.id
+        LEFT JOIN (SELECT g.event_id,group_concat(`g`.`unit_id` SEPARATOR ',') AS ids FROM link_coordination_unit g GROUP BY g.event_id) x
+        ON x.event_id = a.id
+        LEFT JOIN (SELECT h.event_id,group_concat(`h`.`action_id` SEPARATOR ',') AS ids FROM link_abnormal_action h GROUP BY h.event_id) y
+        ON y.event_id = a.id
+        LEFT JOIN (SELECT i.event_id,group_concat(`i`.`place_id` SEPARATOR ',') AS ids FROM link_abnormal_place i GROUP BY i.event_id) z
+        ON z.event_id = a.id
+        <if test="id != null">
+            WHERE `a`.`id` = #{id}
+        </if>
+    </select>
+
+    <select id="countByDatePart" resultType="com.fangao.dev.sys.dto.PetitionCountDTO">
+        SELECT COUNT(a.id) AS count,a.visit_date AS visit_date
+        FROM petition_event_info a
+        WHERE
+        <if test="status != null and status != 0">
+            a.status >= #{status} AND
+        </if>
+        a.visit_date>=#{start_date}
+        AND a.visit_date&lt;=#{end_date}
+        AND a.deleted = 0
+        GROUP BY a.visit_date
+    </select>
+
+    <select id="countByDatePart2" resultType="com.fangao.dev.sys.dto.PetitionLineCountDTO">
+        SELECT a.id AS id,a.visit_date AS visit_date
+        FROM petition_event_info a
+        WHERE
+        <if test="status != null and status != 0">
+            a.status >= #{status} AND
+        </if>
+        <if test="start_date != null and start_date != ''">
+            a.visit_date>=#{start_date} AND
+        </if>
+        a.visit_date&lt;=#{end_date}
+        AND a.deleted = 0
+        ORDER BY a.visit_date
+    </select>
+
+    <select id="countJDPie" resultType="com.fangao.dev.sys.vo.DrawPetitionPieVO">
+        SELECT a.`name` AS item,COUNT(d.id) AS count,
+        ROUND(COUNT(a.`name`)/(SELECT COUNT(*) from petition_event_info where deleted=0 AND `status`>0)*100,2) as percent
+        FROM
+        sys_org a
+        JOIN sys_user_org b ON a.id=b.org_id
+        JOIN sys_user_role c ON c.role_id=2 AND b.user_id=c.user_id
+        JOIN petition_event_info d ON d.deleted=0 AND d.`status`>0 AND b.user_id=d.reception_id
+        GROUP BY a.id
+        ORDER BY a.sort DESC ,a.id ASC
+    </select>
+
+    <select id="countJDPlacePie" resultType="com.fangao.dev.sys.vo.DrawPetitionPieVO">
+        SELECT a.`name` AS item,COUNT(b.id) AS count,
+        ROUND(COUNT(a.`name`)/(SELECT COUNT(*) from petition_event_info where deleted=0 AND `status`>0)*100,2) as percent
+        FROM
+        dict_petition_event_place a
+        JOIN petition_event_info b ON b.deleted=0 AND b.`status`>0 AND b.event_place_id=a.id
+        WHERE a.deleted = 0
+        GROUP BY a.id
+        ORDER BY a.sort DESC,a.id ASC
+    </select>
+
+    <select id="countJDUnitPie" resultType="com.fangao.dev.sys.vo.DrawPetitionPieVO">
+        SELECT a.`name` AS item,COUNT(b.id) AS count,
+        ROUND(COUNT(a.`name`)/(SELECT COUNT(*) from petition_event_info where deleted=0 AND `status`>0)*100,2) as percent
+        FROM
+        dict_petition_unit a
+        JOIN petition_event_info b ON b.deleted=0 AND b.`status`>0 AND b.duty_unit_id=a.id
+        WHERE a.deleted = 0
+        GROUP BY a.id
+        ORDER BY a.sort DESC,a.id ASC
+    </select>
+
+    <select id="queryLeafContentType" resultType="com.fangao.dev.sys.dto.LeafContentTypeDTO">
+        SELECT a.id,a.name,COUNT(a.id) AS count,queryContentTypeParentIdsById(a.id) AS ids
+        FROM dict_petition_content_type a
+        JOIN petition_event_info b ON b.deleted=0 AND b.`status`>0 AND b.content_type_id=a.id
+        WHERE a.deleted = 0
+        GROUP BY a.id
+    </select>
+
+    <select id="queryContentType" resultType="com.fangao.dev.sys.dto.ContentTypeDTO">
+        SELECT a.id,a.pid,a.`name`
+        FROM
+        dict_petition_content_type a
+        WHERE a.deleted=0 AND a.id IN
+        <foreach item="tempId" collection="ids" open="(" separator="," close=")">
+            #{tempId}
+        </foreach>
+        ORDER BY a.pid,a.id,a.sort
+    </select>
+    <select id="getPetitionEventInfos" resultType="com.fangao.dev.sys.entity.PetitionEventInfo">
+        SELECT * from petition_event_info where reception_org_id = #{org_Id} and event_place_id = #{event_place_id} and visit_date>=#{start_date}
+        AND visit_date&lt;=#{end_date}
+    </select>
+    <select id="getPetitionEventInfosByEventPlace" resultType="com.fangao.dev.sys.entity.PetitionEventInfo">
+        SELECT * from petition_event_info where reception_org_id = #{org_id} and event_place_id = #{event_place_id}
+        <if test="begin_date!=null and begin_date!=''">
+            and visit_date>=#{begin_date}
+        </if>
+        <if test="end_date!=null and end_date!=''">
+            AND visit_date&lt;=#{end_date}
+        </if>
+    </select>
+    <select id="getPetitionEventInfosByOrg" resultType="com.fangao.dev.sys.entity.PetitionEventInfo">
+        SELECT * from petition_event_info where reception_org_id = #{org_id}
+        <if test="begin_date!=null and begin_date!=''">
+            and visit_date>=#{begin_date}
+        </if>
+        <if test="end_date!=null and end_date!=''">
+            AND visit_date&lt;=#{end_date}
+        </if>
+    </select>
+</mapper>

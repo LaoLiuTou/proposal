@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fangao.dev.sys.mapper.DeleteCheckMapper">
+    <select id="selectDeleteCheck" resultType="com.fangao.dev.sys.dto.CheckDTO">
+        SELECT
+        su.real_name as userRealName,
+        dc.id as id,
+        pei.id as petitionEventInfoId,
+        pei.`name` as name,
+        pei.event_num as eventNum,
+        pei.idcard as idcard,
+        pei.event_content as eventContent,
+        pei.main_demand as mainDemand,
+        pei.involve_num as involveNum,
+        pei.is_key_area as isKeyArea,
+        pei.event_place_id as eventPlaceId,
+        pei.key_area_id as keyAreaId,
+        pei.is_repeat as isRepeat,
+        pei.content_type_id as contentTypeId,
+        pei.visit_action_status as visitActionStatus,
+        pei.visit_place_status as visitPlaceStatus,
+        pei.duty_unit_id as dutyUnitId,
+        pei.work_proposal as workProposal,
+        pei.is_leader_had as isLeaderHad,
+        pei.leader_id as leaderId,
+        pei.operator as operator,
+        dc.create_time as createTime,
+        pei.reception_id as receptionId,
+        pei.visit_date as visitDate,
+        pei.status as status,
+        d.`name` as contentTypeName,
+        e.`name` as dutyUnitName
+        from delete_check  dc left join petition_event_info pei on dc.petition_event_info_id = pei.id
+        LEFT JOIN sys_user su on dc.user_id = su.id
+        LEFT JOIN dict_petition_content_type d on pei.content_type_id = d.id
+        LEFT JOIN dict_petition_unit e on pei.duty_unit_id = e.id
+        where dc.deleted = 0 and dc.`status`= 0
+        <if test="checkDTO.userRealName != null and checkDTO.userRealName != ''">
+            <bind name="likeUserRealName" value="'%' + checkDTO.userRealName + '%'" />
+            AND su.real_name LIKE #{likeUserRealName}
+        </if>
+        <if test="checkDTO.beginSubmitDate != null">
+            AND dc.create_time &gt; #{checkDTO.beginSubmitDate}
+        </if>
+        <if test="checkDTO.endSubmitDate != null">
+            AND dc.create_time &lt; #{checkDTO.endSubmitDate}
+        </if>
+        ORDER by dc.create_time ASC
+    </select>
+</mapper>

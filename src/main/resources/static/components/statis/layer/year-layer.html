@@ -1,0 +1,22 @@
+<div style="padding: 20px;">
+    <input type="text" class="layui-input" readonly id="date">
+</div>
+<script>
+    layui.use(['laydate','layer'], function () {
+        const laydate = layui.laydate;
+        laydate.render({
+            elem: '#date'
+            ,format: 'yyyy年'
+            ,type: 'year'
+            ,max:new Date().getTime()
+            ,btns: ['now','confirm']
+            ,done: function(value, date, endDate){
+                let openDiv = layui.sessionData('dateLayer')['openDiv'];
+                layui.sessionData('dateLayer', {key: openDiv+'_type', value: '3'});
+                layui.sessionData('dateLayer', {key: openDiv+'_start', value: value+'01月01日'});
+                layui.sessionData('dateLayer', {key: openDiv+'_end', value: value+'12月31日'});
+                layer.close(layui.sessionData('dateLayer')['index']);
+            }
+        });
+    });
+</script>

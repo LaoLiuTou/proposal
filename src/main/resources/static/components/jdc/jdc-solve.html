@@ -1,0 +1,40 @@
+<form id="solve-form" lay-filter="solve-form" class="layui-form model-form">
+    <input id="petitionEventInfoId" name="petitionEventInfoId" type="hidden"/>
+    <div class="layui-form-item layui-form-text">
+        <label class="layui-form-label ">办结备注</label>
+        <div class="layui-input-block">
+            <textarea placeholder="请输入办结备注" class="layui-textarea" lay-verify="required" name="content" id="content" style="resize:none" ></textarea>
+        </div>
+    </div>
+    <div class="layui-form-item model-form-footer">
+        <button class="layui-btn layui-btn-primary close" ew-event="closeDialog" type="button">取消</button>
+        <button class="layui-btn" lay-filter="solve-form-submit" lay-submit>保存</button>
+    </div>
+</form>
+<script>
+    layui.use(['form','crab','layer'],function () {
+        var layer = layui.layer;
+        var crab = layui.crab;
+        var form = layui.form;
+
+        // 回显 resource 数据
+        var eventInfo = crab.getTempData('p_eventInfo');
+        crab.putTempData('p_eventInfo');
+        // console.log(eventInfo);
+        if (eventInfo) {
+            $('#petitionEventInfoId').val(eventInfo.id);
+        }
+
+        //提交表单
+        form.on('submit(solve-form-submit)',function (data) {
+            //再次确认
+            layer.confirm('您确定要办结该事项?',{icon: 3, title:'提示'},function(index) {
+                crab.request('/jdc/djxx/addPeg', data.field, function () {
+                    layer.msg("办结成功",{icon: 1});
+                    crab.finishPopupCenter();
+                }, 'POST');
+            });
+            return false;
+        });
+    });
+</script>

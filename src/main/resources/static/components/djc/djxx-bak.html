@@ -1,0 +1,335 @@
+<div class="layui-card">
+    <div id="pageHead" class="layui-card-header">
+        <h2 class="header-title">登记人信息</h2>
+        <span class="layui-breadcrumb pull-right">
+          <a><cite id="printEmpty">打印空表</cite></a>
+          <a><cite id="scanId">扫描</cite></a>
+        </span>
+    </div>
+    <div class="layui-card-body">
+        <input name="eventId" type="hidden"/>
+        <!-- 身份表单 -->
+        <form class="layui-form" id="userinfo_form" lay-filter="userinfo_form">
+            <div class="layui-form-item">
+                <label class="layui-form-label"><span style="color: red">*</span>姓名</label>
+                <div class="layui-input-block">
+                    <input id="name" type="text" name="name" required  lay-verify="required" placeholder="请输入姓名" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label"><span style="color: red">*</span>身份证号</label>
+                <div class="layui-input-block">
+                    <input id="idcard" type="text" name="idcard" required  lay-verify="required|identity" placeholder="请输入身份证号" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div id="sexItem" class="layui-form-item">
+                <label class="layui-form-label">性别</label>
+                <div class="layui-input-block">
+                    <input type="radio" name="sex" value="1" title="男" >
+                    <input type="radio" name="sex" value="0" title="女" checked>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label class="layui-form-label">民族</label>
+                    <div class="layui-input-block">
+                        <input id="nation" value="汉" type="text" name="nation"  placeholder="请输入民族" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label"><span style="color: red">*</span>出生年月</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="birthDate" id="birthDate" required lay-verify="required|date" placeholder="yyyy-MM-dd" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label"><span style="color: red">*</span>户籍地址</label>
+                <div class="layui-input-block">
+                    <input id="permanentAddress" type="text" name="permanentAddress" required  lay-verify="required" placeholder="请输入户籍地址" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label"><span style="color: red">*</span>现住地址</label>
+                <div class="layui-input-block">
+                    <input id="currentAddress" type="text" name="currentAddress" required  lay-verify="required" placeholder="请输入现居住地" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">联系电话</label>
+                <div class="layui-input-block">
+                    <input id="mobileNo" type="text" name="mobileNo" placeholder="请输入11位联系电话" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label"><span style="color: red">*</span>来访日期</label>
+                <div class="layui-input-block">
+                    <input type="text" name="visitDate" id="visitDate" required lay-verify="required|date" placeholder="yyyy-MM-dd" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label"><span style="color: red">*</span>指定接待处</label>
+                <div class="layui-input-block">
+                    <select id="receptionOrgIds" name="receptionOrgIds" xm-select="receptionOrgIds" xm-select-max="12" xm-select-search=""></select>
+                    <!--<select id="receptionOrgId" name="receptionOrgId" lay-verify="required"></select>-->
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <button id="submitBtn" class="layui-btn" lay-submit lay-filter="formDemo">提交</button>
+                    <button id="submitAndPrintBtn" class="layui-btn" lay-submit lay-filter="formSubmitAndPrint">提交并打印</button>
+                    <button id="resetBtn" type="reset" class="layui-btn layui-btn-primary">重置</button>
+                    <button id="editBtn" class="layui-btn"  style="display:none;">修改信息</button>
+                    <button id="saveEditBtn" class="layui-btn" lay-submit lay-filter="formDemo" style="display:none;">保存修改</button>
+                </div>
+            </div>
+        </form>
+
+    </div>
+    <object id="CertCtl" style="height: 0;color: #fff;" clsid="{41D8EDD7-BC34-4A31-BEC8-47714A1E4046}" type="application/x-itst-activex" width="200px" height="18px"></object>
+
+    </object>
+</div>
+
+<script type="text/javascript">
+    layui.use(['form'], function(){
+        var form = layui.form;
+        $("#scanId").click(function(){
+            //scanCard();
+            scan();
+            return false;
+        });
+
+        function scan() {
+            var obj = document.getElementById("CertCtl");
+            var retValue = obj.idcard_scan(1);
+            if (0 == retValue){
+                $("#name").val(obj.userName);
+                $("#idcard").val(obj.userIDCode);
+                $("#permanentAddress").val(obj.userAddress);
+                $("#currentAddress").val(obj.userAddress);
+				var sexValue = 1;
+				if(obj.userSex == "男"){
+					sexValue = 0;
+				}
+				$('input[name="sex"][value="'+sexValue+'"]').prop('checked','checked');
+				form.render();
+				$("#nation").val(obj.userNation);
+				var bithdayStr = obj.userBirthDay;
+				$("#birthDate").val(bithdayStr.substr(0,4)+'-'+bithdayStr.substr(4,2)+'-'+bithdayStr.substr(6,2));
+            }else if(1 == retValue){
+                layer.msg('错误:端口打开失败', {
+                    time: 2000 //2s后自动关闭
+                });
+            }else if(2 == retValue){
+                layer.msg('错误:寻卡失败', {
+                    time: 2000 //2s后自动关闭
+                });
+            }else if(3 == retValue){
+                layer.msg('错误:选卡失败', {
+                    time: 2000 //2s后自动关闭
+                });
+            }else if(4 == retValue){
+                layer.msg('错误:初始化失败', {
+                    time: 2000 //2s后自动关闭
+                });
+            }else if(5 == retValue){
+                layer.msg('错误:身份证读取错误', {
+                    time: 2000 //2s后自动关闭
+                });
+            }else if(6 == retValue){
+                layer.msg('错误:身份证读取异常', {
+                    time: 2000 //2s后自动关闭
+                });
+            }else if(20 == retValue){
+                layer.msg('错误:获取姓名信息失败', {
+                    time: 2000 //2s后自动关闭
+                });
+            }else if(25 == retValue){
+                layer.msg('错误:获取卡号信息失败', {
+                    time: 2000 //2s后自动关闭
+                });
+            }else if(50<=retValue){
+                layer.msg('错误:设备驱动加载失败', {
+                    time: 2000 //2s后自动关闭
+                });
+            }
+        }
+    });
+</script>
+<script type="text/javascript">
+    layui.use(['form', 'crab','laydate','formSelects'], function(){
+        var form = layui.form;
+        var crab = layui.crab;
+        var laydate = layui.laydate;
+        var formSelects = layui.formSelects;
+        var edit = false;
+
+        form.render();
+        initLayDate();
+
+        //初始化日期
+        function initLayDate(){
+            //日期
+            laydate.render({
+                elem: '#birthDate'
+                ,value: '1940-01-01'
+            });
+            laydate.render({
+                elem: '#visitDate'
+                ,value: new Date()
+            });
+        }
+
+        //打印空表
+        $("#printEmpty").click(function(){
+            let height = ($(window).height()-30)>=1050?1050:($(window).height()-30);
+            layer.open({
+                type: 2,
+                content: '/components/print/djc.html',
+                title: false,
+                area: ['860px', height+'px']
+            });
+        });
+
+        loadCheckbox(crab,form,'/djc/djxx/listReceptionOrg','receptionOrgIds');
+
+        // 加载单选下拉选择框
+        function loadSingleSelectBox(crab,form,url,selectIdName,selectedId){
+            crab.get(url, {}, function (data) {
+                var l = data.length;
+                if (l > 0) {
+                    var option = '<option value=""></option>',_selectedId;
+                    if(selectedId){
+                        _selectedId = selectedId
+                    }
+                    for (var i = 0; i < l; i++) {
+                        var add = '';
+                        if(data[i].address) add = '&nbsp;，&nbsp;'+data[i].address;
+                        option += '<option value="' + data[i].id + '" '+((''+data[i].id===''+_selectedId)?"selected":"")+'>' + data[i].name + add+'</option>';
+                    }
+                    $('#'+selectIdName).empty().append(option);
+                    form.render('select');
+                    initEdit();
+                }
+            });
+        }
+
+        // 加载多选下拉选择框
+        function loadCheckbox(crab,form,url,selectIdName,selectedId){
+            crab.get(url, {}, function (data) {
+                var l = data.length;
+                if (l > 0) {
+                    var option = '<option value=""></option>',_selectedId;
+                    if(selectedId){
+                        _selectedId = selectedId
+                    }
+                    for (var i = 0; i < l; i++) {
+                        var add = '';
+                        if(data[i].address) add = '&nbsp;,&nbsp;'+data[i].address;
+                        option += '<option value="' + data[i].id + '" '+((''+data[i].id===''+_selectedId)?"selected":"")+'>' + data[i].name + add + '</option>';
+                    }
+                    $('#'+selectIdName).empty().append(option);
+                    formSelects.btns(selectIdName,['select', 'remove'], {show: 'name'});
+                    formSelects.render(selectIdName);
+                }
+            });
+        }
+
+        // 编辑的登记人信息
+        var user = crab.getFormData();
+        crab.putFormData(); //清除缓存，否则会一直为编辑状态
+        if (user) {
+            $('#pageHead').remove();
+            $('#submitBtn').hide();
+            $('#submitAndPrintBtn').hide();
+            $('#resetBtn').hide();
+            $('#editBtn').show();
+            $('#idcard').prop('disabled',true);
+            changeFieldDisabled(true);
+            changeReceptionOrgDisabled(true);
+            console.log(user);
+            edit = true;
+        }
+        function changeFieldDisabled(disabledVal) {
+            $('#name').prop('disabled',disabledVal);
+            $('#nation').prop('disabled',disabledVal);
+            $('#permanentAddress').prop('disabled',disabledVal);
+            $('#currentAddress').prop('disabled',disabledVal);
+            $('#mobileNo').prop('disabled',disabledVal);
+            $('#birthDate').prop('disabled',disabledVal);
+            $('#visitDate').prop('disabled',disabledVal);
+            $('input[name="sex"]').prop('disabled',disabledVal);
+            form.render();
+        }
+        function changeReceptionOrgDisabled(disabledVal){
+            $('#receptionOrgId').prop('disabled',disabledVal);
+            form.render();
+        }
+        //回显数据
+        function initEdit(){
+            if (edit) {
+                form.val('userinfo_form', user);
+                form.render();
+            }
+        }
+
+        $("#editBtn").click(function(){
+            $('#editBtn').hide();
+            $('#saveEditBtn').show();
+            changeFieldDisabled(false);
+            (''+user.status==='0') && changeReceptionOrgDisabled(false);
+            return false;
+        });
+
+        //监听提交
+        form.on('submit(formDemo)', function(data){
+            console.log(data.field);
+            data.field.mobileNo = $.trim(data.field.mobileNo);
+            if(edit){
+                data.field.eventId = user.eventId;
+                crab.post('/djc/edit', data.field, function (data) {
+                    layer.msg('修改成功',{time:2000});
+                    crab.finishPopupCenter();
+                });
+            }else{
+                crab.post('/djc/djxx', data.field, function (data) {
+                    layer.msg('登记成功',{time:2000});
+                    $("#userinfo_form")[0].reset();
+                    form.render();
+                    initLayDate();
+                });
+            }
+            return false;
+        });
+        form.on('submit(formSubmitAndPrint)', function(data){
+            crab.post('/djc/djxx_eventnum', data.field, function (d) {
+                let str = d.split('_');
+                if(''+str[0] !== ''){
+                    layer.msg('登记成功',{time:2000});
+                    let height = ($(window).height()-30)>=1050?1050:($(window).height()-30);
+                    layer.open({
+                        type: 2,
+                        content: '/components/print/djc.html?' +
+                        'event_num='+str[0] +
+                        '&name='+data.field.name +
+                        '&idcard='+data.field.idcard +
+                        '&mobile_no='+data.field.mobileNo +
+                        '&visit_date='+data.field.visitDate +
+                        '&current_address='+data.field.currentAddress +
+                        '&reception_org='+ str[1]+(str.length===3?'&nbsp;&nbsp;'+str[2]:'') +
+                            '&sex='+ (''+data.sex==='0'?'男':'女'),
+                        title: false,
+                        area: ['860px', height+'px']
+                    });
+                    $("#userinfo_form")[0].reset();
+                    form.render();
+                    initLayDate();
+                }else{
+                    layer.msg('登记失败',{time:2000});
+                }
+            });
+            return false;
+        });
+    });
+</script>

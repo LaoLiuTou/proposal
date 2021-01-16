@@ -1,0 +1,228 @@
+<div class="layui-card">
+    <div class="layui-card-header">
+        <h2 class="header-title">接待信息管理</h2>
+    </div>
+    <div class="layui-card-body">
+        <!-- 搜索条件 -->
+        <div class="layui-form toolbar">
+            <form id="searchForm" onsubmit="return false;">
+                事件名称：<input name="name" class="layui-input search-input" type="text" placeholder="输入事件名称关键字"/>&emsp;
+                信访人：<input name="petitionerName" class="layui-input search-input" type="text" placeholder="输入信访人姓名"/>&emsp;
+                事件编号：<input name="eventNum" id="eventNum" class="layui-input search-input" type="text"
+                            placeholder="输入事件编号"/>&emsp;
+                事件状态：<select name="status" lay-verify="">
+                <option value="-2">请选择</option><!-- 因后台status为Integer,为空时默认为0，故此处不为空，对-2进行处理 -->
+                <option value="0">待接待</option>
+                <option value="1">处理中</option>
+                <option value="2">已处理</option>
+                <option value="-3">删除审核中</option>
+                <option value="-1">已放弃</option>
+            </select>
+                <button id="user-btn-search" class="layui-btn icon-btn"><i class="layui-icon">&#xe615;</i>搜索</button>
+                <a href="javascript:;" id="high-search">高级搜索</a>
+
+            </form>
+        </div>
+        <!-- 表格顶部操作列 -->
+        <script type="text/html" id="user-toolbar">
+            <div class="layui-btn-container">
+                <button class="layui-btn" id="export">
+                    <i class="iconfont icon-export"></i> 导出
+                </button>
+            </div>
+        </script>
+        <table class="layui-table" id="user-table" lay-filter="user-table"></table>
+    </div>
+</div>
+
+<!-- 表格操作列 -->
+<script type="text/html" id="user-table-bar">
+    <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="view">详情</a>
+    <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="edit">编辑</a>
+    <a class="layui-btn layui-btn-warm layui-btn-xs" lay-event="progress">进度</a>
+</script>
+
+<!-- 表格状态列 -->
+<script type="text/html" id="user-tpl-status">
+    <input type="checkbox" lay-filter="user-tpl-status" value="{{d.id}}" lay-skin="switch"
+           lay-text="正常|禁用" {{d.status==0?'checked':''}}/>
+</script>
+<style>
+    button.fright {
+        float: right;
+        margin: 5px;
+    }
+</style>
+<script>
+    layui.use(['form', 'table', 'config', 'layer', 'crab', 'laydate'], function () {
+        var form = layui.form;
+        var table = layui.table;
+        var config = layui.config;
+        var layer = layui.layer;
+        var crab = layui.crab;
+        var laydate = layui.laydate;
+        laydate.render({
+            elem: '#visitDate'
+        });
+        var where = {status: -2};
+
+        // 渲染表格
+        var userTable = table.render({
+            elem: '#user-table',
+            toolbar: '#user-toolbar',
+            defaultToolbar: ['filter', 'print'],
+            url: config.base_server + '/jdc/xxgl/page_xfld',
+            where: JSON.parse(JSON.stringify(where)),
+            parseData: config.parseData,
+            page: true,
+            limits: [30, 60, 90, 120, 240, 360, 720, 1440, 2880, 5760, 11520],
+            cols: [[
+                {type: 'numbers'},
+                {field: 'eventNum', title: '事件编号', width: 130},
+                {field: 'visitDate', title: '来访日期', width: 110},
+                {field: 'petitionerName', title: '来访人', width: 75},
+                {field: 'name', title: '事件名称', width: 300},
+                {field: 'permanentAddress', title: '户籍地址', width: 150, hide: true},
+                {field: 'comeNum', title: '来访人数', width: 90},
+                {field: 'eventContent', title: '反映问题', width: 400},
+                {field: 'firstContentTypeName', title: '一级问题分类', width: 150},
+                {field: 'contentTypeName', title: '问题分类', width: 150, hide: true},
+                {field: 'eventPlace', title: '事发地', width: 90},
+                {field: 'isGroupVisitName', title: '是否集体访', width: 110, hide: true},
+                {field: 'isRepeatName', title: '是否重访', width: 90, hide: true},
+                {field: 'mobileNo', title: '联系电话', width: 120, hide: true},
+                {field: 'currentAddress', title: '居住地', width: 150, hide: true},
+                {field: 'idcard', title: '身份证号', width: 175, hide: true},
+                {field: 'statusName', title: '事件状态', width: 100},
+                {field: 'solveStateName', title: '是否办结', width: 90},
+                {field: 'djOrg', title: '登记地点', width: 120, hide: true},
+                {field: 'mainDemand', title: '主要诉求', width: 300, hide: true},
+                {field: 'isKeyAreaName', title: '是否重点领域', width: 150, hide: true},
+                {field: 'keyArea', title: '重点领域分类', width: 150, hide: true},
+                {field: 'visitPlaceStatusName', title: '上访地点是否正常', width: 150, hide: true},
+                {field: 'abnormalPlace', title: '上访异常地点', width: 150, hide: true},
+                {field: 'visitActionStatusName', title: '上访行为是否正常', width: 150, hide: true},
+                {field: 'abnormalAction', title: '上访异常行为', width: 150, hide: true},
+                {field: 'involveNum', title: '涉及人数', width: 90, hide: true},
+                {field: 'followPerson', title: '随访人信息', width: 110, hide: true},
+                {field: 'isHoldUpName', title: '是否滞留', width: 90, hide: true},
+                {field: 'isFollowName', title: '是否跟访', width: 90, hide: true},
+                {field: 'followContent', title: '跟访内容', width: 150, hide: true},
+                {field: 'dutyUnitName', title: '责任单位', width: 100},
+                {field: 'coUnit', title: '配合单位', width: 150, hide: true},
+                {field: 'wkdwName', title: '稳控单位', width: 100, hide: true},
+                {field: 'receptionOrg', title: '接待处', width: 120},
+                {field: 'receptionName', title: '接待人', width: 75},
+                {field: 'workProposal', title: '工作建议', width: 200, hide: true},
+                {field: 'crux', title: '问题症结', width: 200, hide: true},
+                {field: 'isVerifiedName', title: '问题是否属实', width: 130, hide: true},
+                {field: 'verifyDetail', title: '核实情况', width: 200, hide: true},
+                {field: 'isReasonableName', title: '诉求合理性', width: 110, hide: true},
+                {field: 'unreasonableReason', title: '不合理理由', width: 200, hide: true},
+                {field: 'newestProgress', title: '最新工作进展', width: 200, hide: true},
+                {field: 'isLeaderHadName', title: '是否领导包案', width: 130, hide: true},
+                {field: 'leader', title: '领导姓名', width: 200, hide: true},
+                {field: 'isFinalOpinionName', title: '是否有最终处理意见', width: 165, hide: true},
+                {field: 'finalOpinion', title: '最终处理意见', width: 200, hide: true},
+                {field: 'createTime', title: '创建时间', sort: true, width: 150},
+                {fixed: 'right', align: 'center', toolbar: '#user-table-bar', title: '操作', width: 180}
+            ]]
+        });
+        // 表格顶部操作列
+        table.on('toolbar(user-table)', function (obj) {
+            if (obj.event === 'add') {
+                location.replace('./#jdc-djxx');
+            }
+        });
+        // 导出点击事件
+        $(document).on('click','#export',(function () {
+            var cols = [];
+            var colNames = [];
+            userTable.config.cols[0].forEach(item => {
+                if (item.type !== 'numbers' && !item.hide && item.toolbar !== '#user-table-bar'){
+                    cols.push(item.field);
+                    colNames.push(item.title);
+                }
+            });
+            var _where = JSON.parse(JSON.stringify(where));
+            _where.cols = cols;
+            _where.colNames = colNames;
+            if (!_where.name)_where.name = '';
+            if (!_where.petitionerName)_where.petitionerName = '';
+            if (!_where.eventNum)_where.eventNum = '';
+            if (!_where.highSearch)_where.highSearch = '';
+            window.open('/jdc/xxgl/export_xfld?'+$.param(_where));
+        }));
+        // 表格操作列事件
+        table.on('tool(user-table)', function (obj) {
+            var data = obj.data;
+            var layEvent = obj.event;
+
+            if (layEvent === 'progress') {
+                // 事件处理进度
+                showEditModel(data, '事项处理进度', '/components/jdc/jdc-eventProgress.html');
+            } else if (obj.event === 'view') {
+                crab.putTempData('p_eventInfo', data);
+                let height = $(window).height() - 30;
+                let detail_layer_index = crab.popupCenter({
+                    closeBtn: 0,
+                    path: '/components/jdc/jdc-djxx-table.html',
+                    title: false,
+                    offset: '15px',
+                    area: ['800px', height + 'px']
+                });
+                crab.putTempData('detail_layer_index', detail_layer_index);
+            } else if (obj.event === 'edit') {
+                console.log(data);
+                crab.putTempData('editData',data);
+                location.replace('./#jdc-xxjxg-xfld');
+            }
+        });
+
+        //显示事件处理进度弹窗
+        var showEditModel = function (data, titleName, htmlUrl, area, offset) {
+            crab.putTempData('p_eventInfo', data);
+            crab.popupCenter({
+                title: data ? titleName : '暂无内容',
+                offset: offset ? offset : '15px',
+                path: htmlUrl,
+                area: area ? area : '600px',
+                maxHeight: '500px',
+                finish: function () {
+                    userTable.reload('user-table', {});
+                }
+            });
+        };
+
+        // 搜索按钮点击事件
+        $('#user-btn-search').click(function () {
+            where = crab.getSearchForm();
+            userTable.reload({where: JSON.parse(JSON.stringify(where))});
+        });
+
+        // 修改user状态
+        form.on('switch(user-tpl-status)', function (obj) {
+            crab.put('/sys/user/status_' + obj.elem.value, {
+                status: obj.elem.checked ? 0 : -1
+            }, function () {
+                layer.msg('用户状态修改成功', {icon: 1});
+            });
+        });
+
+        // 高级搜索
+        $('#high-search').click(function () {
+            crab.popupCenter({
+                title: '高级搜索',
+                offset: 'auto',
+                path: '/components/jdc/jdc-high-search-xfld.html',
+                area: ['1400px', ($(window).height() - 30) + 'px'],
+                finish: function () {
+                    let highSearchData = crab.getTempData('highSearchData') || '';
+                    crab.putTempData('highSearchData');
+                    where = {status: -2, highSearch: highSearchData};
+                    userTable.reload({where: JSON.parse(JSON.stringify(where))});
+                }
+            });
+        });
+    });
+</script>

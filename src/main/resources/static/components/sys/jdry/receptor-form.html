@@ -1,0 +1,122 @@
+<!-- user表单弹窗 -->
+<form id="user-form" lay-filter="user-form" class="layui-form model-form">
+    <input name="id" type="hidden"/>
+    <div class="layui-row">
+        <div class="layui-col-md12">
+            <div class="layui-form-item">
+                <label class="layui-form-label">姓名</label>
+                <div class="layui-input-block">
+                    <input name="name" placeholder="请输入姓名" type="text" class="layui-input" minlength="2" maxlength="20"
+                           lay-verify="required" required/>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">性别</label>
+                <div class="layui-input-block">
+                    <input type="radio" name="sex" value="男" title="男" checked/>
+                    <input type="radio" name="sex" value="女" title="女"/>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">身份证号</label>
+                <div class="layui-input-block">
+                    <input name="idcard" placeholder="请输入身份证号" type="text" class="layui-input" lay-verify="uniqueVerify"/>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">所属组织</label>
+                <div class="layui-input-block">
+                    <select id="orgIds" name="orgIds" lay-verify="required"></select>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">排序</label>
+                <div class="layui-input-block">
+                    <input name="sort" placeholder="请输入排序" type="number" class="layui-input"/>
+                </div>
+            </div>
+        </div>
+        <div class="layui-form-item model-form-footer">
+            <button class="layui-btn layui-btn-primary close" ew-event="closeDialog" type="button">取消</button>
+            <button class="layui-btn" lay-filter="user-form-submit" lay-submit>保存</button>
+        </div>
+    </div>
+</form>
+
+<script>
+    layui.use(['layer', 'crab', 'form'], function () {
+        var layer = layui.layer;
+        var crab = layui.crab;
+        var form = layui.form;
+        var edit = false;
+
+        form.render('radio');
+
+        loadSingleSelectBox(crab,form,'/djc/djxx/listReceptionOrg','orgIds');
+
+        // 加载单选下拉选择框
+        function loadSingleSelectBox(crab,form,url,selectIdName,selectedId){
+            crab.get(url, {}, function (data) {
+                var l = data.length;
+                if (l > 0) {
+                    var option = '<option value=""></option>',_selectedId;
+                    if(selectedId){
+                        _selectedId = selectedId
+                    }
+                    for (var i = 0; i < l; i++) {
+                        var add = '';
+                        if(data[i].address) add = '&nbsp;，&nbsp;'+data[i].address;
+                        option += '<option value="' + data[i].id + '" '+((''+data[i].id===''+_selectedId)?"selected":"")+'>' + data[i].name + add+'</option>';
+                    }
+                    $('#'+selectIdName).empty().append(option);
+                    form.render('select');
+                    initEdit();
+                }
+            });
+        }
+
+        // 编辑的用户信息
+        var user = crab.getFormData();
+        if (user) {
+            edit = true;
+        }
+        $('#user-form').attr('method', edit ? 'PUT' : 'POST');
+        function initEdit(){
+            console.log(user);
+            if(edit){
+                form.val('user-form', user);
+                form.render();
+            }
+        }
+
+        // 表单提交事件
+        form.verify({
+            uniqueVerify:function(value, item){
+                if(value !== ''){
+                    var url = '/jdry',flag = true;
+                    if(edit){
+                        url += '/verify/'+user.id+'/'+value;
+                    }else{
+                        url += '/verify/-1/'+value;
+                    }
+                    crab.request(url, {}, function (data) {
+                        flag = parseInt(data) <= 0;
+                    },'GET','',false);
+                    if(!flag) return "该身份证号已存在";
+                }
+            }
+        }).on('submit(user-form-submit)', function (data) {
+            var url = '/jdry/dto';
+            if (edit) {
+                url += '/edit';
+            }
+            if(data.field.status===undefined) data.field.status = 0;
+            if(data.field.sort==='') data.field.sort = 0;
+            crab.request(url, data.field, function () {
+                layer.msg(edit ? '修改成功' : '添加成功', {icon: 1});
+                crab.finishPopupCenter();
+            }, $('#user-form').attr('method'));
+            return false;
+        });
+    });
+</script>
