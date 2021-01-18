@@ -12,6 +12,7 @@
         <!-- 搜索条件 -->
         <div class="layui-form toolbar">
             <form id="searchForm" onsubmit="return false;">
+                接待室：<select id="receptionOrgId" name="receptionOrgId" lay-search="receptionOrgId" lay-search></select>
                 事件名称：<input name="name" class="layui-input search-input" type="text" placeholder="输入事件名称关键字"/>&emsp;
                 信访人：<input name="petitionerName" class="layui-input search-input" type="text" placeholder="输入信访人姓名"/>&emsp;
                 事件编号：<input name="eventNum" id="eventNum" class="layui-input search-input" type="text" placeholder="输入事件编号"/>&emsp;
@@ -44,18 +45,18 @@
 
 <!-- 表格操作列 -->
 <script type="text/html" id="user-table-bar">
-    <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="view">详情</a>
-    <a class="layui-btn layui-btn-xs {{(d.deleteCheckStatus==0 || d.status==2)?'layui-btn-disabled':''}}" lay-event="solve">办结</a>
-    <a class="layui-btn layui-btn-normal layui-btn-xs {{(d.deleteCheckStatus==0 || d.status==2)?'layui-btn-disabled':''}}" lay-event="addProgress">反馈</a>
-    <a class="layui-btn layui-btn-warm layui-btn-xs" lay-event="progress">进度</a>
-    <a class="layui-btn layui-btn-normal layui-btn-xs" style="display:{{editR?'inline-block':'none'}}" lay-event="edit">编辑</a>
-    <a class="layui-btn layui-btn-danger layui-btn-xs {{(d.deleteCheckStatus==0 || d.status==2)?'layui-btn-disabled':''}}" style="display:{{delR?'inline-block':'none'}}" lay-event="del">删除</a>
-    <br>
-    <a class="layui-btn layui-btn-primary layui-btn-xs" style="display:{{dictSolveR?'inline-block':'none'}}" lay-event="dictSolve">化解</a>
-    <a class="layui-btn layui-btn-primary layui-btn-xs" style="display:{{revisitR?'inline-block':'none'}}" lay-event="revisit">回访</a>
-    <a class="layui-btn layui-btn-primary layui-btn-xs" style="display:{{meetingR?'inline-block':'none'}}" lay-event="meeting">协调会</a>
-    <a class="layui-btn layui-btn-primary layui-btn-xs" style="display:{{satisfactionR?'inline-block':'none'}}" lay-event="satisfaction">满意度</a>
-    <a class="layui-btn layui-btn-primary layui-btn-xs" style="display:{{praiseR?'inline-block':'none'}}" lay-event="praise">上级表扬</a>
+    <a class="f-btn-first layui-btn layui-btn-primary layui-btn-xs" lay-event="view">详情</a>
+    <a class="f-btn layui-btn layui-btn-xs {{(d.deleteCheckStatus==0 || d.status==2)?'layui-btn-disabled':''}}" style="display:{{overR?'inline-block':'none'}}" lay-event="solve">办结</a>
+    <a class="f-btn layui-btn layui-btn-normal layui-btn-xs {{(d.deleteCheckStatus==0 || d.status==2)?'layui-btn-disabled':''}}" style="display:{{backR?'inline-block':'none'}}" lay-event="addProgress">反馈</a>
+    <a class="f-btn layui-btn layui-btn-warm layui-btn-xs" style="display:{{progressR?'inline-block':'none'}}" lay-event="progress">进度</a>
+    <a class="f-btn layui-btn layui-btn-normal layui-btn-xs" style="display:{{editR?'inline-block':'none'}}" lay-event="edit">编辑</a>
+    <a class="f-btn layui-btn layui-btn-danger layui-btn-xs {{(d.deleteCheckStatus==0 || d.status==2)?'layui-btn-disabled':''}}" style="display:{{delR?'inline-block':'none'}}" lay-event="del">删除</a>
+    <br class="f-btn">
+    <a class="f-btn layui-btn layui-btn-primary layui-btn-xs" style="display:{{dictSolveR?'inline-block':'none'}}" lay-event="dictSolve">化解</a>
+    <a class="f-btn layui-btn layui-btn-primary layui-btn-xs" style="display:{{revisitR?'inline-block':'none'}}" lay-event="revisit">回访</a>
+    <a class="f-btn layui-btn layui-btn-primary layui-btn-xs" style="display:{{meetingR?'inline-block':'none'}}" lay-event="meeting">协调会</a>
+    <a class="f-btn layui-btn layui-btn-primary layui-btn-xs" style="display:{{satisfactionR?'inline-block':'none'}}" lay-event="satisfaction">满意度</a>
+    <a class="f-btn layui-btn layui-btn-primary layui-btn-xs" style="display:{{praiseR?'inline-block':'none'}}" lay-event="praise">上级表扬</a>
 </script>
 
 <!-- 表格状态列 -->
@@ -72,7 +73,7 @@
 </style>
 <script>
     resources = JSON.parse(sessionStorage.getItem('ur'))['jdc/jdc-xxgl.html'];
-    editR=false,delR=false,moreR=false,dictSolveR=false,meetingR=false,handleR=false,satisfactionR=false,praiseR=false,revisitR=false;
+    overR=true,backR=true,progressR=true,ReditR=false,delR=false,moreR=false,dictSolveR=false,meetingR=false,handleR=false,satisfactionR=false,praiseR=false,revisitR=false;
     if(resources){
         for(let i=0;i<resources.length;i++){
             if(''+resources[i].name === '编辑' && ''+resources[i].uri === '/jdc/djxx/edit') editR = true;
@@ -103,8 +104,59 @@
             elem: '#visitDate'
         });
         var where = {status: -2};
-        //
-        //console.log('第一次显示',crab.getUser().username);
+
+        let cols=[[
+            {type: 'numbers'},
+            {field: 'eventNum', title: '事件编号', width: 130},
+            {field: 'visitDate', title: '来访日期', width: 110},
+            {field: 'petitionerName', title: '来访人', width: 75},
+            {field: 'name', title: '事件名称', width: 300},
+            {field: 'permanentAddress', title: '户籍地址', width: 150, hide: true},
+            {field: 'comeNum', title: '来访人数', width: 90},
+            {field: 'eventContent', title: '反映问题', width: 400},
+            {field: 'firstContentTypeName', title: '一级问题分类',width: 150},
+            {field: 'contentTypeName', title: '问题分类',width: 150, hide: true},
+            {field: 'eventPlace', title: '事发地', width: 90},
+            {field: 'isGroupVisitName', title: '是否集体访', width: 110, hide: true},
+            {field: 'isRepeatName', title: '是否重访', width: 90, hide: true},
+            {field: 'mobileNo', title: '联系电话', width: 120, hide: true},
+            {field: 'currentAddress', title: '居住地', width: 150, hide: true},
+            {field: 'idcard', title: '身份证号', width: 175, hide: true},
+            {field: 'statusName', title: '事件状态', width: 100},
+            {field: 'solveStateName', title: '是否办结', width: 90},
+            {field: 'djOrg', title: '登记地点', width: 120, hide: true},
+            {field: 'mainDemand', title: '主要诉求', width: 300, hide: true},
+            {field: 'isKeyAreaName', title: '是否重点领域',width: 150, hide: true},
+            {field: 'keyArea', title: '重点领域分类',width: 150, hide: true},
+            {field: 'visitPlaceStatusName', title: '上访地点是否正常',width: 150, hide: true},
+            {field: 'abnormalPlace', title: '上访异常地点',width: 150, hide: true},
+            {field: 'visitActionStatusName', title: '上访行为是否正常',width: 150, hide: true},
+            {field: 'abnormalAction', title: '上访异常行为',width: 150, hide: true},
+            {field: 'involveNum', title: '涉及人数', width: 90, hide: true},
+            {field: 'followPerson', title: '随访人信息', width: 110, hide: true},
+            {field: 'isHoldUpName', title: '是否滞留',width: 90, hide: true},
+            {field: 'isFollowName', title: '是否跟访',width: 90, hide: true},
+            {field: 'followContent', title: '跟访内容',width: 150, hide: true},
+            {field: 'dutyUnitName', title: '责任单位',width: 100},
+            {field: 'coUnit', title: '配合单位',width: 150, hide: true},
+            {field: 'wkdwName', title: '稳控单位',width: 100, hide: true},
+            {field: 'receptionName', title: '接待人', width: 75},
+            {field: 'workProposal', title: '工作建议', width: 200, hide: true},
+            {field: 'crux', title: '问题症结', width: 200, hide: true},
+            {field: 'isVerifiedName', title: '问题是否属实', width: 130, hide: true},
+            {field: 'verifyDetail', title: '核实情况', width: 200, hide: true},
+            {field: 'isReasonableName', title: '诉求合理性', width: 110, hide: true},
+            {field: 'unreasonableReason', title: '不合理理由', width: 200, hide: true},
+            {field: 'newestProgress', title: '最新工作进展', width: 200, hide: true},
+            {field: 'isLeaderHadName', title: '是否领导包案', width: 130, hide: true},
+            {field: 'leader', title: '领导姓名', width: 200, hide: true},
+            {field: 'isFinalOpinionName', title: '是否有最终处理意见', width: 165, hide: true},
+            {field: 'finalOpinion', title: '最终处理意见', width: 200, hide: true},
+            {field: 'createTime', title: '创建时间', sort: true, width:150},
+            {fixed: 'right', align: 'left', toolbar: '#user-table-bar', title: '操作', minWidth: 295}
+        ]];
+        //console.log("crab.getUser().username"+JSON.stringify(crab.getUser().orgId));
+
         // 渲染表格
         var userTable = table.render({
             elem: '#user-table',
@@ -115,56 +167,20 @@
             parseData: config.parseData,
             page: true,
             limits:[10,20,30,40,50,60,70,80,90,120,240,360,720,1440],
-            cols: [[
-                {type: 'numbers'},
-                {field: 'eventNum', title: '事件编号', width: 130},
-                {field: 'visitDate', title: '来访日期', width: 110},
-                {field: 'petitionerName', title: '来访人', width: 75},
-                {field: 'name', title: '事件名称', width: 300},
-                {field: 'permanentAddress', title: '户籍地址', width: 150, hide: true},
-                {field: 'comeNum', title: '来访人数', width: 90},
-                {field: 'eventContent', title: '反映问题', width: 400},
-                {field: 'firstContentTypeName', title: '一级问题分类',width: 150},
-                {field: 'contentTypeName', title: '问题分类',width: 150, hide: true},
-                {field: 'eventPlace', title: '事发地', width: 90},
-                {field: 'isGroupVisitName', title: '是否集体访', width: 110, hide: true},
-                {field: 'isRepeatName', title: '是否重访', width: 90, hide: true},
-                {field: 'mobileNo', title: '联系电话', width: 120, hide: true},
-                {field: 'currentAddress', title: '居住地', width: 150, hide: true},
-                {field: 'idcard', title: '身份证号', width: 175, hide: true},
-                {field: 'statusName', title: '事件状态', width: 100},
-                {field: 'solveStateName', title: '是否办结', width: 90},
-                {field: 'djOrg', title: '登记地点', width: 120, hide: true},
-                {field: 'mainDemand', title: '主要诉求', width: 300, hide: true},
-                {field: 'isKeyAreaName', title: '是否重点领域',width: 150, hide: true},
-                {field: 'keyArea', title: '重点领域分类',width: 150, hide: true},
-                {field: 'visitPlaceStatusName', title: '上访地点是否正常',width: 150, hide: true},
-                {field: 'abnormalPlace', title: '上访异常地点',width: 150, hide: true},
-                {field: 'visitActionStatusName', title: '上访行为是否正常',width: 150, hide: true},
-                {field: 'abnormalAction', title: '上访异常行为',width: 150, hide: true},
-                {field: 'involveNum', title: '涉及人数', width: 90, hide: true},
-                {field: 'followPerson', title: '随访人信息', width: 110, hide: true},
-                {field: 'isHoldUpName', title: '是否滞留',width: 90, hide: true},
-                {field: 'isFollowName', title: '是否跟访',width: 90, hide: true},
-                {field: 'followContent', title: '跟访内容',width: 150, hide: true},
-                {field: 'dutyUnitName', title: '责任单位',width: 100},
-                {field: 'coUnit', title: '配合单位',width: 150, hide: true},
-                {field: 'wkdwName', title: '稳控单位',width: 100, hide: true},
-                {field: 'receptionName', title: '接待人', width: 75},
-                {field: 'workProposal', title: '工作建议', width: 200, hide: true},
-                {field: 'crux', title: '问题症结', width: 200, hide: true},
-                {field: 'isVerifiedName', title: '问题是否属实', width: 130, hide: true},
-                {field: 'verifyDetail', title: '核实情况', width: 200, hide: true},
-                {field: 'isReasonableName', title: '诉求合理性', width: 110, hide: true},
-                {field: 'unreasonableReason', title: '不合理理由', width: 200, hide: true},
-                {field: 'newestProgress', title: '最新工作进展', width: 200, hide: true},
-                {field: 'isLeaderHadName', title: '是否领导包案', width: 130, hide: true},
-                {field: 'leader', title: '领导姓名', width: 200, hide: true},
-                {field: 'isFinalOpinionName', title: '是否有最终处理意见', width: 165, hide: true},
-                {field: 'finalOpinion', title: '最终处理意见', width: 200, hide: true},
-                {field: 'createTime', title: '创建时间', sort: true, width:150},
-                {fixed: 'right', align: 'left', toolbar: '#user-table-bar', title: '操作', minWidth: 295}
-            ]]
+            cols: cols,
+
+            done: function(res, curr, count){
+                console.log("crab.getUser().showRoles"+crab.getUser());
+                console.log("crab.getUser().showRoles"+crab.getUser().showRoles);
+                if(crab.getUser().showRoles.search("管理员") == -1&&crab.getUser().orgId!=$('#receptionOrgId').val()+''){
+                     $('.f-btn').hide();
+                     $('.layui-table-fixed-r').width(80);
+                     $('.f-btn-first').css('margin-top',13);
+                }
+                else{
+                    $('.f-btn').show();
+                }
+            }
         });
         // 表格顶部操作列
         table.on('toolbar(user-table)', function (obj) {
@@ -388,6 +404,7 @@
         $('#user-btn-search').click(function () {
             where = crab.getSearchForm();
             userTable.reload({where: JSON.parse(JSON.stringify(where))});
+
         });
 
         // 修改user状态
@@ -414,7 +431,33 @@
                 }
             });
         });
+        initSelectBox();
+        //初始化下拉框
+        function initSelectBox(){
+            loadSingleSelectBox(crab,form,'/sys/org/all/list','receptionOrgId');
 
+        }
+        // 加载单选下拉选择框
+        function loadSingleSelectBox(crab,form,url,selectIdName,selectedId){
+            crab.get(url, {}, function (data) {
+                var l = data.length;
+                if (l > 0) {
+                    var option = '<option value=""></option>',_selectedId;
+                    if(selectedId){
+                        _selectedId = selectedId
+                    }
+                    for (var i = 0; i < l; i++) {
+
+                        //怎么区分接待室
+                        if(data[i].name.search("接待") != -1||data[i].name.search("会议室") != -1){
+                            option += '<option value="' + data[i].id + '" '+((''+data[i].id===''+crab.getUser().orgId)?"selected":"")+'>' + data[i].name + '</option>';
+                        }
+                    }
+                    $('#'+selectIdName).empty().append(option);
+                    form.render('select');
+                }
+            });
+        }
 
     });
 </script>

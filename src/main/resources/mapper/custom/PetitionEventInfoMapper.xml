@@ -836,7 +836,10 @@
         `b`.`permanent_address` AS `permanentAddress`,
         `b`.`current_address` AS `currentAddress`,
         `b`.`mobile_no` AS `mobileNo`,
-        `c`.`name` AS `receptionName`,
+
+        (select GROUP_CONCAT(name) from `petition_receptor` where  FIND_IN_SET(`id`,`a`.`reception_id`)) AS `receptionName`,
+        #`c`.`name` AS `receptionName`,
+
         `d`.`name` AS `contentTypeName`,
         `q`.`name` AS `firstContentTypeName`,
         `e`.`name` AS `dutyUnitName`,
@@ -852,7 +855,7 @@
         `petition_event_info` `a`
         LEFT JOIN `sys_org` `r` ON `a`.`reception_org_id` = `r`.`id`
         LEFT JOIN `petitioner_info` `b` ON `a`.`idcard` = `b`.`idcard`
-        LEFT JOIN `petition_receptor` `c` ON `a`.`reception_id` = `c`.`id`
+        #LEFT JOIN `petition_receptor` `c` ON  FIND_IN_SET(`c`.`id`,`a`.`reception_id`)
         LEFT JOIN `dict_petition_content_type` `d` ON `a`.`content_type_id` = `d`.`id`
         LEFT JOIN `dict_petition_content_type` `q` ON `q`.`id` = `d`.`rid`
         LEFT JOIN `dict_petition_unit` `e` ON `a`.`duty_unit_id` = `e`.`id`

@@ -37,9 +37,10 @@ public class ReceptorController extends BaseController<IPetitionReceptorService,
     @ApiOperation(value = "orgId接待处下 所有接待员")
     @GetMapping("/list")
     public R<List<PetitionReceptor>> list() {
-        Long loginUserId = getLoginUserId();
+        //改成所有接待员
+        //Long loginUserId = getLoginUserId();
         PetitionReceptor receptor = new PetitionReceptor();
-        receptor.setOrgs(String.valueOf(userOrgService.getOrgIdByUserId(loginUserId)));
+        //receptor.setOrgs(String.valueOf(userOrgService.getOrgIdByUserId(loginUserId)));
         return  success(baseService.queryPetitionReceptorByOrgs(receptor));
     }
 

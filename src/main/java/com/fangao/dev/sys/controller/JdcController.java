@@ -13,6 +13,7 @@ import com.fangao.dev.sys.utils.FileUtil;
 import com.fangao.dev.sys.vo.DrawPetitionCatIntervalVO;
 import com.fangao.dev.sys.vo.DrawPetitionLineVO;
 import com.fangao.dev.sys.vo.DrawPetitionPieVO;
+import com.fangao.dev.sys.vo.UserRoleSelectedVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.StringUtils;
@@ -64,6 +65,12 @@ public class JdcController extends BaseController<IPetitionEventInfoService, Pet
     protected IPetitionEventExtraRevisitService petitionEventExtraRevisitService;
     @Autowired
     protected IPetitionEventExtraHandleService petitionEventExtraHandleService;
+    @Autowired
+    protected IDictPetitionSolveService dictPetitionSolveService;
+    @Autowired
+    protected IUserService userService;
+    @Autowired
+    protected IUserRoleService userRoleService;
     @GetMapping("/djdr/page")
     public R<IPage<JdcDTO>> page(JdcDTO jdcDTO) {
         Long loginUserId = getLoginUserId();
@@ -111,7 +118,31 @@ public class JdcController extends BaseController<IPetitionEventInfoService, Pet
 
     @PutMapping("/xxgl/solve")
     public R<Boolean> xxglEditDictSolveId(PetitionEventInfo info){
-        return success(baseService.update(new UpdateWrapper<PetitionEventInfo>().set("dict_solve_id",info.getDictSolveId()).eq("id",info.getId())));
+
+        DictPetitionSolve dps = new DictPetitionSolve();
+        dps.setStatus(0);
+        dps.setName(info.getName());
+        dps.setSort(0);
+
+        List<DictPetitionSolve> list=dictPetitionSolveService.list(new QueryWrapper<DictPetitionSolve>().eq("name",info.getName()));
+
+        if(list.size()>0){
+            info.setDictSolveId(list.get(0).getId());
+            return success(baseService.update(new UpdateWrapper<PetitionEventInfo>().set("dict_solve_id",info.getDictSolveId()).eq("id",info.getId())));
+
+        }
+        else{
+            if(dictPetitionSolveService.save(dps)){
+                info.setDictSolveId(dps.getId());
+                return success(baseService.update(new UpdateWrapper<PetitionEventInfo>().set("dict_solve_id",info.getDictSolveId()).eq("id",info.getId())));
+            }
+            else{
+                return failed("选择失败");
+            }
+        }
+
+
+
 }
 
     @PutMapping("/xxgl/satisfaction")
@@ -142,7 +173,20 @@ public class JdcController extends BaseController<IPetitionEventInfoService, Pet
     @GetMapping("/xxgl/page")
     public R<IPage<JdcDTO>> xxglPage(JdcDTO jdcDTO) {
         Long loginUserId = getLoginUserId();
-        jdcDTO.setReceptionOrgId(userOrgService.getOrgIdByUserId(loginUserId));
+        //UserInfoDTO userInfo =userService.queryUserInfo(loginUserId);
+        String roleNames = "";
+        List<UserRoleSelectedVO> roleList = userRoleService.listSelectedVO(loginUserId);
+        if(roleList != null && roleList.size() > 0){
+            for(UserRoleSelectedVO userRoleSelectedVO: roleList){
+                if(userRoleSelectedVO.getSelected() != null && userRoleSelectedVO.getSelected()){
+                    roleNames+=userRoleSelectedVO.getName()+"，";
+                }
+            }
+        }
+        if(jdcDTO.getReceptionOrgId()==null&&!roleNames.contains("管理员")){
+            jdcDTO.setReceptionOrgId(userOrgService.getOrgIdByUserId(loginUserId));
+        }
+        //jdcDTO.setReceptionOrgId(userOrgService.getOrgIdByUserId(loginUserId));
         R<IPage<JdcDTO>> iPageR = success(jdcService.xxglPage(getPage(), jdcDTO));
         return iPageR;
     }

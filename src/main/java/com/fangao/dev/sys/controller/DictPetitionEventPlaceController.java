@@ -10,6 +10,7 @@ import com.fangao.dev.sys.entity.Org;
 import com.fangao.dev.sys.entity.Role;
 import com.fangao.dev.sys.mapper.RoleMapper;
 import com.fangao.dev.sys.service.*;
+import com.fangao.dev.sys.vo.UserRoleSelectedVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +30,8 @@ import java.util.List;
 @RestController
 @RequestMapping("/sys/dict/event_place")
 public class DictPetitionEventPlaceController extends BaseController<IDictPetitionEventPlaceService, DictPetitionEventPlace> {
-
+    @Autowired
+    protected IUserRoleService userRoleService;
 
     @ApiOperation(value = "分页查询 所有事发地")
     @GetMapping("/page")
@@ -47,7 +49,22 @@ public class DictPetitionEventPlaceController extends BaseController<IDictPetiti
     @GetMapping("/list_effective_by_jdc")
     public R<List<DictPetitionEventPlace>> listEffectiveByJDC() {
         Long loginUserId = getLoginUserId();
-        return success(baseService.listEffectiveByUserId(loginUserId));
+        String roleNames = "";
+        List<UserRoleSelectedVO> roleList = userRoleService.listSelectedVO(loginUserId);
+        if(roleList != null && roleList.size() > 0){
+            for(UserRoleSelectedVO userRoleSelectedVO: roleList){
+                if(userRoleSelectedVO.getSelected() != null && userRoleSelectedVO.getSelected()){
+                    roleNames+=userRoleSelectedVO.getName()+"，";
+                }
+            }
+        }
+        if(roleNames.contains("管理员")){
+            return success(baseService.listEffective());
+        }
+        else{
+            return success(baseService.listEffectiveByUserId(loginUserId));
+        }
+
     }
 
     @ApiOperation(value = "根据信访件接待单位 查询 正常事发地")

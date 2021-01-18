@@ -6,6 +6,7 @@ import com.baomidou.kisso.common.encrypt.MD5Salt;
 import com.baomidou.kisso.common.util.RandomType;
 import com.baomidou.kisso.common.util.RandomUtil;
 import com.baomidou.kisso.security.token.SSOToken;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.api.Assert;
@@ -117,8 +118,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 
         Assert.fail(StringUtils.isEmpty(dto.getUsername())
                 || StringUtils.isEmpty(dto.getPassword()), "用户名密码不能为空");
-
-        List<User> userList = list(Wrappers.<User>query().eq("username", dto.getUsername()));
+        QueryWrapper<User> queryWrapper=new QueryWrapper<>();
+        queryWrapper=queryWrapper.eq("username", dto.getUsername());
+        List<User> userList = list(queryWrapper);
         Assert.fail(null == userList || userList.size() != 1, "用户不存在或异常数据");
 
         User user = userList.get(0);
@@ -155,12 +157,15 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         tempUser.setUsername(user.getUsername());
         tempUser.setNickName(user.getNickName());
         tempUser.setAvatar(user.getAvatar());
+        tempUser.setOrgId(userOrgService.getOrgIdByUserId(user.getId())+"");
+
         List<UserRoleSelectedVO> roleList = userRoleService.listSelectedVO(user.getId());
         if(roleList != null && roleList.size() > 0){
             for(UserRoleSelectedVO userRoleSelectedVO: roleList){
                 if(userRoleSelectedVO.getSelected() != null && userRoleSelectedVO.getSelected()){
                     tempUser.setIndexPage(userRoleSelectedVO.getIndexPage());
-                    break;
+                    tempUser.setShowRoles(tempUser.getShowRoles()==null?userRoleSelectedVO.getName():tempUser.getShowRoles()+"，"+userRoleSelectedVO.getName());
+                    //break;
                 }
             }
         }

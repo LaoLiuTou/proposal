@@ -1,11 +1,27 @@
 <!-- 单位表单弹窗 -->
 <form id="xxgl-form" lay-filter="xxgl-form" class="layui-form model-form" onsubmit="return false;">
-    <div class="layui-form-item">
+    <!--<div class="layui-form-item">
         <label class="layui-form-label">化解方式</label>
         <div class="layui-input-block">
             <select id="dictSolveId" name="dictSolveId"></select>
         </div>
+    </div>-->
+
+    <div class="layui-form-item">
+        <div style="float: left; width: 180px;">
+            <label class="layui-form-label">化解方式</label>
+            <input type="checkbox" name="isNew" lay-filter="isNew" lay-skin="switch" lay-text="新建|已有">
+        </div>
+        <div class="layui-input-block" style="width: calc(100% - 180px); float: left; margin-left: 0;">
+            <div id="dutyUnitIdSelectBox">
+                <select id="dictSolveId" name="dictSolveId" lay-filter="dictSolveId" lay-search></select>
+            </div>
+            <div id="dutyUnitIdInputBox" style="display: none">
+                <input type="text" id="dictSolveName" name="dictSolveName" placeholder="请输入化解方式" autocomplete="off" class="layui-input">
+            </div>
+        </div>
     </div>
+
     <div class="layui-form-item model-form-footer">
         <button class="layui-btn layui-btn-primary close" ew-event="closeDialog" type="button">取消</button>
         <button class="layui-btn" type="button" id="saveBtn">保存</button>
@@ -17,7 +33,11 @@
         const layer = layui.layer;
         const crab = layui.crab;
         const form = layui.form;
-
+        let isNewFlag = false;
+        layui.use(['form'], function () {
+            //加载layui的表单组件样式
+            form.render();
+        })
         let data = crab.getTempData('p_eventInfo');
         crab.putTempData('p_eventInfo');
 
@@ -39,16 +59,36 @@
             });
         }
 
+        //监听是否新建
+        form.on('switch(isNew)', function(data){
+            if(data.elem.checked){
+                isNewFlag=true;
+                $('#dutyUnitIdSelectBox').hide();
+                $('#dutyUnitIdInputBox').show();
+            }else{
+                isNewFlag=false;
+                $('#dutyUnitIdInputBox').hide();
+                $('#dutyUnitIdSelectBox').show();
+            }
+        });
+
         loadSingleSelectBox(crab,form,'/sys/dict/solve/list_effective','dictSolveId');
 
         // 保存点击事件
         $('#saveBtn').click(function(){
             let dictSolveId = $('#dictSolveId').val();
-            if(dictSolveId === '') {
+            let dictSolveName = $('#dictSolveName').val();
+            if(dictSolveId === ''&&!isNewFlag) {
                 layer.msg('请选择化解方式');
                 return false;
             }
-            crab.put('/jdc/xxgl/solve', {id:data.id,dictSolveId:dictSolveId}, function (msg) {
+            else if(dictSolveName === ''&&isNewFlag) {
+
+                layer.msg('请输入化解方式');
+                return false;
+            }
+            //name
+            crab.put('/jdc/xxgl/solve', {id:data.id,name:isNewFlag?$('#dictSolveName').val():$('#dictSolveId').find("option:selected").text()}, function (msg) {
                 console.log(msg);
                 layer.msg('选择成功');
                 crab.finishPopupCenter();

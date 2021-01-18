@@ -8,7 +8,7 @@
     </select>
 
     <select id="listAll" resultType="com.fangao.dev.sys.entity.Org">
-        SELECT id,pid,name,id AS `value` FROM sys_org WHERE deleted=0 ORDER BY id
+        SELECT id,pid,code,name,id AS `value` FROM sys_org WHERE deleted=0 ORDER BY id
     </select>
 
     <select id="listReceptionOrg" resultType="com.fangao.dev.sys.vo.ReceptionOrgSelectedVO">
