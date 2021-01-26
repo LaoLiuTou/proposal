@@ -373,6 +373,8 @@
                 showExtra('上级表扬',data.extraPraise);
             });
 
+
+
             function showExtra(name,list){
                 let str = '<tr>',length = list.length;
                 if(length > 0){
@@ -406,10 +408,11 @@
                         });
                         $('#choose-form .cate-print').click(function(){
                             let cate_print_data = {},cate_print_data_type = {};
-                            $('input[name="print-cate"]:checked').each(function(){
+                            //$('input[name="print-cate"]:checked').each(function(){
+                            $('input[name="print-cate"]').each(function(){
                                 let $this = $(this)[0],value = $this.value,type = $($this).data('type');
-                                cate_print_data_type[''+value]=type;
-                                cate_print_data[''+value]=o_data[''+value]?o_data[''+value]:'';
+                                console.log($(this).prop("checked"));
+                                cate_print_data_type[''+value]=type;                                 cate_print_data[''+value]=o_data[''+value]?o_data[''+value]:'';
                             });
                             sessionStorage.setItem('catePrintData',JSON.stringify(cate_print_data));
                             sessionStorage.setItem('catePrintDataType',JSON.stringify(cate_print_data_type));

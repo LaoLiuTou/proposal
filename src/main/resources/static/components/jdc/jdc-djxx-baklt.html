@@ -17,7 +17,7 @@
                             <div class="layui-col-md3">
                                 <label class="layui-form-label"><span style="color: red">*</span>姓名</label>
                                 <div class="layui-input-block">
-                                    <input id="petitionerName" type="text" name="petitionerName" required  lay-verify="required" placeholder="请输入姓名" autocomplete="off" class="layui-input">
+                                    <input id="petitionerName" type="text" name="petitionerName" required  lay-verify="jdc_petitionerName" placeholder="请输入姓名" autocomplete="off" class="layui-input">
                                 </div>
                             </div>
                             <div class="layui-col-md3">
@@ -44,7 +44,7 @@
                             <div class="layui-col-md6">
                                 <label class="layui-form-label"><span style="color: red">*</span>身份证号</label>
                                 <div class="layui-input-block">
-                                    <input id="idcard" type="text" name="idcard" required  lay-verify="required|identity" placeholder="请输入身份证号" autocomplete="off" class="layui-input">
+                                    <input id="idcard" type="text" name="idcard" required  lay-verify="jdc_idcard" placeholder="请输入身份证号" autocomplete="off" class="layui-input">
                                 </div>
                             </div>
                             <div class="layui-col-md2" style="text-align: right;height: 38px;line-height: 38px;">
@@ -53,7 +53,7 @@
                             <div class="layui-col-md4">
                                 <label class="layui-form-label"><span style="color: red">*</span>出生年月</label>
                                 <div class="layui-input-block">
-                                    <input type="text" name="birthDate" id="birthDate" required lay-verify="required|date" placeholder="yyyy-MM-dd" autocomplete="off" class="layui-input">
+                                    <input type="text" name="birthDate" id="birthDate" required lay-verify="jdc_brthday" placeholder="yyyy-MM-dd" autocomplete="off" class="layui-input">
                                 </div>
                             </div>
                         </div>
@@ -63,7 +63,7 @@
                             <div class="layui-col-md10">
                                 <label class="layui-form-label"><span style="color: red">*</span>户籍地址</label>
                                 <div class="layui-input-block">
-                                    <input id="permanentAddress" type="text" name="permanentAddress" required  lay-verify="required" placeholder="请输入户籍地址" autocomplete="off" class="layui-input">
+                                    <input id="permanentAddress" type="text" name="permanentAddress" required  lay-verify="jdc_permanentAddress" placeholder="请输入户籍地址" autocomplete="off" class="layui-input">
                                 </div>
                             </div>
                             <div class="layui-col-md2" style="text-align: right;height: 38px;line-height: 38px;">
@@ -74,7 +74,7 @@
                     <div class="layui-form-item">
                         <label class="layui-form-label"><span style="color: red">*</span>现住地址</label>
                         <div class="layui-input-block">
-                            <input id="currentAddress" type="text" name="currentAddress" required  lay-verify="required" placeholder="请输入现居住地" autocomplete="off" class="layui-input">
+                            <input id="currentAddress" type="text" name="currentAddress" required  lay-verify="jdc_currentAddress" placeholder="请输入现居住地" autocomplete="off" class="layui-input">
                         </div>
                     </div>
                     <div class="layui-form-item">
@@ -88,7 +88,7 @@
                             <div class="layui-col-md3">
                                 <label class="layui-form-label"><span style="color: red">*</span>来访日期</label>
                                 <div class="layui-input-block">
-                                    <input type="text" name="visitDate" id="visitDate" required lay-verify="required|date" placeholder="yyyy-MM-dd" autocomplete="off" class="layui-input">
+                                    <input type="text" name="visitDate" id="visitDate" required lay-verify="jdc_visitDate" placeholder="yyyy-MM-dd" autocomplete="off" class="layui-input">
                                 </div>
                             </div>
                             <div class="layui-col-md6"></div>
@@ -112,7 +112,7 @@
                             <div class="layui-col-md8">
                                 <label class="layui-form-label"><span style="color: red">*</span>事件名称</label>
                                 <div class="layui-input-block">
-                                    <input id="name" type="text" name="name" required  lay-verify="required" placeholder="请输入名称" autocomplete="off" class="layui-input">
+                                    <input id="name" type="text" name="name" required  lay-verify="jdc_name" placeholder="请输入名称" autocomplete="off" class="layui-input">
                                 </div>
                             </div>
                             <div class="layui-col-md4"></div>
@@ -173,7 +173,7 @@
                     <div class="layui-form-item">
                         <label class="layui-form-label"><span style="color: red">*</span>内容分类</label>
                         <div class="layui-input-block">
-                            <select name="contentTypeIdStr" xm-select="contentTypeId" xm-select-radio lay-verify="required">
+                            <select name="contentTypeIdStr" xm-select="contentTypeId" xm-select-radio lay-verify="jdc_contentTypeIdStr">
                                 <option value="">请选择内容分类</option>
                             </select>
                         </div>
@@ -182,7 +182,7 @@
                         <div class="layui-inline">
                             <label class="layui-form-label"><span style="color: red">*</span>来访人数</label>
                             <div class="layui-input-block">
-                                <input id="comeNum" type="text" name="comeNum" required  lay-verify="required|number" placeholder="请输入来访人数" autocomplete="off" class="layui-input">
+                                <input id="comeNum" type="text" name="comeNum" required  lay-verify="jdc_comeNum" placeholder="请输入来访人数" autocomplete="off" class="layui-input">
                             </div>
                         </div>
                         <div class="layui-inline">
@@ -281,15 +281,13 @@
                 <div class="layui-field-box">
                     <div class="layui-form-item">
                         <div class="layui-row">
-                            <div class="layui-col-md4">
+                            <div class="layui-col-md6">
                                 <div class="layui-row">
-                                    <div class="layui-col-md3">
+                                    <div style="float: left; width: 180px;">
                                         <label class="layui-form-label"><span style="color: red">*</span>责任单位</label>
-                                    </div>
-                                    <div class="layui-col-md3" style="text-align: center">
                                         <input type="checkbox" name="isNewDutyUnitId" lay-filter="isNewDutyUnitId" lay-skin="switch" lay-text="新建|已有">
                                     </div>
-                                    <div class="layui-col-md6">
+                                    <div class="layui-input-block" style="width: calc(100% - 180px); float: left; margin-left: 0;">
                                         <div id="dutyUnitIdSelectBox">
                                             <select id="dutyUnitId" name="dutyUnitId" lay-filter="dutyUnitId" lay-search></select>
                                         </div>
@@ -299,28 +297,14 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="layui-col-md4">
+
+                            <div class="layui-col-md6">
                                 <div class="layui-row">
-                                    <div class="layui-col-md3">
-                                        <label class="layui-form-label">配合单位</label>
-                                    </div>
-                                    <div class="layui-col-md3" style="text-align: center">
-                                        <a id="addCoUnitBtn" href="javascript:;" class="layui-btn layui-btn-primary layui-btn-sm">新增</a>
-                                    </div>
-                                    <div class="layui-col-md6">
-                                        <select id="coUnitIds" name="coUnitIds" xm-select="coUnitIds" xm-select-search=""></select>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="layui-col-md4">
-                                <div class="layui-row">
-                                    <div class="layui-col-md3">
+                                    <div style="float: left;width: 180px;">
                                         <label class="layui-form-label">稳控单位</label>
-                                    </div>
-                                    <div class="layui-col-md3" style="text-align: center">
                                         <input type="checkbox" name="isNewWkdw" lay-filter="isNewWkdw" lay-skin="switch" lay-text="新建|已有">
                                     </div>
-                                    <div class="layui-col-md6">
+                                    <div class="layui-input-block" style="width: calc(100% - 180px); float: left; margin-left: 0;">
                                         <div id="wkdwNameSelectBox">
                                             <select  id="wkdwName" name="wkdwName" lay-filter="wkdwName" lay-search>
                                             </select>
@@ -334,6 +318,15 @@
                         </div>
                     </div>
                     <div class="layui-form-item">
+                        <div style="float: left;">
+                            <label class="layui-form-label">配合单位</label>
+                            <a id="addCoUnitBtn" href="javascript:;" class="layui-btn layui-btn-primary layui-btn-sm" style="height: 36px;line-height: 36px;">新增</a>
+                        </div>
+                        <div class="layui-input-block" style="margin-left: 160px;">
+                            <select id="coUnitIds" name="coUnitIds" xm-select="coUnitIds" xm-select-search=""></select>
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
                         <label class="layui-form-label">工作建议</label>
                         <div class="layui-input-block">
                             <input id="workProposal" type="text" name="workProposal" placeholder="请填写工作建议" autocomplete="off" class="layui-input">
@@ -342,7 +335,7 @@
                     <div class="layui-form-item">
                         <label class="layui-form-label"><span style="color: red">*</span>接访人</label>
                         <div class="layui-input-block">
-                            <select id="receptionId" required  lay-verify="required" name="receptionId" lay-filter="receptionId"></select>
+                            <select id="receptionId" required  lay-verify="jdc_receptionId" name="receptionId" xm-select="receptionId" xm-select-search="" ></select>
                         </div>
                     </div>
                 </div>
@@ -799,7 +792,7 @@
 
         function initEditData() {
             crab.get('/jdc/djxx/edit_data',{id:editData.id},function(data){
-                console.log(data);
+
                 // layui中设置radio时需要value为字符串
                 data.sex = ''+data.sex;
                 data.isRepeat = ''+data.isRepeat;
@@ -813,6 +806,11 @@
                 // layui组件formSelects设置value，多级需要“['1/4/7','2/5']”格式，复选需要“['1','4','7']”格式
                 if(data.contentTypeIds) formSelects.value('contentTypeId', [''+data.contentTypeIds]);
                 if(data.coUnitIds) formSelects.value('coUnitIds', data.coUnitIds.split(','));
+
+                ////////lt start//////
+                if(data.receptionId) formSelects.value('receptionId', data.receptionId.split(','));
+                ////////lt start//////
+
                 if(data.abnormalPlaceIds) formSelects.value('abnormalPlaceIds', data.abnormalPlaceIds.split(','));
                 if(data.abnormalActionIds) formSelects.value('abnormalActionIds', data.abnormalActionIds.split(','));
                 // layui设置form值，不包含组件formSelects
@@ -1011,7 +1009,10 @@
             loadSingleSelectBox(crab,form,'/sys/dict/event_place/list_effective_by_jdc','eventPlaceId');
             loadSingleSelectBox(crab,form,'/sys/dict/key_area/list_effective','keyAreaId');
             loadSingleSelectBox(crab,form,'/sys/dict/unit/list_effective','dutyUnitId');
-            loadSingleSelectBox(crab,form,'/jdry/list','receptionId');
+            ////lt start/////
+            //loadSingleSelectBox(crab,form,'/jdry/list','receptionId');
+            loadCheckbox(crab,form,'/jdry/list','receptionId');
+            ////lt  end/////
             loadCheckbox(crab,form,'/sys/dict/abnormal_place/list_effective','abnormalPlaceIds');
             loadCheckbox(crab,form,'/sys/dict/abnormal_action/list_effective','abnormalActionIds');
             loadCheckbox(crab,form,'/sys/dict/unit/list_effective','coUnitIds');
@@ -1169,6 +1170,7 @@
         table.on('tool(repeat-table)', function (obj) {
             var data = obj.data;
             var layEvent = obj.event;
+            console.log(layEvent);
             if(layEvent === 'view'){
                 // 查看事项详情
                 crab.putTempData('p_eventInfo', data);
@@ -1183,6 +1185,7 @@
                 crab.putTempData('detail_layer_index', detail_layer_index);
             } else if (layEvent === 'link') {
                 // 回显所关联的事项数据
+                console.log(data);
                 function initLinkData(data){
                     // console.log(data);
                     // 所关联事项id
@@ -1215,6 +1218,12 @@
                     // layui组件formSelects设置value，多级需要“['1/4/7','2/5']”格式，复选需要“['1','4','7']”格式
                     if(data.contentTypeIds) formSelects.value('contentTypeId', [''+data.contentTypeIds]);
                     if(data.coUnitIds) formSelects.value('coUnitIds', data.coUnitIds.split(','));
+
+
+                    ////lt start////
+                    if(data.receptionId) formSelects.value('receptionId', data.receptionId.split(','));
+                    ////lt start////
+
                     if(data.abnormalPlaceIds) formSelects.value('abnormalPlaceIds', data.abnormalPlaceIds.split(','));
                     if(data.abnormalActionIds) formSelects.value('abnormalActionIds', data.abnormalActionIds.split(','));
                     // layui设置form值，不包含组件formSelects

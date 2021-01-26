@@ -30,4 +30,5 @@ public class PetitionEventStatisticDTO extends SuperEntity {
     private String eventContent;
     @ApiModelProperty(value = "事项状态，用于展示")
     private String statusName;
+
 }

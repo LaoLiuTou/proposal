@@ -34,9 +34,10 @@ public interface IPetitionEventInfoService extends IService<PetitionEventInfo> {
 
      /*接待处所有接待信息分页查询，按创建日期倒叙排列*/
      IPage<JdcDTO> xxglPage(Page page, JdcDTO jdcDTO);
-
+     IPage<JdcDTO>  statisPetitionEventInfos(Page page,JdcDTO jdcDTO);
      /*信访件信息导出查询*/
      List<Map<String,Object>> xxglPageExportQuery(JdcDTO jdcDTO);
+     List<Map<String,Object>> statisExportQuery(JdcDTO jdcDTO);
 
      List<JdcDTO> getRepeatList(JdcDTO jdcDTO);
 
@@ -75,6 +76,7 @@ public interface IPetitionEventInfoService extends IService<PetitionEventInfo> {
      String statisticsQueryContentTypeIdsById(Long id);
 
      List<PetitionEventStatisticDTO> statisticsQueryEventList(StatisQueryEventDTO dto);
+
 
      List<PetitionEventStatisticDTO> statisticsQueryRepeatEventList(StatisQueryEventDTO dto);
      List<PetitionEventInfo> getPetitionEventInfos(long orgId, long event_place, String begin,String end);

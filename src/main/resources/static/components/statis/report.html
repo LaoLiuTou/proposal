@@ -1,0 +1,241 @@
+<div class="layui-card" id="JdcxxglDiv">
+    <div class="layui-card-header">
+        <h2jdc-xxgl class="header-title">报表统计查询</h2jdc-xxgl>
+    </div>
+    <div class="layui-card-body">
+        <!-- 搜索条件 -->
+        <div class="layui-form toolbar">
+            <form id="searchForm" onsubmit="return false;">
+                事发地：<select id="eventPlaceId" name="eventPlaceId" lay-search="eventPlaceId" lay-filter="eventPlaceId" lay-search  ></select>
+                责任单位：<select id="dutyUnitId" name="dutyUnitId" lay-filter="dutyUnitId"   lay-search class="requiredItem"></select>
+                是否群访：<select id="isGroupVisitName"><option value="">全部</option><option value="是">是</option><option value="否">否</option></select>
+
+                <button id="user-btn-search" class="layui-btn icon-btn"><i class="layui-icon">&#xe615;</i>搜索</button>
+             </form>
+        </div>
+        <span id ="searchSpan"></span>
+        <div class="layui-btn-group pull-right date-btns not-has-day every-day" data-open="quarter">
+        </div>
+        <!-- 表格顶部操作列 -->
+        <script type="text/html" id="user-toolbar">
+            <div class="layui-btn-container">
+                <button class="layui-btn layui-btn-sm" id="exportData">
+                    <i class="iconfont icon-export"></i> 导出
+                </button>
+
+
+            </div>
+        </script>
+
+        <table class="layui-table" id="user-table" lay-filter="user-table"></table>
+    </div>
+</div>
+
+
+<style>
+    button.fright{
+        float: right;
+        margin: 5px;
+    }
+</style>
+<script>
+    resources = JSON.parse(sessionStorage.getItem('ur'))['statis/report.html'];
+
+    layui.use(['form', 'table', 'config', 'layer', 'crab','laydate','upload'], function () {
+        var form = layui.form;
+        var table = layui.table;
+        var config = layui.config;
+        var layer = layui.layer;
+        var crab = layui.crab;
+        var laydate = layui.laydate;
+        var upload = layui.upload;
+        laydate.render({
+            elem: '#visitDate'
+        });
+        var where = {status: -2};
+        let param = [];
+        let cols=[[
+            {type: 'numbers'},
+            {field: 'eventPlace', title: '事发地'},
+            {field: 'dutyUnitName', title: '责任单位'},
+            {field: 'firstContentTypeName', title: '一级问题分类'},
+            {field: 'contentTypeName', title: '问题分类'},
+            {field: 'count', title: '批次'},
+            {field: 'isGroupVisitName', title: '是否集体访'},
+        ]];
+        //console.log("crab.getUser().username"+JSON.stringify(crab.getUser().orgId));
+        ////////////////
+        let openDiv = layui.sessionData('dateLayer')['openDiv'];
+        layui.sessionData('dateLayer', {key: openDiv+'_type', value: '5'});
+        layui.sessionData('dateLayer', {key: openDiv+'_start', value: ''});
+        layui.sessionData('dateLayer', {key: openDiv+'_end', value: ''});
+        layer.close(layui.sessionData('dateLayer')['index']);
+        const laytpl = layui.laytpl;
+        const clientWidth = $('.layui-body')[0].clientWidth;
+        const dateBtnsHtml =
+            '    <a href="javascript:;" class="date-btn layui-btn layui-btn-primary layui-btn-xs {{= \'\'+d.type===\'2\'?\'btn-gray\':\'\'}}" data-type="2">月</a>' +
+            '    <a href="javascript:;" class="date-btn layui-btn layui-btn-primary layui-btn-xs {{= \'\'+d.type===\'5\'?\'btn-gray\':\'\'}}" data-type="5">季</a>' +
+            '    <a href="javascript:;" class="date-btn layui-btn layui-btn-primary layui-btn-xs {{= \'\'+d.type===\'3\'?\'btn-gray\':\'\'}}" data-type="3">年</a>' +
+            '    <a href="javascript:;" class="layui-btn layui-btn-primary layui-btn-xs " id="allBtn">全部</a>';
+        const dateType = {2:{name:'month',text:'月'},5:{name:'quarter',text:'季'},3:{name:'year',text:'年'}};
+        let layerIndex = null,
+            now = new Date();
+        laytpl(dateBtnsHtml).render({type:"quarter_type", notHasDay:true}, function(string){$('.date-btns.not-has-day.every-day').empty().append(string);});
+
+        $('#allBtn').click(function (){
+            initList('','');
+        });
+
+        //日期按钮组点击事件
+        $('.date-btns').on('click','.date-btn',function(e){
+           /* $('.date-btn').removeClass("layui-btn-danger");
+            $('.date-btn').addClass("layui-btn-primary");
+            $(this).removeClass("layui-btn-primary");
+            $(this).addClass("layui-btn-danger");*/
+
+
+            let type = $(this).data('type'),openDiv = $(this).parent().data('open');
+            layui.sessionData('dateLayer', {key: 'openDiv', value: openDiv});
+            openLayer({
+                path: '/components/statis/layer/'+dateType[''+type].name+'-layer.html'
+                ,title:dateType[''+type].text+'选择'
+                ,event:e
+            },function(){
+                let  start = changeDateFormat(layui.sessionData('dateLayer')['quarter_start']),
+                    end = changeDateFormat(layui.sessionData('dateLayer')['quarter_end']);
+                //重新加载
+                initList(start,end);
+            });
+        });
+
+        //将2019年05月25日转换为2019-05-25格式
+        function changeDateFormat(str){
+            return str.replace(/年/g,'-').replace(/月/g,'-').replace(/日/g,'');
+        }
+        //计算日期弹框位置
+        function getOffsetLeft(clientX,w){
+            let one = clientX+(w/2),
+                two = clientX-(w/2);
+            if(one<=clientWidth && two >= 0){
+                return two;
+            }else if(one > clientWidth){
+                return clientWidth-w;
+            }else if(two < 0){
+                return 0;
+            }else{
+                return (clientWidth-w)/2;
+            }
+        }
+        //打开日期弹框
+        function openLayer(opts,endCallback){
+            let width=opts.width?opts.width:314,
+                height=opts.height?opts.height:121;
+            layerIndex = layer.open({
+                type:1
+                ,offset: [opts.event.clientY+'px', getOffsetLeft(opts.event.clientX,width)+'px']
+                ,area: [width+'px', height+'px']
+                ,title: opts.title
+                ,shadeClose:true
+                ,resize: true
+                ,success:function(layero, index){$(layero).children('.layui-layer-content').load(opts.path);}
+                ,end:function(){if(endCallback){endCallback();}}
+            });
+            layui.sessionData('dateLayer', {key: 'index', value: layerIndex});
+        }
+        function initList(start,end){
+            param=[]
+            if(start!=''&&end!=''){
+                $('#searchSpan').text('查询时间段：'+layui.sessionData('dateLayer')['quarter_start']+'--'+layui.sessionData('dateLayer')['quarter_end']);
+                param.push("`visitDate`>='"+start+"'");
+                param.push("`visitDate`<='"+end+"'");
+            }
+            else{
+                $('#searchSpan').text('');
+            }
+            if($('#eventPlaceId').val()!=''){
+                //param['highSearch']=param['highSearch']+" AND `eventPlaceId`='"+$('#eventPlaceId').val()+"'";
+                param.push("`eventPlaceId`="+$('#eventPlaceId').val());
+            }
+            if($('#isGroupVisitName').val()!=''){
+                param.push("`isGroupVisitName`='"+$('#isGroupVisitName').val()+"'");
+            }
+            if($('#dutyUnitId').val()!=''){
+                param.push("`dutyUnitId`='"+$('#dutyUnitId').val()+"'");
+            }
+
+
+            userTable.reload({where: {"status":"-2",'highSearch':param.join(' AND ')}});
+        }
+
+
+
+        // 渲染表格
+        var userTable = table.render({
+            elem: '#user-table',
+            toolbar: '#user-toolbar',
+            defaultToolbar: ['filter', 'print'],
+            url: config.base_server + '/jdc/xxgl/statis/page',
+            where: JSON.parse(JSON.stringify(where)),
+            parseData: config.parseData,
+            page: true,
+            limits:[10,20,30,40,50,60,70,80,90,120,240,360,720,1440],
+            cols: cols,
+            done: function(res, curr, count){
+
+                console.log(res);
+            }
+        });
+
+        // 导出点击事件
+        $(document).on('click','#exportData',(function () {
+            let type=changeDateFormat(layui.sessionData('dateLayer')['quarter_type']),
+                start = changeDateFormat(layui.sessionData('dateLayer')['quarter_start']),
+                end = changeDateFormat(layui.sessionData('dateLayer')['quarter_end']);
+
+
+            if(start!=''&&end!=''){
+                $('#searchSpan').text('查询时间段：'+layui.sessionData('dateLayer')['quarter_start']+'--'+layui.sessionData('dateLayer')['quarter_end']);
+                param.push("`visitDate`>='"+start+"'");
+                param.push("`visitDate`<='"+end+"'");
+            }
+            if($('#eventPlaceId').val()!=''){
+                //param['highSearch']=param['highSearch']+" AND `eventPlaceId`='"+$('#eventPlaceId').val()+"'";
+                param.push("`eventPlaceId`="+$('#eventPlaceId').val());
+            }
+            if($('#isGroupVisitName').val()!=''){
+                param.push("`isGroupVisitName`='"+$('#isGroupVisitName').val()+"'");
+            }
+            if($('#dutyUnitId').val()!=''){
+                param.push("`dutyUnitId`='"+$('#dutyUnitId').val()+"'");
+            }
+            window.open('/jdc/xxgl/statis/export?'+$.param( {"status":"-2",'highSearch':param.join(' AND ')}));
+        }));
+
+        loadSingleSelectBox(crab,form,'/sys/dict/event_place/list_effective','eventPlaceId');
+        loadSingleSelectBox(crab,form,'/sys/dict/unit/list_effective','dutyUnitId');
+        // 加载单选下拉选择框
+        function loadSingleSelectBox(crab,form,url,selectIdName,selectedId){
+            crab.get(url, {}, function (data) {
+                var l = data.length;
+                if (l > 0) {
+                    var option = '<option value=""></option>',_selectedId;
+                    if(selectedId){
+                        _selectedId = selectedId
+                    }
+                    for (var i = 0; i < l; i++) {
+                        option += '<option value="' + data[i].id + '" '+((''+data[i].id===''+_selectedId)?"selected":"")+'>' + data[i].name + '</option>';
+                    }
+                    $('#'+selectIdName).empty().append(option);
+                    form.render('select');
+                }
+            });
+        }
+        // 搜索按钮点击事件
+        $('#user-btn-search').click(function () {
+            let  start = changeDateFormat(layui.sessionData('dateLayer')['quarter_start']),
+                end = changeDateFormat(layui.sessionData('dateLayer')['quarter_end']);
+            initList(start,end)
+
+        });
+    });
+</script>

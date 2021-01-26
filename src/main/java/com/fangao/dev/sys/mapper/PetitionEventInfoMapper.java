@@ -31,7 +31,11 @@ public interface PetitionEventInfoMapper extends BaseMapper<PetitionEventInfo> {
 
     List<JdcDTO> selectAllEvent(IPage<JdcDTO> page, @Param(value = "jdcDTO") JdcDTO jdcDTO);
 
+    List<JdcDTO> statisPetitionEventInfos(IPage<JdcDTO> page, @Param(value = "jdcDTO") JdcDTO jdcDTO);
+
     List<Map<String,Object>> selectAllEventExport(@Param(value = "jdcDTO") JdcDTO jdcDTO);
+
+    List<Map<String,Object>> exportStatisPetitionEventInfos(@Param(value = "jdcDTO") JdcDTO jdcDTO);
 
     PetitionEventShowPrintDTO queryEventInfoShow(@Param(value = "id") long id);
 
@@ -76,6 +80,9 @@ public interface PetitionEventInfoMapper extends BaseMapper<PetitionEventInfo> {
     List<PetitionEventStatisticDTO> statisticsQueryRepeatEventList(@Param("statisQueryEventDTO")StatisQueryEventDTO dto);
 
     List<PetitionEventInfo> getPetitionEventInfos(@Param("org_Id")long orgId, @Param("event_place_id")long event_place, @Param("start_date")String begin_date, @Param("end_date")String end_date);
+
     List<PetitionEventInfo> getPetitionEventInfosByEventPlace(@Param("org_id")long org_id, @Param("event_place_id")long event_place_id, @Param("begin_date")String begin, @Param("end_date")String end);
+
     List<PetitionEventInfo> getPetitionEventInfosByOrg(@Param("org_id")long org_id, @Param("begin_date")String begin, @Param("end_date")String end);
+
 }

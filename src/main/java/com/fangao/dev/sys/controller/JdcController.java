@@ -154,17 +154,40 @@ public class JdcController extends BaseController<IPetitionEventInfoService, Pet
     public R<Boolean> xxglAddExtraPraise(PetitionEventExtraPraise temp){
         return success(petitionEventExtraPraiseService.save(temp));
     }
+    @PostMapping("/xxgl/list/praise")
+    public R<List<PetitionEventExtraPraise>> xxglListExtraPraise(PetitionEventExtraPraise temp){
+        return success(petitionEventExtraPraiseService.list(new QueryWrapper<PetitionEventExtraPraise>().eq("event_id", temp.getEventId())));
+    }
+    @PostMapping("/xxgl/update/praise")
+    public R<Boolean> xxglUpdateExtraPraise(PetitionEventExtraPraise temp){
+        return success(petitionEventExtraPraiseService.update(new UpdateWrapper<PetitionEventExtraPraise>().set("content",temp.getContent()).eq("id",temp.getId())));
+    }
 
     @PostMapping("/xxgl/revisit")
     public R<Boolean> xxglAddExtraRevisit(PetitionEventExtraRevisit temp){
         return success(petitionEventExtraRevisitService.save(temp));
+    }
+    @PostMapping("/xxgl/list/revisit")
+    public R<List<PetitionEventExtraRevisit>> xxglListExtraRevisit(PetitionEventExtraRevisit temp){
+        return success(petitionEventExtraRevisitService.list(new QueryWrapper<PetitionEventExtraRevisit>().eq("event_id", temp.getEventId())));
+    }
+    @PostMapping("/xxgl/update/revisit")
+    public R<Boolean> xxglUpdateExtraRevisit(PetitionEventExtraRevisit temp){
+        return success(petitionEventExtraRevisitService.update(new UpdateWrapper<PetitionEventExtraRevisit>().set("content",temp.getContent()).eq("id",temp.getId())));
     }
 
     @PostMapping("/xxgl/meeting")
     public R<Boolean> xxglAddExtraMeeting(PetitionEventExtraMeeting temp){
         return success(petitionEventExtraMeetingService.save(temp));
     }
-
+    @PostMapping("/xxgl/list/meeting")
+    public R<List<PetitionEventExtraMeeting>> xxglListExtraMeeting(PetitionEventExtraMeeting temp){
+        return success(petitionEventExtraMeetingService.list(new QueryWrapper<PetitionEventExtraMeeting>().eq("event_id", temp.getEventId())));
+    }
+    @PostMapping("/xxgl/update/meeting")
+    public R<Boolean> xxglUpdateExtraMeeting(PetitionEventExtraMeeting temp){
+        return success(petitionEventExtraMeetingService.update(new UpdateWrapper<PetitionEventExtraMeeting>().set("content",temp.getContent()).eq("id",temp.getId())));
+    }
     @PostMapping("/xxgl/db/handle")
     public R<Boolean> xxglAddExtraHandle(PetitionEventExtraHandle temp){
         return success(petitionEventExtraHandleService.save(temp));
@@ -190,7 +213,31 @@ public class JdcController extends BaseController<IPetitionEventInfoService, Pet
         R<IPage<JdcDTO>> iPageR = success(jdcService.xxglPage(getPage(), jdcDTO));
         return iPageR;
     }
+    @ApiOperation(value = "报表统计查询")
+    @GetMapping("/xxgl/statis/page")
+    public R<IPage<JdcDTO>> xxglStatisPage(JdcDTO jdcDTO) {
 
+        R<IPage<JdcDTO>> iPageR = success(petitionEventInfoService.statisPetitionEventInfos(getPage(), jdcDTO));
+        return iPageR;
+    }
+    @ApiOperation(value = "报表统计查询")
+    @GetMapping("/xxgl/statis/export")
+    public void xxglStatisExport(JdcDTO jdcDTO,HttpServletResponse response) throws IOException{
+
+        try{
+            List<String> cols = Arrays.asList("eventPlace","dutyUnitName","firstContentTypeName","contentTypeName","count","isGroupVisitName");
+            List<String> colNames= Arrays.asList("事发地","责任单位","一级问题分类","问题分类","批次","是否集体访");
+
+
+            List<Map<String,Object>> list = petitionEventInfoService.statisExportQuery(jdcDTO);
+
+
+            ExportExcelUtils.downLoadExcel("报表统计导出","报表统计","报表统计导出",cols,colNames,list,response);
+        }catch (Exception e){
+            e.printStackTrace();
+            response.sendError(response.SC_NOT_FOUND, e.getMessage());
+        }
+    }
     @GetMapping("/xxgl/export")
     public void xxglPageExport(@RequestParam("status") String status,
                                @RequestParam("name") String name,
@@ -208,7 +255,18 @@ public class JdcController extends BaseController<IPetitionEventInfoService, Pet
             jdcDTO.setEventNum(eventNum);
             jdcDTO.setHighSearch(highSearch);
             Long loginUserId = getLoginUserId();
-            jdcDTO.setReceptionOrgId(userOrgService.getOrgIdByUserId(loginUserId));
+            String roleNames = "";
+            List<UserRoleSelectedVO> roleList = userRoleService.listSelectedVO(loginUserId);
+            if(roleList != null && roleList.size() > 0){
+                for(UserRoleSelectedVO userRoleSelectedVO: roleList){
+                    if(userRoleSelectedVO.getSelected() != null && userRoleSelectedVO.getSelected()){
+                        roleNames+=userRoleSelectedVO.getName()+"，";
+                    }
+                }
+            }
+            if(!roleNames.contains("管理员")){
+                jdcDTO.setReceptionOrgId(userOrgService.getOrgIdByUserId(loginUserId));
+            }
             List<Map<String,Object>> list = jdcService.xxglPageExport(jdcDTO);
             ExportExcelUtils.downLoadExcel("信访件导出","信访件","信访件导出",cols,colNames,list,response);
         }catch (Exception e){
@@ -302,6 +360,7 @@ public class JdcController extends BaseController<IPetitionEventInfoService, Pet
         }
         return success(petitionEventInfoService.statisticsQueryEventList(dto));
     }
+
 
     @ApiOperation(value = "新领导控制台 查询重访事项")
     @GetMapping("/statis/new_console_repeat_event")

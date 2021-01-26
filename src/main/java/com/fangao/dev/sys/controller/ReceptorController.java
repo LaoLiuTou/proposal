@@ -10,6 +10,8 @@ import com.fangao.dev.sys.entity.PetitionReceptor;
 import com.fangao.dev.sys.service.IPetitionEventInfoService;
 import com.fangao.dev.sys.service.IPetitionReceptorService;
 import com.fangao.dev.sys.service.IUserOrgService;
+import com.fangao.dev.sys.service.IUserRoleService;
+import com.fangao.dev.sys.vo.UserRoleSelectedVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,14 +35,26 @@ public class ReceptorController extends BaseController<IPetitionReceptorService,
 
     @Autowired
     private IPetitionEventInfoService petitionEventInfoService;
-
+    @Autowired
+    protected IUserRoleService userRoleService;
     @ApiOperation(value = "orgId接待处下 所有接待员")
     @GetMapping("/list")
     public R<List<PetitionReceptor>> list() {
         //改成所有接待员
-        //Long loginUserId = getLoginUserId();
+        Long loginUserId = getLoginUserId();
+        String roleNames = "";
+        List<UserRoleSelectedVO> roleList = userRoleService.listSelectedVO(loginUserId);
+        if(roleList != null && roleList.size() > 0){
+            for(UserRoleSelectedVO userRoleSelectedVO: roleList){
+                if(userRoleSelectedVO.getSelected() != null && userRoleSelectedVO.getSelected()){
+                    roleNames+=userRoleSelectedVO.getName()+"，";
+                }
+            }
+        }
         PetitionReceptor receptor = new PetitionReceptor();
-        //receptor.setOrgs(String.valueOf(userOrgService.getOrgIdByUserId(loginUserId)));
+        if(!roleNames.contains("管理员")){
+            receptor.setOrgs(String.valueOf(userOrgService.getOrgIdByUserId(loginUserId)));
+        }
         return  success(baseService.queryPetitionReceptorByOrgs(receptor));
     }
 

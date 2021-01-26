@@ -269,24 +269,30 @@
                     title: '选择满意度',
                     path: '/components/jdc/jdc-xxgl-dict-satisfaction-from.html'
                 });
-            } else if (obj.event === 'revisit') {
+            }
+            else if (obj.event === 'revisit') {
                 crab.putTempData('p_eventInfo', data);
-                crab.popupCenter({
+                /*crab.popupCenter({
                     title: '添加回访情况记录',
-                    path: '/components/jdc/jdc-xxgl-extra-revisit-from.html'
-                });
+                    path: '/components/jdc/jdc-xxgl-extra-revisit-from.html',
+                    offset: '15px',
+                    area: ['800px', height+'px'],
+                });*/
+                showEditModel(data,'添加回访情况记录','/components/jdc/jdc-xxgl-extra-revisit-from.html','800px');
             } else if (obj.event === 'meeting') {
                 crab.putTempData('p_eventInfo', data);
-                crab.popupCenter({
+                /*crab.popupCenter({
                     title: '添加协调会记录',
                     path: '/components/jdc/jdc-xxgl-extra-meeting-from.html'
-                });
+                });*/
+                showEditModel(data,'添加协调会记录','/components/jdc/jdc-xxgl-extra-meeting-from.html','800px');
             } else if (obj.event === 'praise') {
                 crab.putTempData('p_eventInfo', data);
-                crab.popupCenter({
+                /*crab.popupCenter({
                     title: '添加上级表扬记录',
                     path: '/components/jdc/jdc-xxgl-extra-praise-from.html'
-                });
+                });*/
+                showEditModel(data,'添加上级表扬记录','/components/jdc/jdc-xxgl-extra-praise-from.html','800px');
             }
         });
 

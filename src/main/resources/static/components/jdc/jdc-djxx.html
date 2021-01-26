@@ -17,7 +17,7 @@
                             <div class="layui-col-md3">
                                 <label class="layui-form-label"><span style="color: red">*</span>姓名</label>
                                 <div class="layui-input-block">
-                                    <input id="petitionerName" type="text" name="petitionerName" required  lay-verify="jdc_petitionerName" placeholder="请输入姓名" autocomplete="off" class="layui-input">
+                                    <input id="petitionerName" type="text" name="petitionerName"   placeholder="请输入姓名" autocomplete="off" class="layui-input requiredItem">
                                 </div>
                             </div>
                             <div class="layui-col-md3">
@@ -44,7 +44,7 @@
                             <div class="layui-col-md6">
                                 <label class="layui-form-label"><span style="color: red">*</span>身份证号</label>
                                 <div class="layui-input-block">
-                                    <input id="idcard" type="text" name="idcard" required  lay-verify="jdc_idcard" placeholder="请输入身份证号" autocomplete="off" class="layui-input">
+                                    <input id="idcard" type="text" name="idcard"   placeholder="请输入身份证号" autocomplete="off" class="layui-input requiredItem">
                                 </div>
                             </div>
                             <div class="layui-col-md2" style="text-align: right;height: 38px;line-height: 38px;">
@@ -53,7 +53,7 @@
                             <div class="layui-col-md4">
                                 <label class="layui-form-label"><span style="color: red">*</span>出生年月</label>
                                 <div class="layui-input-block">
-                                    <input type="text" name="birthDate" id="birthDate" required lay-verify="jdc_brthday" placeholder="yyyy-MM-dd" autocomplete="off" class="layui-input">
+                                    <input type="text" name="birthDate" id="birthDate"   placeholder="yyyy-MM-dd" autocomplete="off" class="layui-input requiredItem">
                                 </div>
                             </div>
                         </div>
@@ -63,7 +63,7 @@
                             <div class="layui-col-md10">
                                 <label class="layui-form-label"><span style="color: red">*</span>户籍地址</label>
                                 <div class="layui-input-block">
-                                    <input id="permanentAddress" type="text" name="permanentAddress" required  lay-verify="jdc_permanentAddress" placeholder="请输入户籍地址" autocomplete="off" class="layui-input">
+                                    <input id="permanentAddress" type="text" name="permanentAddress"   placeholder="请输入户籍地址" autocomplete="off" class="layui-input requiredItem">
                                 </div>
                             </div>
                             <div class="layui-col-md2" style="text-align: right;height: 38px;line-height: 38px;">
@@ -74,7 +74,7 @@
                     <div class="layui-form-item">
                         <label class="layui-form-label"><span style="color: red">*</span>现住地址</label>
                         <div class="layui-input-block">
-                            <input id="currentAddress" type="text" name="currentAddress" required  lay-verify="jdc_currentAddress" placeholder="请输入现居住地" autocomplete="off" class="layui-input">
+                            <input id="currentAddress" type="text" name="currentAddress"   placeholder="请输入现居住地" autocomplete="off" class="layui-input requiredItem">
                         </div>
                     </div>
                     <div class="layui-form-item">
@@ -88,7 +88,7 @@
                             <div class="layui-col-md3">
                                 <label class="layui-form-label"><span style="color: red">*</span>来访日期</label>
                                 <div class="layui-input-block">
-                                    <input type="text" name="visitDate" id="visitDate" required lay-verify="jdc_visitDate" placeholder="yyyy-MM-dd" autocomplete="off" class="layui-input">
+                                    <input type="text" name="visitDate" id="visitDate"   placeholder="yyyy-MM-dd" autocomplete="off" class="layui-input requiredItem">
                                 </div>
                             </div>
                             <div class="layui-col-md6"></div>
@@ -112,7 +112,7 @@
                             <div class="layui-col-md8">
                                 <label class="layui-form-label"><span style="color: red">*</span>事件名称</label>
                                 <div class="layui-input-block">
-                                    <input id="name" type="text" name="name" required  lay-verify="jdc_name" placeholder="请输入名称" autocomplete="off" class="layui-input">
+                                    <input id="name" type="text" name="name"   placeholder="请输入名称" autocomplete="off" class="layui-input requiredItem">
                                 </div>
                             </div>
                             <div class="layui-col-md4"></div>
@@ -136,10 +136,10 @@
                                     </div>
                                     <div class="layui-col-md6">
                                         <div id="eventPlaceIdSelectBox">
-                                            <select id="eventPlaceId" name="eventPlaceId" lay-search="eventPlaceId" lay-search></select>
+                                            <select id="eventPlaceId" name="eventPlaceId" lay-search="eventPlaceId" lay-filter="eventPlaceId" lay-search class="requiredItem"></select>
                                         </div>
                                         <div id="eventPlaceIdInputBox" style="display: none">
-                                            <input type="text" name="eventPlaceName" placeholder="请输入事发地" autocomplete="off" class="layui-input">
+                                            <input type="text" id="eventPlaceName" name="eventPlaceName" placeholder="请输入事发地" autocomplete="off" class="layui-input">
                                         </div>
                                     </div>
                                 </div>
@@ -173,7 +173,7 @@
                     <div class="layui-form-item">
                         <label class="layui-form-label"><span style="color: red">*</span>内容分类</label>
                         <div class="layui-input-block">
-                            <select name="contentTypeIdStr" xm-select="contentTypeId" xm-select-radio lay-verify="jdc_contentTypeIdStr">
+                            <select name="contentTypeIdStr" xm-select="contentTypeId" id="contentTypeIdStr" lay-filter="contentTypeIdStr"  xm-select-radio  class="requiredItem">
                                 <option value="">请选择内容分类</option>
                             </select>
                         </div>
@@ -182,7 +182,7 @@
                         <div class="layui-inline">
                             <label class="layui-form-label"><span style="color: red">*</span>来访人数</label>
                             <div class="layui-input-block">
-                                <input id="comeNum" type="text" name="comeNum" required  lay-verify="jdc_comeNum" placeholder="请输入来访人数" autocomplete="off" class="layui-input">
+                                <input id="comeNum" type="text" name="comeNum"   placeholder="请输入来访人数" autocomplete="off" class="layui-input requiredItem">
                             </div>
                         </div>
                         <div class="layui-inline">
@@ -289,10 +289,10 @@
                                     </div>
                                     <div class="layui-input-block" style="width: calc(100% - 180px); float: left; margin-left: 0;">
                                         <div id="dutyUnitIdSelectBox">
-                                            <select id="dutyUnitId" name="dutyUnitId" lay-filter="dutyUnitId" lay-search></select>
+                                            <select id="dutyUnitId" name="dutyUnitId" lay-filter="dutyUnitId"   lay-search class="requiredItem"></select>
                                         </div>
                                         <div id="dutyUnitIdInputBox" style="display: none">
-                                            <input type="text" name="dutyUnitName" placeholder="请输入责任单位" autocomplete="off" class="layui-input">
+                                            <input type="text" id="dutyUnitName" name="dutyUnitName" placeholder="请输入责任单位" autocomplete="off" class="layui-input">
                                         </div>
                                     </div>
                                 </div>
@@ -335,7 +335,7 @@
                     <div class="layui-form-item">
                         <label class="layui-form-label"><span style="color: red">*</span>接访人</label>
                         <div class="layui-input-block">
-                            <select id="receptionId" required  lay-verify="jdc_receptionId" name="receptionId" xm-select="receptionId" xm-select-search="" ></select>
+                            <select id="receptionId"   name="receptionId" xm-select="receptionId" xm-select-search="" class="requiredItem"></select>
                         </div>
                     </div>
                 </div>
@@ -1002,11 +1002,14 @@
                 return false;
             }
             $('#currentAddress').val(permanentAddress);
+            $("#currentAddress").change();
         });
 
         //初始化下拉框
         function initSelectBox(){
-            loadSingleSelectBox(crab,form,'/sys/dict/event_place/list_effective_by_jdc','eventPlaceId');
+            //全部事发地
+            loadSingleSelectBox(crab,form,'/sys/dict/event_place/list_effective','eventPlaceId');
+            //loadSingleSelectBox(crab,form,'/sys/dict/event_place/list_effective_by_jdc','eventPlaceId');
             loadSingleSelectBox(crab,form,'/sys/dict/key_area/list_effective','keyAreaId');
             loadSingleSelectBox(crab,form,'/sys/dict/unit/list_effective','dutyUnitId');
             ////lt start/////
@@ -1084,9 +1087,17 @@
             if(data.elem.checked){
                 $('#eventPlaceIdSelectBox').hide();
                 $('#eventPlaceIdInputBox').show();
+                $('#eventPlaceName').addClass("requiredItem")
+                $('#eventPlaceId').removeClass("requiredItem")
+                if($('#eventPlaceName').val()==''){
+                    $('#eventPlaceName').addClass("layui-form-danger")
+                }
             }else{
                 $('#eventPlaceIdInputBox').hide();
                 $('#eventPlaceIdSelectBox').show();
+                $('#eventPlaceId').addClass("requiredItem")
+                $('#eventPlaceName').removeClass("requiredItem")
+
             }
         });
         //监听是否新建责任单位
@@ -1094,9 +1105,16 @@
             if(data.elem.checked){
                 $('#dutyUnitIdSelectBox').hide();
                 $('#dutyUnitIdInputBox').show();
+                $('#dutyUnitName').addClass("requiredItem")
+                $('#dutyUnitId').removeClass("requiredItem")
+                if($('#dutyUnitName').val()==''){
+                    $('#dutyUnitName').addClass("layui-form-danger")
+                }
             }else{
                 $('#dutyUnitIdInputBox').hide();
                 $('#dutyUnitIdSelectBox').show();
+                $('#dutyUnitId').addClass("requiredItem")
+                $('#dutyUnitName').removeClass("requiredItem")
             }
         });
 
@@ -1290,9 +1308,92 @@
             resetRepeat();
             resetForm();
         });
+        $('#userinfo_form').on('change','.requiredItem',function (){
+            let item = $(this)[0];
+            if($(this).val()!='') {
+
+                if (item.tagName == 'INPUT') {
+                    $("input[name='" + $(this).prop('name') + "']").removeClass("layui-form-danger");
+                    if($(this).prop('id')=='idcard'){
+                        let reg = /(^\d{18}$)|(^\d{17}(\d|X|x)$)/;
+                        let idcard = $.trim($('#idcard').val());
+                        if(idcard === '' || !reg.test(idcard)){
+                            $('#idcard').addClass("layui-form-danger");
+                        }
+                    }
+                } else if (item.tagName == 'SELECT') {
+                    $("input[name='" + $(this).attr('_name') + "']").removeClass("layui-form-danger");
+                }
+            }
+        });
+
+        form.on('select(eventPlaceId)', function(data){
+            if(data.value!=''){
+                $('#eventPlaceId').next().find('input').removeClass("layui-form-danger");
+            }
+        });
+        form.on('select(dutyUnitId)', function(data){
+            if(data.value!=''){
+                $('#dutyUnitId').next().find('input').removeClass("layui-form-danger");
+            }
+        });
 
         //监听提交
         form.on('submit(submitBtn)', function(data){
+
+            let requiredFlag= true;
+            $('.requiredItem').each(function (){
+                if($(this).val()==''&&$(this).prop('id')!='contentTypeIdStr'&&$(this).prop('id')!='receptionId'){
+
+                    console.log("$(this).prop('name')"+$(this).prop('id'));
+                    let item = $(this)[0];
+                    if(item.tagName=='INPUT'){
+                        $("input[name='"+$(this).prop('name')+"']").addClass("layui-form-danger");
+                    }
+                    else if(item.tagName=='SELECT'){
+                        if($(this).prop('id')=='eventPlaceId'){
+                            $(this).next().find('input').addClass("layui-form-danger");
+                        }
+                        else if($(this).prop('id')=='dutyUnitId'){
+                            $(this).next().find('input').addClass("layui-form-danger");
+                        }
+                        else{
+                            $("input[name='"+$(this).attr('_name')+"']").addClass("layui-form-danger");
+                        }
+
+                    }
+                    requiredFlag=false;
+
+                }
+            });
+
+            console.log(data.field.receptionId+"data.field.contentTypeIdStr"+!data.field.receptionId);
+            if(!data.field.contentTypeIdStr){
+                requiredFlag=false;
+                $("input[name='contentTypeIdStr']").addClass("layui-form-danger");
+            }else{
+                $("input[name='contentTypeIdStr']").removeClass("layui-form-danger");
+            }
+            if(!data.field.receptionId){
+                requiredFlag=false;
+                $("input[name='receptionId']").addClass("layui-form-danger");
+            }
+            else{
+                $("input[name='receptionId']").removeClass("layui-form-danger");
+            }
+
+            if(!requiredFlag){
+                layer.msg('请输入必填项！');
+                return false;
+            }
+            //
+            let reg = /(^\d{18}$)|(^\d{17}(\d|X|x)$)/;
+            let idcard = $.trim($('#idcard').val());
+            if(idcard === '' || !reg.test(idcard)){
+                layer.msg('请填写正确的身份证号');
+                $('#idcard').addClass("layui-form-danger");
+                return false;
+            }
             if(''+data.field.isNewEventPlaceId === 'on'){
                 data.field.eventPlaceId = -1;
                 if($.trim(data.field.eventPlaceName) === ''){layer.msg("请输入新建的事发地"); return false;}

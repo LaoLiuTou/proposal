@@ -164,5 +164,6 @@ public class JdcDTO extends PetitionEventInfo {
     @ApiModelProperty(value = "随访人信息，用于编辑")
     private List<FollowPersonDTO> followers;
 
-
+    @ApiModelProperty(value = "批次")
+    private String count;
 }

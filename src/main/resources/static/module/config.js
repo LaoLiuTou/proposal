@@ -5,7 +5,7 @@
 layui.define(function (exports) {
 
     var config = {
-        base_server: 'http://192.168.3.16:8088', // 接口地址
+        base_server: 'http://192.168.3.16:8088/', // 接口地址
         theme: 'theme-blue-white',  // 主题颜色
         audioId: 'ant-audio',  // 音频 ID
         audioMsg: '/assets/images/msg.mp3',  // 音频消息

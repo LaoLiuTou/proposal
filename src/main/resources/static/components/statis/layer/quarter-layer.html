@@ -1,0 +1,70 @@
+<div style="padding: 20px;">
+    <input type="text" class="layui-input" readonly id="date">
+</div>
+<script>
+    layui.use(['laydate','layer'], function () {
+        function mGetDate(year, month){
+            let d = new Date(year, month, 0);
+            return d.getDate();
+        }
+        const laydate = layui.laydate;
+        laydate.render({
+            elem: '#date'
+            ,type: 'month'
+            ,format: 'yyyy年M季度'
+            ,min: "1900-1-1"
+            ,max: new Date().getFullYear()+ "-12-31"
+            ,btns: ['now','confirm']
+            ,ready: function () {
+                const hd = $("#layui-laydate" + $('#date').attr("lay-key"));
+                if (hd.length > 0) {
+                    hd.click(function () {
+                        ren($(this));
+                    });
+                }
+                ren(hd);
+            }
+            ,done: function(value, date){
+
+                let startDate="",endDate="";
+                if(date.month==1){
+                    startDate=date.year+'年01月01日';
+                    endDate=date.year+'年03月31日';
+                }
+                else if(date.month==2){
+                    startDate=date.year+'年04月01日';
+                    endDate=date.year+'年06月30日';
+                }
+                else if(date.month==3){
+                    startDate=date.year+'年07月01日';
+                    endDate=date.year+'年09月30日';
+                }
+                else if(date.month==4){
+                    startDate=date.year+'年10月01日';
+                    endDate=date.year+'年12月31日';
+                }
+
+                let openDiv = layui.sessionData('dateLayer')['openDiv'];
+                layui.sessionData('dateLayer', {key: openDiv+'_type', value: '5'});
+                layui.sessionData('dateLayer', {key: openDiv+'_start', value: startDate});
+                layui.sessionData('dateLayer', {key: openDiv+'_end', value: endDate});
+                layer.close(layui.sessionData('dateLayer')['index']);
+            }
+
+        });
+        function  ren(thiz) {
+            const mls = thiz.find(".laydate-month-list");
+            mls.each(function () {
+                $(this).find("li").each(function (inx, ele) {
+                    const cx = ele.innerHTML;
+                    if (inx < 4) {
+                        ele.innerHTML = cx.replace(/月/g, "季度");
+                    } else {
+                        ele.style.display = "none";
+                    }
+                });
+            });
+        }
+
+    });
+</script>

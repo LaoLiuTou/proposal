@@ -67,10 +67,22 @@ public class PetitionEventInfoServiceImpl extends ServiceImpl<PetitionEventInfoM
         page.setRecords(list);
         return page;
     }
+    @Override
+    public IPage<JdcDTO> statisPetitionEventInfos(Page page, JdcDTO jdcDTO) {
+        /*page.setTotal(selectAllEventTotal(jdcDTO));*/
+        List<JdcDTO> list = baseMapper.statisPetitionEventInfos(page,jdcDTO);
+        page.setRecords(list);
+        return page;
+    }
+
 
     @Override
     public List<Map<String,Object>> xxglPageExportQuery(JdcDTO jdcDTO) {
         return baseMapper.selectAllEventExport(jdcDTO);
+    }
+    @Override
+    public List<Map<String,Object>> statisExportQuery(JdcDTO jdcDTO) {
+        return baseMapper.exportStatisPetitionEventInfos(jdcDTO);
     }
 
     @Override
@@ -253,6 +265,7 @@ public class PetitionEventInfoServiceImpl extends ServiceImpl<PetitionEventInfoM
         }
         return baseMapper.statisticsQueryEventList(dto);
     }
+
 
     @Override
     public List<PetitionEventStatisticDTO> statisticsQueryRepeatEventList(StatisQueryEventDTO dto) {

@@ -488,6 +488,11 @@ html {
     padding-right: 45px;
 }
 
+.small-model-form {
+    padding-top: 10px;
+    padding-right: 45px;
+}
+
 .model-form-footer {
     text-align: right;
 }
